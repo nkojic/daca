@@ -1,0 +1,8 @@
+<Application x:Class="WpfAmsterdam.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    StartupUri="Windows/Window2.xaml">
+    <Application.Resources>
+
+    </Application.Resources>
+</Application>

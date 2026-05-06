@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>WpfAmsterdam</RootNamespace>
+    <AssemblyName>WpfAmsterdam</AssemblyName>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\wine03.jpg" />
+    <Resource Include="Resources\wine03.png" />
+    <Resource Include="Resources\more.jpg" />
+    <None Include="Resources\icons7003.png" />
+    <None Include="Resources\icons5925.png" />
+    <None Include="Resources\icons6986.png" />
+    <None Include="Resources\arrow_right_blue.png" />
+    <None Include="Resources\arrow_right_green.png" />
+    <None Include="Resources\arrow_right_green1.png" />
+    <None Include="Resources\arrow_down_green.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\printer1.png" />
+    <None Include="Resources\00450_printer.png" />
+    <None Include="Resources\forward.png" />
+  </ItemGroup>
+
+</Project>
