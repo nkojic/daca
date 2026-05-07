@@ -15,7 +15,8 @@ namespace WpfAmsterdam
         public static string konekcijaPom2 = "User ID=daca;Password=spider2204;Data Source=DACHA-LAPTOP\\DACASQL14;Initial Catalog=AmsterdamSplavNovi";
         public static string konekcijaPom3 = "User ID=daca;Password=spider2204;Data Source=LENOVO-PC\\DACASQL2014;Initial Catalog=AmsterdamSplavNovi";
         public static string konekcijaPom4 = "User ID=daca;Password=spider2204;Data Source=DESKTOP-HP\\SQLEXPRESS16;Initial Catalog=AmsterdamSplavNovi";
-        public static string konekcija = "User ID=daca;Password=spider2204;Data Source=ELO15E1-PC\\SQLTOUCH2R2;Initial Catalog=AmsterdamSplavNovi";
+        //public static string konekcija = "User ID=daca;Password=spider2204;Data Source=ELO15E1-PC\\SQLTOUCH2R2;Initial Catalog=AmsterdamSplavNovi";
+        public static string konekcija = "User ID=daca;Password=spider2204;Data Source=DESKTOP-N6QEGP1\\DACASQL;Initial Catalog=AmsterdamSplavNovi;TrustServerCertificate=True";
 
         private Form1 _frm1;
         public static System.Windows.Forms.Timer Timer1 = new System.Windows.Forms.Timer();

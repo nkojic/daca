@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="Data\DsArtikli.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Data\DsKonStoloviStavke.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgKalk.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgKalkPlacanje.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgKartica.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgOkno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgPlacanje.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgPopust.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgPotpis1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgPrilozi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgRacun.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgStaff.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgZamenaKonobara.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Dialogs\DlgZamenaStolova.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>
