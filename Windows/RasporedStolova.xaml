@@ -57,14 +57,15 @@
         <!-- Gornji deo - konfiguracija -->
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="#E8E8E8"
                     Height="60" VerticalAlignment="Center">
+            <!-- Inicijalno kreiranje -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
                 <TextBox x:Name="txtSquareCount" Width="55" Height="30" FontSize="16"
                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                          Margin="0,0,5,0"/>
                 <Border Width="22" Height="22" BorderBrush="Black" BorderThickness="1"
                         CornerRadius="2" Background="White" Margin="0,0,5,0"/>
-                <TextBlock Text="Kvadratni stolovi" FontSize="14" FontWeight="SemiBold"
-                           VerticalAlignment="Center" Margin="0,0,25,0"/>
+                <TextBlock Text="Kvadratni" FontSize="13" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="0,0,15,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBox x:Name="txtRoundCount" Width="55" Height="30" FontSize="16"
@@ -72,22 +73,56 @@
                          Margin="0,0,5,0"/>
                 <Border Width="24" Height="24" BorderBrush="Black" BorderThickness="1"
                         CornerRadius="12" Background="White" Margin="0,0,5,0"/>
-                <TextBlock Text="Kružni stolovi" FontSize="14" FontWeight="SemiBold"
-                           VerticalAlignment="Center" Margin="0,0,25,0"/>
+                <TextBlock Text="Kružni" FontSize="13" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="0,0,15,0"/>
             </StackPanel>
-            <Button x:Name="btnPrikazi" Content="Prikaži" Width="80" Height="35"
-                    FontSize="14" FontWeight="Bold" Background="#4CAF50" Foreground="White"
-                    Margin="0,0,10,0" Click="btnPrikazi_Click"/>
-            <Button x:Name="btnSnimi" Content="Snimi" Width="80" Height="35"
-                    FontSize="14" FontWeight="Bold" Background="#FFD700"
-                    Margin="0,0,10,0" Click="btnSnimi_Click"/>
-            <Button x:Name="btnZatvori" Content="Zatvori" Width="80" Height="35"
-                    FontSize="14" FontWeight="Bold" Background="#DC3545" Foreground="White"
+            <Button x:Name="btnPrikazi" Content="Prikaži" Width="70" Height="35"
+                    FontSize="13" FontWeight="Bold" Background="#4CAF50" Foreground="White"
+                    Margin="0,0,8,0" Click="btnPrikazi_Click"/>
+
+            <!-- Separator -->
+            <Border Width="2" Height="35" Background="#999" Margin="8,0"/>
+
+            <!-- Dodavanje i brisanje -->
+            <Button x:Name="btnDodajKvadrat" Content="+ Kvadratni" Width="95" Height="35"
+                    FontSize="12" FontWeight="Bold" Background="#2196F3" Foreground="White"
+                    Margin="0,0,5,0" Click="btnDodajKvadrat_Click"/>
+            <Button x:Name="btnDodajKrug" Content="+ Kružni" Width="80" Height="35"
+                    FontSize="12" FontWeight="Bold" Background="#9C27B0" Foreground="White"
+                    Margin="0,0,5,0" Click="btnDodajKrug_Click"/>
+            <Button x:Name="btnObrisi" Content="Obriši" Width="70" Height="35"
+                    FontSize="12" FontWeight="Bold" Background="#F44336" Foreground="White"
+                    Margin="0,0,5,0" Click="btnObrisi_Click"/>
+
+            <!-- Separator -->
+            <Border Width="2" Height="35" Background="#999" Margin="8,0"/>
+
+            <Button x:Name="btnSnimi" Content="Snimi" Width="70" Height="35"
+                    FontSize="13" FontWeight="Bold" Background="#FFD700"
+                    Margin="0,0,8,0" Click="btnSnimi_Click"/>
+            <Button x:Name="btnZatvori" Content="Zatvori" Width="70" Height="35"
+                    FontSize="13" FontWeight="Bold" Background="#DC3545" Foreground="White"
                     Click="btnZatvori_Click"/>
         </StackPanel>
 
-        <!-- Donji deo - canvas za stolove -->
-        <Border Margin="10" BorderBrush="Black" BorderThickness="2" Background="White">
+        <!-- Status bar -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Background="#F0F0F0"
+                    Height="25">
+            <TextBlock Margin="15,0,20,0" VerticalAlignment="Center" FontSize="12">
+                <Run Text="Ukupno: "/><Run x:Name="txtTotal" FontWeight="Bold" Text="0"/>
+            </TextBlock>
+            <TextBlock Margin="0,0,20,0" VerticalAlignment="Center" FontSize="12">
+                <Run Text="Kvadratni: "/><Run x:Name="txtSqCount" FontWeight="Bold" Text="0"/>
+            </TextBlock>
+            <TextBlock Margin="0,0,20,0" VerticalAlignment="Center" FontSize="12">
+                <Run Text="Kružni: "/><Run x:Name="txtRdCount" FontWeight="Bold" Text="0"/>
+            </TextBlock>
+            <TextBlock x:Name="txtMode" Margin="20,0,0,0" VerticalAlignment="Center"
+                       FontSize="11" FontWeight="Bold" Foreground="#555" Text=""/>
+        </StackPanel>
+
+        <!-- Canvas za stolove -->
+        <Border x:Name="canvasBorder" Margin="10" BorderBrush="Black" BorderThickness="2" Background="White">
             <Canvas x:Name="canvasStolovi" ClipToBounds="True"/>
         </Border>
     </DockPanel>

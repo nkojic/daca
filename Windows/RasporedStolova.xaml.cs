@@ -25,6 +25,8 @@ namespace WpfAmsterdam
         private List<TableItem> tableItems = new List<TableItem>();
         private Button draggedButton = null;
         private Point dragOffset;
+        private bool deleteMode = false;
+        private int maxId = 0;
 
         public RasporedStolova()
         {
@@ -38,9 +40,6 @@ namespace WpfAmsterdam
 
             if (dt.Rows.Count > 0)
             {
-                int squareCount = 0;
-                int roundCount = 0;
-
                 foreach (DataRow row in dt.Rows)
                 {
                     string name = row["BrojStola"].ToString();
@@ -62,13 +61,41 @@ namespace WpfAmsterdam
                         UiButton = btn
                     });
 
-                    if (type == "round") roundCount++;
-                    else squareCount++;
+                    // Prati maxId za generisanje novih imena
+                    ParseMaxId(name);
                 }
 
-                txtSquareCount.Text = squareCount.ToString();
-                txtRoundCount.Text = roundCount.ToString();
+                UpdateCounts();
             }
+        }
+
+        private void ParseMaxId(string name)
+        {
+            if (name.Length > 1 && name.StartsWith("S"))
+            {
+                int num;
+                if (int.TryParse(name.Substring(1), out num) && num > maxId)
+                {
+                    maxId = num;
+                }
+            }
+        }
+
+        private string GetNextName()
+        {
+            maxId++;
+            return "S" + maxId;
+        }
+
+        private void UpdateCounts()
+        {
+            int sq = tableItems.Count(t => t.TipStola == "square");
+            int rd = tableItems.Count(t => t.TipStola == "round");
+            txtTotal.Text = tableItems.Count.ToString();
+            txtSqCount.Text = sq.ToString();
+            txtRdCount.Text = rd.ToString();
+            txtSquareCount.Text = sq.ToString();
+            txtRoundCount.Text = rd.ToString();
         }
 
         private Button CreateTableButton(string name, string type)
@@ -95,8 +122,12 @@ namespace WpfAmsterdam
             return btn;
         }
 
+        // --- Inicijalno generisanje ---
+
         private void btnPrikazi_Click(object sender, RoutedEventArgs e)
         {
+            if (deleteMode) ToggleDeleteMode();
+
             int squareCount, roundCount;
             if (!int.TryParse(txtSquareCount.Text, out squareCount) || squareCount < 0)
             {
@@ -111,23 +142,20 @@ namespace WpfAmsterdam
 
             canvasStolovi.Children.Clear();
             tableItems.Clear();
+            maxId = 0;
 
-            // Ažuriraj layout da dobijemo ActualWidth/Height
             canvasStolovi.UpdateLayout();
             double canvasWidth = canvasStolovi.ActualWidth;
             if (canvasWidth < 100) canvasWidth = 1000;
 
-            int counter = 0;
             int maxCols = (int)((canvasWidth - 20) / 75);
             if (maxCols < 1) maxCols = 10;
             int col = 0;
             int row = 0;
 
-            // Kvadratni stolovi
             for (int i = 0; i < squareCount; i++)
             {
-                counter++;
-                string name = "S" + counter;
+                string name = GetNextName();
                 double x = 20 + col * 75;
                 double y = 20 + row * 75;
 
@@ -138,24 +166,19 @@ namespace WpfAmsterdam
 
                 tableItems.Add(new TableItem
                 {
-                    BrojStola = name,
-                    PosX = x,
-                    PosY = y,
-                    TipStola = "square",
-                    UiButton = btn
+                    BrojStola = name, PosX = x, PosY = y,
+                    TipStola = "square", UiButton = btn
                 });
 
                 col++;
                 if (col >= maxCols) { col = 0; row++; }
             }
 
-            // Kružni stolovi - novi red
             if (squareCount > 0) { col = 0; row++; }
 
             for (int i = 0; i < roundCount; i++)
             {
-                counter++;
-                string name = "S" + counter;
+                string name = GetNextName();
                 double x = 15 + col * 80;
                 double y = 20 + row * 80;
 
@@ -166,15 +189,96 @@ namespace WpfAmsterdam
 
                 tableItems.Add(new TableItem
                 {
-                    BrojStola = name,
-                    PosX = x,
-                    PosY = y,
-                    TipStola = "round",
-                    UiButton = btn
+                    BrojStola = name, PosX = x, PosY = y,
+                    TipStola = "round", UiButton = btn
                 });
 
                 col++;
                 if (col >= maxCols) { col = 0; row++; }
+            }
+
+            UpdateCounts();
+        }
+
+        // --- Dodavanje pojedinačnog stola ---
+
+        private void btnDodajKvadrat_Click(object sender, RoutedEventArgs e)
+        {
+            if (deleteMode) ToggleDeleteMode();
+            DodajSto("square");
+        }
+
+        private void btnDodajKrug_Click(object sender, RoutedEventArgs e)
+        {
+            if (deleteMode) ToggleDeleteMode();
+            DodajSto("round");
+        }
+
+        private void DodajSto(string type)
+        {
+            string name = GetNextName();
+            double x = 30;
+            double y = 30;
+
+            Button btn = CreateTableButton(name, type);
+            Canvas.SetLeft(btn, x);
+            Canvas.SetTop(btn, y);
+            canvasStolovi.Children.Add(btn);
+
+            tableItems.Add(new TableItem
+            {
+                BrojStola = name, PosX = x, PosY = y,
+                TipStola = type, UiButton = btn
+            });
+
+            UpdateCounts();
+        }
+
+        // --- Režim brisanja ---
+
+        private void btnObrisi_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleDeleteMode();
+        }
+
+        private void ToggleDeleteMode()
+        {
+            deleteMode = !deleteMode;
+
+            if (deleteMode)
+            {
+                canvasBorder.BorderBrush = Brushes.Red;
+                canvasBorder.Background = new SolidColorBrush(Color.FromRgb(255, 245, 245));
+                btnObrisi.Background = new SolidColorBrush(Color.FromRgb(183, 28, 28));
+                txtMode.Text = "REŽIM BRISANJA — kliknite na sto za brisanje";
+                txtMode.Foreground = Brushes.Red;
+            }
+            else
+            {
+                canvasBorder.BorderBrush = Brushes.Black;
+                canvasBorder.Background = Brushes.White;
+                btnObrisi.Background = new SolidColorBrush(Color.FromRgb(244, 67, 54));
+                txtMode.Text = "";
+                txtMode.Foreground = new SolidColorBrush(Color.FromRgb(85, 85, 85));
+            }
+        }
+
+        private void ObrisiSto(Button btn)
+        {
+            TableItem item = tableItems.Find(t => t.UiButton == btn);
+            if (item == null) return;
+
+            System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show(
+                "Da li ste sigurni da želite da obrišete sto " + item.BrojStola + "?",
+                "Brisanje stola",
+                System.Windows.Forms.MessageBoxButtons.YesNo,
+                System.Windows.Forms.MessageBoxIcon.Warning);
+
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                canvasStolovi.Children.Remove(btn);
+                tableItems.Remove(item);
+                UpdateCounts();
             }
         }
 
@@ -182,7 +286,16 @@ namespace WpfAmsterdam
 
         private void Table_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            draggedButton = sender as Button;
+            Button btn = sender as Button;
+
+            if (deleteMode)
+            {
+                ObrisiSto(btn);
+                e.Handled = true;
+                return;
+            }
+
+            draggedButton = btn;
             dragOffset = e.GetPosition(draggedButton);
             draggedButton.CaptureMouse();
             e.Handled = true;
@@ -223,6 +336,8 @@ namespace WpfAmsterdam
 
         private void Table_DoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (deleteMode) return;
+
             Button btn = sender as Button;
             TableItem item = tableItems.Find(t => t.UiButton == btn);
             if (item == null) return;
@@ -256,6 +371,8 @@ namespace WpfAmsterdam
                 System.Windows.Forms.MessageBox.Show("Nema stolova za snimanje.");
                 return;
             }
+
+            if (deleteMode) ToggleDeleteMode();
 
             using (SqlConnection con = new SqlConnection(konekcija))
             {
