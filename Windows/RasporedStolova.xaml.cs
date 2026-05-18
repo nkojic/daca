@@ -247,17 +247,22 @@ namespace WpfAmsterdam
 
             if (deleteMode)
             {
-                canvasBorder.BorderBrush = Brushes.Red;
+                canvasBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 118, 117));
                 canvasBorder.Background = new SolidColorBrush(Color.FromRgb(255, 245, 245));
                 btnObrisi.Background = new SolidColorBrush(Color.FromRgb(183, 28, 28));
                 txtMode.Text = "REŽIM BRISANJA — kliknite na sto za brisanje";
-                txtMode.Foreground = Brushes.Red;
+                txtMode.Foreground = new SolidColorBrush(Color.FromRgb(214, 48, 49));
             }
             else
             {
-                canvasBorder.BorderBrush = Brushes.Black;
-                canvasBorder.Background = Brushes.White;
-                btnObrisi.Background = new SolidColorBrush(Color.FromRgb(244, 67, 54));
+                canvasBorder.BorderBrush = new SolidColorBrush(Color.FromRgb(238, 241, 245));
+                canvasBorder.Background = null; // DrawingBrush iz XAML-a
+                LinearGradientBrush deleteGrad = new LinearGradientBrush();
+                deleteGrad.StartPoint = new Point(0, 0);
+                deleteGrad.EndPoint = new Point(1, 1);
+                deleteGrad.GradientStops.Add(new GradientStop(Color.FromRgb(255, 118, 117), 0));
+                deleteGrad.GradientStops.Add(new GradientStop(Color.FromRgb(225, 112, 85), 1));
+                btnObrisi.Background = deleteGrad;
                 txtMode.Text = "";
                 txtMode.Foreground = new SolidColorBrush(Color.FromRgb(85, 85, 85));
             }

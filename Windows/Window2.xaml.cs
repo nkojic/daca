@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -97,6 +98,13 @@ namespace WpfAmsterdam
             RasporedStolova.Click += RasporedStolova_Click;
         }
 
+        // Boje za status stolova (Light Minimalist paleta)
+        private static readonly SolidColorBrush BrushEmpty = new SolidColorBrush(Color.FromRgb(240, 242, 245));
+        private static readonly SolidColorBrush BrushMine = new SolidColorBrush(Color.FromRgb(184, 245, 216));
+        private static readonly SolidColorBrush BrushOther = new SolidColorBrush(Color.FromRgb(255, 224, 178));
+        private static readonly SolidColorBrush BrushNewOrder = new SolidColorBrush(Color.FromRgb(255, 184, 184));
+        private static readonly SolidColorBrush BrushNewOrderRecent = new SolidColorBrush(Color.FromRgb(255, 118, 117));
+
         public void ReloadTablesFromDatabase()
         {
             canvasTables.Children.Clear();
@@ -115,21 +123,17 @@ namespace WpfAmsterdam
                 Button btn = new Button();
                 btn.Content = name;
                 btn.Tag = name;
-                btn.Background = Brushes.White;
-                btn.FontSize = 18;
-                btn.FontWeight = FontWeights.Bold;
+                btn.Background = BrushEmpty;
+                btn.Foreground = new SolidColorBrush(Color.FromRgb(178, 190, 195));
                 btn.Click += exp_Click;
 
                 if (type == "round")
                 {
-                    btn.Width = 60;
-                    btn.Height = 60;
-                    btn.Style = (Style)FindResource("Okrugli");
+                    btn.Style = (Style)FindResource("StoKrugW2");
                 }
                 else
                 {
-                    btn.Width = 45;
-                    btn.Height = 45;
+                    btn.Style = (Style)FindResource("StoKvadratW2");
                 }
 
                 Canvas.SetLeft(btn, posX);
@@ -137,6 +141,10 @@ namespace WpfAmsterdam
                 canvasTables.Children.Add(btn);
                 dctButton[name] = btn;
             }
+
+            // Ažuriraj waiter strip
+            txtKonobarIme.Text = KonobarIme;
+            txtDatum.Text = DateTime.Now.ToString("dd. MMMM yyyy.  |  HH:mm", new CultureInfo("sr-Latn-RS"));
         }
 
         private void RasporedStolova_Click(object sender, RoutedEventArgs e)
@@ -217,9 +225,15 @@ namespace WpfAmsterdam
 
         private void BojenjeStolova()
         {
+            SolidColorBrush fgEmpty = new SolidColorBrush(Color.FromRgb(178, 190, 195));
+            SolidColorBrush fgMine = new SolidColorBrush(Color.FromRgb(0, 184, 148));
+            SolidColorBrush fgOther = new SolidColorBrush(Color.FromRgb(225, 112, 85));
+            SolidColorBrush fgNew = new SolidColorBrush(Color.FromRgb(214, 48, 49));
+
             foreach (Button dugme in dctButton.Values)
             {
-                dugme.Background = Brushes.White;
+                dugme.Background = BrushEmpty;
+                dugme.Foreground = fgEmpty;
             }
             if (daliAdmin)
             {
@@ -231,11 +245,13 @@ namespace WpfAmsterdam
                     {
                         if (Convert.ToInt32(red["proteklo"]) < 2)
                         {
-                            dctButton[brojStola].Background = Brushes.Red;
+                            dctButton[brojStola].Background = BrushNewOrderRecent;
+                            dctButton[brojStola].Foreground = Brushes.White;
                         }
                         else
                         {
-                            dctButton[brojStola].Background = Brushes.Orange;
+                            dctButton[brojStola].Background = BrushNewOrder;
+                            dctButton[brojStola].Foreground = fgNew;
                         }
                     }
                 }
@@ -249,15 +265,21 @@ namespace WpfAmsterdam
                     {
                         if (Convert.ToInt32(red["IdKonobar"]) == KonobarId)
                         {
-                            dctButton[brojStola].Background = Brushes.GreenYellow;
+                            dctButton[brojStola].Background = BrushMine;
+                            dctButton[brojStola].Foreground = fgMine;
                         }
                         else
                         {
-                            dctButton[brojStola].Background = Brushes.Orange;
+                            dctButton[brojStola].Background = BrushOther;
+                            dctButton[brojStola].Foreground = fgOther;
                         }
                     }
                 }
             }
+
+            // Ažuriraj waiter strip
+            txtKonobarIme.Text = KonobarIme;
+            txtDatum.Text = DateTime.Now.ToString("dd. MMMM yyyy.  |  HH:mm", new CultureInfo("sr-Latn-RS"));
         }
 
         private string GetSQLInsert()

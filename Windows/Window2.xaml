@@ -1,48 +1,90 @@
 <Window x:Class="WpfAmsterdam.Window2"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Window2" Height="710" Width="1310" MinHeight="700" MinWidth="1300" WindowState="Maximized">
+    Title="Window2" Height="710" Width="1310" MinHeight="700" MinWidth="1300" WindowState="Maximized"
+    Background="#F5F6F8">
 
     <Window.Resources>
-        <Style TargetType="Button">
+        <!-- Stil za kvadratne stolove -->
+        <Style TargetType="Button" x:Key="StoKvadratW2">
             <Setter Property="SnapsToDevicePixels" Value="true"/>
             <Setter Property="OverridesDefaultStyle" Value="true"/>
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="45"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                           x:Name="Border"
-                           CornerRadius="2"
-                           BorderThickness="1"
-                           BorderBrush="Black">
+                           CornerRadius="10"
+                           BorderThickness="2"
+                           BorderBrush="#DFE6E9">
                             <ContentPresenter
                               Margin="2"
                               HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              RecognizesAccessKey="True"/>
+                              VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style BasedOn="{StaticResource {x:Type Button}}"
-           TargetType="Button"
-           x:Key="Okrugli">
+        <!-- Stil za okrugle stolove -->
+        <Style TargetType="Button" x:Key="StoKrugW2">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="60"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                           x:Name="Border"
-                           CornerRadius="27"
-                           BorderThickness="1"
-                           BorderBrush="Black">
+                           CornerRadius="30"
+                           BorderThickness="2"
+                           BorderBrush="#DFE6E9">
                             <ContentPresenter
                               Margin="2"
                               HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              RecognizesAccessKey="True"/>
+                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Stil za kontrolna dugmad -->
+        <Style TargetType="Button" x:Key="BtnControl">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="12" BorderThickness="0" Padding="10,8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Button" x:Key="BtnSecondary">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#636E72"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="12" BorderThickness="0" Padding="10,8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -50,26 +92,162 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="pack://application:,,,/Resources/wine03.jpg" Opacity="0.3" />
-        </Grid.Background>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <Border CornerRadius="16" Background="White"
+            Margin="12" ClipToBounds="True">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="24" ShadowDepth="2" Opacity="0.06" Color="Black"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- Kontrolna dugmad - gornji red -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
-            <Button Name="izlaz" Height="55" Width="55" Content="Kraj" Background="Red" Foreground="White" Margin="5"/>
-            <Button Name="ZamenaStolova" Height="55" Width="75" Content="Stolovi" Background="Yellow" FontSize="13" Margin="5"/>
-            <Button Name="ZamenaKonobara" Height="55" Width="75" Content="Konobari" Background="Yellow" FontSize="13" Margin="5"/>
-            <Button Name="RasporedStolova" Height="55" Width="85" Content="Raspored" Background="Yellow" FontSize="13" Margin="5"/>
-            <Button Style="{StaticResource Okrugli}" Name="exp" Height="60" Width="60" Content="exp" Background="White" Margin="5"/>
-            <Button Name="staf" Height="55" Width="55" Content="staf" Background="White" Margin="5"/>
-        </StackPanel>
+            <!-- Header sa kontrolnim dugmadima -->
+            <Border Grid.Row="0" Padding="20,14" BorderThickness="0,0,0,1" BorderBrush="#E8ECF1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FAFBFC" Offset="0"/>
+                        <GradientStop Color="#F0F2F5" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Kraj -->
+                    <Button Name="izlaz" Style="{StaticResource BtnControl}"
+                            Width="70" Height="40" Content="Kraj" Margin="0,0,10,0">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#FF7675" Offset="0"/>
+                                <GradientStop Color="#E17055" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <!-- Stolovi -->
+                    <Button Name="ZamenaStolova" Style="{StaticResource BtnControl}"
+                            Width="85" Height="40" Content="Stolovi" Margin="0,0,10,0">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#74B9FF" Offset="0"/>
+                                <GradientStop Color="#0984E3" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <!-- Konobari -->
+                    <Button Name="ZamenaKonobara" Style="{StaticResource BtnControl}"
+                            Width="95" Height="40" Content="Konobari" Margin="0,0,10,0">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#A29BFE" Offset="0"/>
+                                <GradientStop Color="#6C5CE7" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <!-- Raspored -->
+                    <Button Name="RasporedStolova" Style="{StaticResource BtnControl}"
+                            Width="95" Height="40" Content="Raspored" Margin="0,0,10,0">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#55EFC4" Offset="0"/>
+                                <GradientStop Color="#00B894" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <!-- exp -->
+                    <Button Name="exp" Style="{StaticResource BtnSecondary}"
+                            Width="60" Height="40" Content="exp" Margin="0,0,10,0">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#F0F2F5" Offset="0"/>
+                                <GradientStop Color="#DFE6E9" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <!-- staf -->
+                    <Button Name="staf" Style="{StaticResource BtnSecondary}"
+                            Width="60" Height="40" Content="staf" Margin="0,0,10,0">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#F0F2F5" Offset="0"/>
+                                <GradientStop Color="#DFE6E9" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                </StackPanel>
+            </Border>
 
-        <!-- Dinamički stolovi iz baze -->
-        <Canvas x:Name="canvasTables" Grid.Row="1" ClipToBounds="True"/>
-    </Grid>
+            <!-- Waiter info strip -->
+            <Border Grid.Row="1" Padding="20,10" Background="#FAFBFC"
+                    BorderThickness="0,0,0,1" BorderBrush="#EEF1F5">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left" FontSize="14" Foreground="#636E72">
+                        <Run Text="Konobar: "/>
+                        <Run x:Name="txtKonobarIme" Text="" FontWeight="Bold" Foreground="#0984E3"/>
+                    </TextBlock>
+                    <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Right"
+                               FontSize="13" Foreground="#B2BEC3" x:Name="txtDatum"/>
+                </DockPanel>
+            </Border>
+
+            <!-- Canvas za stolove sa grid pattern pozadinom -->
+            <Border Grid.Row="2" Margin="16" CornerRadius="16"
+                    BorderThickness="1" BorderBrush="#EEF1F5" ClipToBounds="True">
+                <Border.Background>
+                    <DrawingBrush TileMode="Tile" Viewport="0,0,30,30" ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="#FAFBFC">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0,0,30,30"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                                <GeometryDrawing>
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="#E8ECF1" Thickness="0.5"/>
+                                    </GeometryDrawing.Pen>
+                                    <GeometryDrawing.Geometry>
+                                        <GeometryGroup>
+                                            <LineGeometry StartPoint="30,0" EndPoint="30,30"/>
+                                            <LineGeometry StartPoint="0,30" EndPoint="30,30"/>
+                                        </GeometryGroup>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Border.Background>
+                <Canvas x:Name="canvasTables" ClipToBounds="True"/>
+            </Border>
+
+            <!-- Legenda -->
+            <Border Grid.Row="3" Padding="20,12" Background="#FAFBFC"
+                    BorderThickness="0,1,0,0" BorderBrush="#EEF1F5">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="STATUS:" FontSize="11" FontWeight="SemiBold"
+                               Foreground="#B2BEC3" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <!-- Slobodan -->
+                    <Border Width="14" Height="14" CornerRadius="4" Background="#F0F2F5"
+                            BorderBrush="#DFE6E9" BorderThickness="2" Margin="0,0,6,0"/>
+                    <TextBlock Text="Slobodan" FontSize="13" Foreground="#636E72"
+                               VerticalAlignment="Center" Margin="0,0,18,0"/>
+                    <!-- Moj sto -->
+                    <Border Width="14" Height="14" CornerRadius="4" Background="#B8F5D8"
+                            BorderBrush="#55EFC4" BorderThickness="2" Margin="0,0,6,0"/>
+                    <TextBlock Text="Moj sto" FontSize="13" Foreground="#636E72"
+                               VerticalAlignment="Center" Margin="0,0,18,0"/>
+                    <!-- Drugi konobar -->
+                    <Border Width="14" Height="14" CornerRadius="4" Background="#FFE0B2"
+                            BorderBrush="#FDCB6E" BorderThickness="2" Margin="0,0,6,0"/>
+                    <TextBlock Text="Drugi konobar" FontSize="13" Foreground="#636E72"
+                               VerticalAlignment="Center" Margin="0,0,18,0"/>
+                    <!-- Nova porudžbina -->
+                    <Border Width="14" Height="14" CornerRadius="4" Background="#FFB8B8"
+                            BorderBrush="#FF7675" BorderThickness="2" Margin="0,0,6,0"/>
+                    <TextBlock Text="Nova porudžbina" FontSize="13" Foreground="#636E72"
+                               VerticalAlignment="Center" Margin="0,0,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
 </Window>
