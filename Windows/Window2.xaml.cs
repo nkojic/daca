@@ -71,17 +71,9 @@ namespace WpfAmsterdam
             tekstKonobari += "FROM dbo.Konobari INNER JOIN dbo.KonobariKodoviKartica ON ";
             tekstKonobari += "dbo.Konobari.BrojKartice = dbo.KonobariKodoviKartica.IdKod WHERE aktivan = 'TRUE'";
             tblKonobari = DatabaseHelper.ReaderTabela(konekcija, tekstKonobari);
-            tblStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT BrojStola FROM dbo.Stolovi");
 
             dctButton = new Dictionary<string, Button>();
-            foreach (DataRow rdd in tblStolovi.Rows)
-            {
-                object wantedNode = this.FindName(rdd["BrojStola"].ToString());
-                if (wantedNode is Button wantedChild)
-                {
-                    dctButton.Add(rdd["BrojStola"].ToString(), wantedChild);
-                }
-            }
+            ReloadTablesFromDatabase();
 
             Timer1.Tick += Tikovanje;
             Timer1.Interval = 5000;
@@ -96,41 +88,67 @@ namespace WpfAmsterdam
             BojenjeStolova();
             Timer1.Start();
 
-            // Регистрација Click event-а за сва дугмад столова
-            RegisterTableButtonClicks();
-        }
-
-        private void RegisterTableButtonClicks()
-        {
-            string[] tableButtons = new string[]
-            {
-                "B1","B2","B3","B4","B5","B6","B7",
-                "O1","O2","O3","O4","O5","O6","O7",
-                "M1","M2","M3","M4","M5","M6","M7","M8","M9","M10",
-                "M11","M12","M13","M14","M15","M16","M17","M18","M19","M20","M21","M22","M23",
-                "U1","U2","U3","U4","U5","U6","U7","U8",
-                "R1","R2","R3","R4","R5","R6","R7","R8","R9","R10","R11","R12","R13","R14","R15","R16","R17",
-                "K1","K2","K3","K4",
-                "V1","V2","V3","V4","V5","V6","V7","V8","V9","V10","V11","V12","V13",
-                "S1","S2","S3","S4",
-                "N1","N2","N3","N4","N5","N6","N7","N8","N9","N10","N11","N12","N13","N14"
-            };
-
-            foreach (string name in tableButtons)
-            {
-                object node = this.FindName(name);
-                if (node is Button btn)
-                {
-                    btn.Click += exp_Click;
-                }
-            }
-
-            // exp дугме
+            // Registracija Click event-a za kontrolna dugmad
             exp.Click += exp_Click;
             staf.Click += staf_Click;
             izlaz.Click += izlaz_Click;
             ZamenaStolova.Click += ZamenaStolova_Click;
             ZamenaKonobara.Click += ZamenaKonobara_Click;
+            RasporedStolova.Click += RasporedStolova_Click;
+        }
+
+        public void ReloadTablesFromDatabase()
+        {
+            canvasTables.Children.Clear();
+            dctButton.Clear();
+
+            tblStolovi = DatabaseHelper.ReaderTabela(konekcija,
+                "SELECT BrojStola, PosX, PosY, TipStola FROM dbo.Stolovi");
+
+            foreach (DataRow row in tblStolovi.Rows)
+            {
+                string name = row["BrojStola"].ToString();
+                string type = row["TipStola"].ToString();
+                double posX = Convert.ToDouble(row["PosX"]);
+                double posY = Convert.ToDouble(row["PosY"]);
+
+                Button btn = new Button();
+                btn.Content = name;
+                btn.Tag = name;
+                btn.Background = Brushes.White;
+                btn.FontSize = 18;
+                btn.FontWeight = FontWeights.Bold;
+                btn.Click += exp_Click;
+
+                if (type == "round")
+                {
+                    btn.Width = 60;
+                    btn.Height = 60;
+                    btn.Style = (Style)FindResource("Okrugli");
+                }
+                else
+                {
+                    btn.Width = 45;
+                    btn.Height = 45;
+                }
+
+                Canvas.SetLeft(btn, posX);
+                Canvas.SetTop(btn, posY);
+                canvasTables.Children.Add(btn);
+                dctButton[name] = btn;
+            }
+        }
+
+        private void RasporedStolova_Click(object sender, RoutedEventArgs e)
+        {
+            Timer1.Stop();
+            RasporedStolova rasporedWin = new RasporedStolova();
+            rasporedWin.ShowDialog();
+            // Po zatvaranju prozora, ponovo učitaj stolove iz baze
+            ReloadTablesFromDatabase();
+            tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
+            BojenjeStolova();
+            Timer1.Start();
         }
 
         private void staf_Click(object sender, RoutedEventArgs e)
@@ -145,7 +163,7 @@ namespace WpfAmsterdam
         {
             Timer1.Stop();
             Button TT = (Button)sender;
-            BrojStola = TT.Name;
+            BrojStola = TT.Tag?.ToString() ?? TT.Content.ToString();
             try
             {
                 IdImee = Convert.ToInt32(tblOtvoreniStolovi.Select("BrojStola = '" + BrojStola + "'")[0]["IdIme"]);
@@ -208,13 +226,17 @@ namespace WpfAmsterdam
                 tblNajnovijeStavke = DatabaseHelper.ReaderTabela(konekcija, "SELECT BrojStola, proteklo FROM NajnovijeStavke");
                 foreach (DataRow red in tblNajnovijeStavke.Rows)
                 {
-                    if (Convert.ToInt32(red["proteklo"]) < 2)
+                    string brojStola = red["BrojStola"].ToString();
+                    if (dctButton.ContainsKey(brojStola))
                     {
-                        dctButton[red["BrojStola"].ToString()].Background = Brushes.Red;
-                    }
-                    else
-                    {
-                        dctButton[red["BrojStola"].ToString()].Background = Brushes.Orange;
+                        if (Convert.ToInt32(red["proteklo"]) < 2)
+                        {
+                            dctButton[brojStola].Background = Brushes.Red;
+                        }
+                        else
+                        {
+                            dctButton[brojStola].Background = Brushes.Orange;
+                        }
                     }
                 }
             }
@@ -222,13 +244,17 @@ namespace WpfAmsterdam
             {
                 foreach (DataRow red in tblOtvoreniStolovi.Rows)
                 {
-                    if (Convert.ToInt32(red["IdKonobar"]) == KonobarId)
+                    string brojStola = red["BrojStola"].ToString();
+                    if (dctButton.ContainsKey(brojStola))
                     {
-                        dctButton[red["BrojStola"].ToString()].Background = Brushes.GreenYellow;
-                    }
-                    else
-                    {
-                        dctButton[red["BrojStola"].ToString()].Background = Brushes.Orange;
+                        if (Convert.ToInt32(red["IdKonobar"]) == KonobarId)
+                        {
+                            dctButton[brojStola].Background = Brushes.GreenYellow;
+                        }
+                        else
+                        {
+                            dctButton[brojStola].Background = Brushes.Orange;
+                        }
                     }
                 }
             }
