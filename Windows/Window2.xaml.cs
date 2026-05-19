@@ -109,7 +109,12 @@ namespace WpfAmsterdam
             btnKonfiguracija.Click += Konfiguracija_Click;
 
             // Admin dugme vidljivo samo za admina
-            btnKonfiguracija.Visibility = daliAdmin ? Visibility.Visible : Visibility.Collapsed;
+            if (daliAdmin)
+            {
+                btnKonfiguracija.Visibility = Visibility.Visible;
+                System.Windows.Forms.MessageBox.Show("Admin mode aktivan - dugme prikazano",
+                    "Debug", System.Windows.Forms.MessageBoxButtons.OK);
+            }
         }
 
         private void LoadKonfiguracija()

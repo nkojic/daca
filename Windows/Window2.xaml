@@ -174,9 +174,9 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <!-- Admin konfiguracija (vidljivo samo za admina) -->
+                    <!-- Admin konfiguracija (vidljivo samo za admina, kontroliše se iz koda) -->
                     <Button Name="btnKonfiguracija" Style="{StaticResource BtnControl}"
-                            Width="90" Height="40" Content="Admin" Visibility="Collapsed">
+                            Width="120" Height="40" Content="⚙ Admin" Visibility="Collapsed" Margin="10,0,0,0">
                         <Button.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#FDCB6E" Offset="0"/>
