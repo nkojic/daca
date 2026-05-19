@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 using System.ComponentModel;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -41,7 +41,7 @@ namespace WpfAmsterdam
             colUkupno.Expression = "Komada * DeoPorcije * Cena";
             DataColumn colTip = new DataColumn("Tip", typeof(string));
             colTip.MaxLength = 50;
-            DataColumn colVreme = new DataColumn("vreme", typeof(TimeSpan));
+            DataColumn colVreme = new DataColumn("vreme", typeof(string));
 
             tableKonobStoloviStavke.Columns.Add(colIdKonobar);
             tableKonobStoloviStavke.Columns.Add(colBrojStola);
@@ -66,12 +66,7 @@ namespace WpfAmsterdam
 
     public class KonobStoloviStavkeTableAdapter
     {
-        private SqlDataAdapter adapter;
         private string connectionString;
-
-        public KonobStoloviStavkeTableAdapter()
-        {
-        }
 
         public string ConnectionString
         {
@@ -79,106 +74,142 @@ namespace WpfAmsterdam
             set { connectionString = value; }
         }
 
-        private void InitAdapter()
-        {
-            adapter = new SqlDataAdapter();
-
-            // SelectCommand
-            adapter.SelectCommand = new SqlCommand(
-                "SELECT IdKonobar, BrojStola, Id, IdArtikal, DeoPorcije, Komada, JedMere, Cena, " +
-                "Komentar, Odneto, ImeArtikal, Tip, vreme FROM KonobStoloviStavke " +
-                "WHERE (BrojStola = @BrojStola) AND (IdKonobar = @IdKonobar)");
-            adapter.SelectCommand.Parameters.Add(new SqlParameter("@BrojStola", SqlDbType.NVarChar, 15));
-            adapter.SelectCommand.Parameters.Add(new SqlParameter("@IdKonobar", SqlDbType.Int));
-
-            // InsertCommand
-            adapter.InsertCommand = new SqlCommand(
-                "INSERT INTO [KonobStoloviStavke] ([IdKonobar], [BrojStola], [Id], [IdArtikal], " +
-                "[DeoPorcije], [Komada], [JedMere], [Cena], [Komentar], [Odneto], [ImeArtikal], " +
-                "[Tip], [vreme]) VALUES (@IdKonobar, @BrojStola, @Id, @IdArtikal, @DeoPorcije, " +
-                "@Komada, @JedMere, @Cena, @Komentar, @Odneto, @ImeArtikal, @Tip, @vreme)");
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@IdKonobar", SqlDbType.Int) { SourceColumn = "IdKonobar" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@BrojStola", SqlDbType.NVarChar, 15) { SourceColumn = "BrojStola" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { SourceColumn = "Id" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@IdArtikal", SqlDbType.Int) { SourceColumn = "IdArtikal" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@DeoPorcije", SqlDbType.Float) { SourceColumn = "DeoPorcije" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@Komada", SqlDbType.Float) { SourceColumn = "Komada" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@JedMere", SqlDbType.NVarChar, 5) { SourceColumn = "JedMere" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@Cena", SqlDbType.Float) { SourceColumn = "Cena" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@Komentar", SqlDbType.NVarChar, 255) { SourceColumn = "Komentar" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@Odneto", SqlDbType.Bit) { SourceColumn = "Odneto" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@ImeArtikal", SqlDbType.NVarChar, 255) { SourceColumn = "ImeArtikal" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@Tip", SqlDbType.NVarChar, 50) { SourceColumn = "Tip" });
-            adapter.InsertCommand.Parameters.Add(new SqlParameter("@vreme", SqlDbType.Time) { SourceColumn = "vreme" });
-
-            // DeleteCommand
-            adapter.DeleteCommand = new SqlCommand(
-                "DELETE FROM [KonobStoloviStavke] WHERE ([IdKonobar] = @Original_IdKonobar) " +
-                "AND ([BrojStola] = @Original_BrojStola) AND ([Id] = @Original_Id)");
-            adapter.DeleteCommand.Parameters.Add(new SqlParameter("@Original_IdKonobar", SqlDbType.Int) { SourceColumn = "IdKonobar", SourceVersion = DataRowVersion.Original });
-            adapter.DeleteCommand.Parameters.Add(new SqlParameter("@Original_BrojStola", SqlDbType.NVarChar, 15) { SourceColumn = "BrojStola", SourceVersion = DataRowVersion.Original });
-            adapter.DeleteCommand.Parameters.Add(new SqlParameter("@Original_Id", SqlDbType.Int) { SourceColumn = "Id", SourceVersion = DataRowVersion.Original });
-
-            // UpdateCommand
-            adapter.UpdateCommand = new SqlCommand(
-                "UPDATE [KonobStoloviStavke] SET [IdKonobar] = @IdKonobar, [BrojStola] = @BrojStola, " +
-                "[Id] = @Id, [IdArtikal] = @IdArtikal, [DeoPorcije] = @DeoPorcije, [Komada] = @Komada, " +
-                "[JedMere] = @JedMere, [Cena] = @Cena, [Komentar] = @Komentar, [Odneto] = @Odneto, " +
-                "[ImeArtikal] = @ImeArtikal, [Tip] = @Tip, [vreme] = @vreme " +
-                "WHERE ([IdKonobar] = @Original_IdKonobar) AND ([BrojStola] = @Original_BrojStola) " +
-                "AND ([Id] = @Original_Id)");
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@IdKonobar", SqlDbType.Int) { SourceColumn = "IdKonobar" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@BrojStola", SqlDbType.NVarChar, 15) { SourceColumn = "BrojStola" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { SourceColumn = "Id" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@IdArtikal", SqlDbType.Int) { SourceColumn = "IdArtikal" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@DeoPorcije", SqlDbType.Float) { SourceColumn = "DeoPorcije" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Komada", SqlDbType.Float) { SourceColumn = "Komada" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@JedMere", SqlDbType.NVarChar, 5) { SourceColumn = "JedMere" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Cena", SqlDbType.Float) { SourceColumn = "Cena" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Komentar", SqlDbType.NVarChar, 255) { SourceColumn = "Komentar" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Odneto", SqlDbType.Bit) { SourceColumn = "Odneto" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@ImeArtikal", SqlDbType.NVarChar, 255) { SourceColumn = "ImeArtikal" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Tip", SqlDbType.NVarChar, 50) { SourceColumn = "Tip" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@vreme", SqlDbType.Time) { SourceColumn = "vreme" });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Original_IdKonobar", SqlDbType.Int) { SourceColumn = "IdKonobar", SourceVersion = DataRowVersion.Original });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Original_BrojStola", SqlDbType.NVarChar, 15) { SourceColumn = "BrojStola", SourceVersion = DataRowVersion.Original });
-            adapter.UpdateCommand.Parameters.Add(new SqlParameter("@Original_Id", SqlDbType.Int) { SourceColumn = "Id", SourceVersion = DataRowVersion.Original });
-        }
-
-        private SqlDataAdapter GetAdapter(string connStr)
-        {
-            if (adapter == null)
-                InitAdapter();
-            adapter.SelectCommand.Connection = new SqlConnection(connStr);
-            adapter.InsertCommand.Connection = adapter.SelectCommand.Connection;
-            adapter.DeleteCommand.Connection = adapter.SelectCommand.Connection;
-            adapter.UpdateCommand.Connection = adapter.SelectCommand.Connection;
-            return adapter;
-        }
-
         public void Fill(DataTable dataTable, string brojStola, int idKonobar)
         {
-            SqlDataAdapter da = GetAdapter(connectionString);
-            da.SelectCommand.Parameters["@BrojStola"].Value = brojStola;
-            da.SelectCommand.Parameters["@IdKonobar"].Value = idKonobar;
-            da.Fill(dataTable);
+            using (SqliteConnection con = new SqliteConnection(connectionString))
+            {
+                con.Open();
+                using (SqliteCommand cmd = new SqliteCommand(
+                    "SELECT IdKonobar, BrojStola, Id, IdArtikal, DeoPorcije, Komada, JedMere, Cena, " +
+                    "Komentar, Odneto, ImeArtikal, Tip, vreme FROM KonobStoloviStavke " +
+                    "WHERE BrojStola = @BrojStola AND IdKonobar = @IdKonobar", con))
+                {
+                    cmd.Parameters.AddWithValue("@BrojStola", brojStola);
+                    cmd.Parameters.AddWithValue("@IdKonobar", idKonobar);
+                    using (SqliteDataReader rdr = cmd.ExecuteReader())
+                    {
+                        dataTable.Load(rdr);
+                    }
+                }
+            }
         }
 
         public void FillBy(DataTable dataTable, int idKonobar)
         {
-            SqlDataAdapter da = new SqlDataAdapter(
-                "SELECT IdKonobar, BrojStola, Id, IdArtikal, DeoPorcije, Komada, JedMere, Cena, " +
-                "Komentar, Odneto, ImeArtikal, Tip, vreme FROM KonobStoloviStavke " +
-                "WHERE (IdKonobar = @IdKonobar)",
-                connectionString);
-            da.SelectCommand.Parameters.AddWithValue("@IdKonobar", idKonobar);
-            da.Fill(dataTable);
+            using (SqliteConnection con = new SqliteConnection(connectionString))
+            {
+                con.Open();
+                using (SqliteCommand cmd = new SqliteCommand(
+                    "SELECT IdKonobar, BrojStola, Id, IdArtikal, DeoPorcije, Komada, JedMere, Cena, " +
+                    "Komentar, Odneto, ImeArtikal, Tip, vreme FROM KonobStoloviStavke " +
+                    "WHERE IdKonobar = @IdKonobar", con))
+                {
+                    cmd.Parameters.AddWithValue("@IdKonobar", idKonobar);
+                    using (SqliteDataReader rdr = cmd.ExecuteReader())
+                    {
+                        dataTable.Load(rdr);
+                    }
+                }
+            }
         }
 
         public int Update(DataTable dataTable)
         {
-            SqlDataAdapter da = GetAdapter(connectionString);
-            return da.Update(dataTable);
+            int affected = 0;
+            using (SqliteConnection con = new SqliteConnection(connectionString))
+            {
+                con.Open();
+                using (SqliteTransaction txn = con.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (DataRow row in dataTable.GetChanges(DataRowState.Deleted)?.Rows ?? new DataRow[0])
+                        {
+                            using (SqliteCommand cmd = new SqliteCommand(
+                                "DELETE FROM KonobStoloviStavke WHERE IdKonobar = @IdKonobar " +
+                                "AND BrojStola = @BrojStola AND Id = @Id", con, txn))
+                            {
+                                cmd.Parameters.AddWithValue("@IdKonobar", row["IdKonobar", DataRowVersion.Original]);
+                                cmd.Parameters.AddWithValue("@BrojStola", row["BrojStola", DataRowVersion.Original]);
+                                cmd.Parameters.AddWithValue("@Id", row["Id", DataRowVersion.Original]);
+                                affected += cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        DataTable added = dataTable.GetChanges(DataRowState.Added);
+                        if (added != null)
+                        {
+                            foreach (DataRow row in added.Rows)
+                            {
+                                using (SqliteCommand cmd = new SqliteCommand(
+                                    "INSERT INTO KonobStoloviStavke (IdKonobar, BrojStola, Id, IdArtikal, " +
+                                    "DeoPorcije, Komada, JedMere, Cena, Komentar, Odneto, ImeArtikal, Tip, vreme) " +
+                                    "VALUES (@IdKonobar, @BrojStola, @Id, @IdArtikal, @DeoPorcije, @Komada, " +
+                                    "@JedMere, @Cena, @Komentar, @Odneto, @ImeArtikal, @Tip, @vreme)", con, txn))
+                                {
+                                    cmd.Parameters.AddWithValue("@IdKonobar", row["IdKonobar"]);
+                                    cmd.Parameters.AddWithValue("@BrojStola", row["BrojStola"]);
+                                    cmd.Parameters.AddWithValue("@Id", row["Id"]);
+                                    cmd.Parameters.AddWithValue("@IdArtikal", row["IdArtikal"]);
+                                    cmd.Parameters.AddWithValue("@DeoPorcije", row["DeoPorcije"]);
+                                    cmd.Parameters.AddWithValue("@Komada", row["Komada"]);
+                                    cmd.Parameters.AddWithValue("@JedMere", row["JedMere"] ?? "");
+                                    cmd.Parameters.AddWithValue("@Cena", row["Cena"]);
+                                    cmd.Parameters.AddWithValue("@Komentar", row["Komentar"] ?? "");
+                                    cmd.Parameters.AddWithValue("@Odneto", Convert.ToInt32(row["Odneto"]));
+                                    cmd.Parameters.AddWithValue("@ImeArtikal", row["ImeArtikal"] ?? "");
+                                    cmd.Parameters.AddWithValue("@Tip", row["Tip"] ?? "");
+                                    cmd.Parameters.AddWithValue("@vreme", row["vreme"] ?? "");
+                                    affected += cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        DataTable modified = dataTable.GetChanges(DataRowState.Modified);
+                        if (modified != null)
+                        {
+                            foreach (DataRow row in modified.Rows)
+                            {
+                                using (SqliteCommand cmd = new SqliteCommand(
+                                    "UPDATE KonobStoloviStavke SET IdKonobar = @IdKonobar, BrojStola = @BrojStola, " +
+                                    "Id = @Id, IdArtikal = @IdArtikal, DeoPorcije = @DeoPorcije, Komada = @Komada, " +
+                                    "JedMere = @JedMere, Cena = @Cena, Komentar = @Komentar, Odneto = @Odneto, " +
+                                    "ImeArtikal = @ImeArtikal, Tip = @Tip, vreme = @vreme " +
+                                    "WHERE IdKonobar = @OrigIdKonobar AND BrojStola = @OrigBrojStola AND Id = @OrigId",
+                                    con, txn))
+                                {
+                                    cmd.Parameters.AddWithValue("@IdKonobar", row["IdKonobar"]);
+                                    cmd.Parameters.AddWithValue("@BrojStola", row["BrojStola"]);
+                                    cmd.Parameters.AddWithValue("@Id", row["Id"]);
+                                    cmd.Parameters.AddWithValue("@IdArtikal", row["IdArtikal"]);
+                                    cmd.Parameters.AddWithValue("@DeoPorcije", row["DeoPorcije"]);
+                                    cmd.Parameters.AddWithValue("@Komada", row["Komada"]);
+                                    cmd.Parameters.AddWithValue("@JedMere", row["JedMere"] ?? "");
+                                    cmd.Parameters.AddWithValue("@Cena", row["Cena"]);
+                                    cmd.Parameters.AddWithValue("@Komentar", row["Komentar"] ?? "");
+                                    cmd.Parameters.AddWithValue("@Odneto", Convert.ToInt32(row["Odneto"]));
+                                    cmd.Parameters.AddWithValue("@ImeArtikal", row["ImeArtikal"] ?? "");
+                                    cmd.Parameters.AddWithValue("@Tip", row["Tip"] ?? "");
+                                    cmd.Parameters.AddWithValue("@vreme", row["vreme"] ?? "");
+                                    cmd.Parameters.AddWithValue("@OrigIdKonobar", row["IdKonobar", DataRowVersion.Original]);
+                                    cmd.Parameters.AddWithValue("@OrigBrojStola", row["BrojStola", DataRowVersion.Original]);
+                                    cmd.Parameters.AddWithValue("@OrigId", row["Id", DataRowVersion.Original]);
+                                    affected += cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        txn.Commit();
+                        dataTable.AcceptChanges();
+                    }
+                    catch
+                    {
+                        txn.Rollback();
+                        throw;
+                    }
+                }
+            }
+            return affected;
         }
     }
 }

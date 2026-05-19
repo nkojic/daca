@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -108,7 +108,7 @@ namespace WpfAmsterdam
             LoadWallsFromDatabase();
 
             DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                "SELECT BrojStola, PosX, PosY, TipStola FROM dbo.Stolovi");
+                "SELECT BrojStola, PosX, PosY, TipStola FROM Stolovi");
 
             if (dt.Rows.Count > 0)
             {
@@ -145,7 +145,7 @@ namespace WpfAmsterdam
             try
             {
                 DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                    "SELECT Id, Naziv, PosX, PosY, Sirina, Visina, Boja FROM dbo.PasivniElementi WHERE Tip = 'zona'");
+                    "SELECT Id, Naziv, PosX, PosY, Sirina, Visina, Boja FROM PasivniElementi WHERE Tip = 'zona'");
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -171,7 +171,7 @@ namespace WpfAmsterdam
             try
             {
                 DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                    "SELECT Id, Naziv, PosX, PosY FROM dbo.PasivniElementi WHERE Tip = 'labela'");
+                    "SELECT Id, Naziv, PosX, PosY FROM PasivniElementi WHERE Tip = 'labela'");
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -194,7 +194,7 @@ namespace WpfAmsterdam
             try
             {
                 DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                    "SELECT Id, PosX, PosY, Sirina, Visina FROM dbo.PasivniElementi WHERE Tip = 'zid'");
+                    "SELECT Id, PosX, PosY, Sirina, Visina FROM PasivniElementi WHERE Tip = 'zid'");
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -1102,21 +1102,21 @@ namespace WpfAmsterdam
 
             if (deleteMode) ToggleDeleteMode();
 
-            using (SqlConnection con = new SqlConnection(konekcija))
+            using (SqliteConnection con = new SqliteConnection(konekcija))
             {
                 con.Open();
-                using (SqlTransaction txn = con.BeginTransaction())
+                using (SqliteTransaction txn = con.BeginTransaction())
                 {
                     try
                     {
                         // Snimi stolove
-                        SqlCommand cmdDel = new SqlCommand("DELETE FROM dbo.Stolovi", con, txn);
+                        SqliteCommand cmdDel = new SqliteCommand("DELETE FROM Stolovi", con, txn);
                         cmdDel.ExecuteNonQuery();
 
                         foreach (TableItem item in tableItems)
                         {
-                            SqlCommand cmdIns = new SqlCommand(
-                                "INSERT INTO dbo.Stolovi (BrojStola, PosX, PosY, TipStola) VALUES (@b, @x, @y, @t)",
+                            SqliteCommand cmdIns = new SqliteCommand(
+                                "INSERT INTO Stolovi (BrojStola, PosX, PosY, TipStola) VALUES (@b, @x, @y, @t)",
                                 con, txn);
                             cmdIns.Parameters.AddWithValue("@b", item.BrojStola);
                             cmdIns.Parameters.AddWithValue("@x", item.PosX);
@@ -1126,14 +1126,14 @@ namespace WpfAmsterdam
                         }
 
                         // Snimi zone
-                        SqlCommand cmdDelZone = new SqlCommand(
-                            "DELETE FROM dbo.PasivniElementi WHERE Tip = 'zona'", con, txn);
+                        SqliteCommand cmdDelZone = new SqliteCommand(
+                            "DELETE FROM PasivniElementi WHERE Tip = 'zona'", con, txn);
                         cmdDelZone.ExecuteNonQuery();
 
                         foreach (ZoneItem zone in zoneItems)
                         {
-                            SqlCommand cmdIns = new SqlCommand(
-                                "INSERT INTO dbo.PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
+                            SqliteCommand cmdIns = new SqliteCommand(
+                                "INSERT INTO PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
                                 "VALUES ('zona', @n, @x, @y, @w, @h, @b)", con, txn);
                             cmdIns.Parameters.AddWithValue("@n", zone.Naziv);
                             cmdIns.Parameters.AddWithValue("@x", zone.PosX);
@@ -1145,14 +1145,14 @@ namespace WpfAmsterdam
                         }
 
                         // Snimi labele
-                        SqlCommand cmdDelLabel = new SqlCommand(
-                            "DELETE FROM dbo.PasivniElementi WHERE Tip = 'labela'", con, txn);
+                        SqliteCommand cmdDelLabel = new SqliteCommand(
+                            "DELETE FROM PasivniElementi WHERE Tip = 'labela'", con, txn);
                         cmdDelLabel.ExecuteNonQuery();
 
                         foreach (LabelItem label in labelItems)
                         {
-                            SqlCommand cmdIns = new SqlCommand(
-                                "INSERT INTO dbo.PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
+                            SqliteCommand cmdIns = new SqliteCommand(
+                                "INSERT INTO PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
                                 "VALUES ('labela', @n, @x, @y, 0, 0, '')", con, txn);
                             cmdIns.Parameters.AddWithValue("@n", label.Naziv);
                             cmdIns.Parameters.AddWithValue("@x", label.PosX);
@@ -1161,14 +1161,14 @@ namespace WpfAmsterdam
                         }
 
                         // Snimi zidove
-                        SqlCommand cmdDelWall = new SqlCommand(
-                            "DELETE FROM dbo.PasivniElementi WHERE Tip = 'zid'", con, txn);
+                        SqliteCommand cmdDelWall = new SqliteCommand(
+                            "DELETE FROM PasivniElementi WHERE Tip = 'zid'", con, txn);
                         cmdDelWall.ExecuteNonQuery();
 
                         foreach (WallItem wall in wallItems)
                         {
-                            SqlCommand cmdIns = new SqlCommand(
-                                "INSERT INTO dbo.PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
+                            SqliteCommand cmdIns = new SqliteCommand(
+                                "INSERT INTO PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
                                 "VALUES ('zid', '', @x, @y, @d, @v, '')", con, txn);
                             cmdIns.Parameters.AddWithValue("@x", wall.PosX);
                             cmdIns.Parameters.AddWithValue("@y", wall.PosY);

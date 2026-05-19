@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -131,8 +131,8 @@ namespace WpfAmsterdam
 
             tblIme = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT * FROM Ime WHERE (IdPotpis <> 24) AND (aktivan = 1)");
             tblPotpis = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT * FROM tblPotpis WHERE IdPotpis BETWEEN 1 AND 20");
-            tblArtikliKojiImajuPrilog = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT IdArtikal FROM dbo.ArtikliKojiImajuPrilog");
-            tblArtikliPrilog = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT IdArtikal, Naziv FROM dbo.ArtikliPrilog");
+            tblArtikliKojiImajuPrilog = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT IdArtikal FROM ArtikliKojiImajuPrilog");
+            tblArtikliPrilog = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT IdArtikal, Naziv FROM ArtikliPrilog");
 
             dsPrebacivanje.KonobStoloviStavke.Columns["Odneto"].DefaultValue = false;
         }
@@ -467,9 +467,9 @@ namespace WpfAmsterdam
                     }
                 }
                 daliNapravljenRacun = true;
-                SqlConnection con1 = new SqlConnection();
+                SqliteConnection con1 = new SqliteConnection();
                 con1.ConnectionString = Window2.konekcija;
-                SqlCommand cmd1 = con1.CreateCommand();
+                SqliteCommand cmd1 = con1.CreateCommand();
                 cmd1.CommandType = CommandType.Text;
                 cmd1.CommandText = SQLUpdateKonobariStolovi();
                 try
@@ -583,11 +583,11 @@ namespace WpfAmsterdam
 
         private string SQLUpdateKonobariStolovi()
         {
-            string tekst = "UPDATE dbo.KonobariStolovi SET daliRacun = 1, popust = " + popust.ToString() +
+            string tekst = "UPDATE KonobariStolovi SET daliRacun = 1, popust = " + popust.ToString() +
                 " WHERE brojStola = '" + Window2.BrojStola + "'";
             if (popust > 0)
             {
-                tekst = "UPDATE dbo.KonobariStolovi SET daliRacun = 1, popust = " + popust.ToString() +
+                tekst = "UPDATE KonobariStolovi SET daliRacun = 1, popust = " + popust.ToString() +
                     ", IdIme = " + Window2.IdImee.ToString() + ", Korisnik = N'" + Window2.Korisnik +
                     "' WHERE brojStola = '" + Window2.BrojStola + "'";
             }

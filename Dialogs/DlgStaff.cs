@@ -4,7 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -131,9 +131,9 @@ namespace WpfAmsterdam
             string TextZ = string.Empty;
             TextToBePrinted = DateTime.Now.ToString() + "\r\n";
             TextToBePrinted += "Topli Obrok:    " + "\r\n" + Label1.Text + " - " + "\r\n" + "\r\n";
-            SqlConnection con1 = new SqlConnection();
+            SqliteConnection con1 = new SqliteConnection();
             con1.ConnectionString = Window2.konekcija;
-            SqlCommand cmd1 = InsertZaposleniKomanda(con1);
+            SqliteCommand cmd1 = InsertZaposleniKomanda(con1);
             if (tblPodela.Rows.Count > 0)
             {
                 con1.Open();
@@ -187,23 +187,15 @@ namespace WpfAmsterdam
             args.Graphics.DrawString(TextToBePrinted, new Font(myFont, FontStyle.Regular), Brushes.Black, margina, 0);
         }
 
-        private SqlCommand InsertZaposleniKomanda(SqlConnection kon)
+        private SqliteCommand InsertZaposleniKomanda(SqliteConnection kon)
         {
-            SqlCommand cmd = kon.CreateCommand();
+            SqliteCommand cmd = kon.CreateCommand();
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "INSERT INTO dbo.NarucenoZaposleni (IDIme, IdArtikal, Cena, Konobar) VALUES (@IdIme, @IdArtikal, @Cena, @Konobar)";
-            SqlParameter param = new SqlParameter("@IdIme", SqlDbType.Int);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@IdArtikal", SqlDbType.Int);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Cena", SqlDbType.Float);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Konobar", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
+            cmd.CommandText = "INSERT INTO NarucenoZaposleni (IDIme, IdArtikal, Cena, Konobar) VALUES (@IdIme, @IdArtikal, @Cena, @Konobar)";
+            cmd.Parameters.AddWithValue("@IdIme", 0);
+            cmd.Parameters.AddWithValue("@IdArtikal", 0);
+            cmd.Parameters.AddWithValue("@Cena", 0.0);
+            cmd.Parameters.AddWithValue("@Konobar", "");
             return cmd;
         }
 

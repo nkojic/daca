@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -40,7 +40,7 @@ namespace WpfAmsterdam
         private void dlgPlacanje_Load(object sender, EventArgs e)
         {
             Panel2.Visible = false;
-            tblPromet = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT * FROM fncPromet('" + Window2.BrojStola + "')");
+            tblPromet = DatabaseHelper.FuncPromet(Window2.konekcija, Window2.BrojStola);
 
             suma = 0;
             foreach (DataRow redd in tblPromet.Rows)
@@ -176,9 +176,9 @@ namespace WpfAmsterdam
                 int id = DatabaseHelper.ProcInsertNarucenoZ(Window2.konekcija, suma, RichTextBox1.Text,
                     Form1.daliBelo, sb.ToString(), Window2.BrojStola, Window2.KonobarIme);
 
-                SqlConnection con1 = new SqlConnection();
+                SqliteConnection con1 = new SqliteConnection();
                 con1.ConnectionString = Window2.konekcija;
-                SqlCommand cmd1 = InsertZNacinKomanda(con1, Form1.daliBelo);
+                SqliteCommand cmd1 = InsertZNacinKomanda(con1, Form1.daliBelo);
                 if (tblPodela.Rows.Count > 0)
                 {
                     con1.Open();
@@ -490,9 +490,9 @@ namespace WpfAmsterdam
             tbSuma.Text = sumaPodela.ToString("0,0.00", CultureInfo.InvariantCulture);
         }
 
-        private SqlCommand InsertZNacinKomanda(SqlConnection kon, bool belo)
+        private SqliteCommand InsertZNacinKomanda(SqliteConnection kon, bool belo)
         {
-            SqlCommand cmd = kon.CreateCommand();
+            SqliteCommand cmd = kon.CreateCommand();
             cmd.CommandType = CommandType.Text;
             if (belo)
             {
@@ -502,33 +502,23 @@ namespace WpfAmsterdam
             {
                 cmd.CommandText = SQLInsertNarucenoZNacinTek();
             }
-            SqlParameter param = new SqlParameter("@IdZaglavlje", SqlDbType.Int);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Nacin", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Iznos", SqlDbType.Float);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Potpis", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@IdIme", SqlDbType.Int);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
+            cmd.Parameters.AddWithValue("@IdZaglavlje", 0);
+            cmd.Parameters.AddWithValue("@Nacin", "");
+            cmd.Parameters.AddWithValue("@Iznos", 0.0);
+            cmd.Parameters.AddWithValue("@Potpis", "");
+            cmd.Parameters.AddWithValue("@IdIme", 0);
             return cmd;
         }
 
         private string SQLInsertNarucenoZNacin()
         {
-            return "INSERT INTO dbo.NarucenoZNacin (IDZaglavlje, NacinPlacanja, Iznos, Potpis, IdIme) " +
+            return "INSERT INTO NarucenoZNacin (IDZaglavlje, NacinPlacanja, Iznos, Potpis, IdIme) " +
                 "VALUES (@IdZaglavlje, @Nacin, @Iznos, @Potpis, @IdIme)";
         }
 
         private string SQLInsertNarucenoZNacinTek()
         {
-            return "INSERT INTO dbo.KuhinjaZNacin (IDZaglavlje, NacinPlacanja, Iznos, Potpis, IdIme) " +
+            return "INSERT INTO KuhinjaZNacin (IDZaglavlje, NacinPlacanja, Iznos, Potpis, IdIme) " +
                 "VALUES (@IdZaglavlje, @Nacin, @Iznos, @Potpis, @IdIme)";
         }
 

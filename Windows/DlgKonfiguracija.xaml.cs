@@ -1,6 +1,6 @@
 using System;
 using System.Windows;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -31,7 +31,7 @@ namespace WpfAmsterdam
 
             try
             {
-                using (SqlConnection con = new SqlConnection(konekcija))
+                using (SqliteConnection con = new SqliteConnection(konekcija))
                 {
                     con.Open();
 
@@ -61,12 +61,12 @@ namespace WpfAmsterdam
             }
         }
 
-        private void SaveConfig(SqlConnection con, string kljuc, string vrednost)
+        private void SaveConfig(SqliteConnection con, string kljuc, string vrednost)
         {
-            SqlCommand cmd = new SqlCommand(
-                "IF EXISTS (SELECT 1 FROM dbo.Konfiguracija WHERE Kljuc = @k) " +
-                "UPDATE dbo.Konfiguracija SET Vrednost = @v WHERE Kljuc = @k " +
-                "ELSE INSERT INTO dbo.Konfiguracija (Kljuc, Vrednost) VALUES (@k, @v)",
+            SqliteCommand cmd = new SqliteCommand(
+                "IF EXISTS (SELECT 1 FROM Konfiguracija WHERE Kljuc = @k) " +
+                "UPDATE Konfiguracija SET Vrednost = @v WHERE Kljuc = @k " +
+                "ELSE INSERT INTO Konfiguracija (Kljuc, Vrednost) VALUES (@k, @v)",
                 con);
             cmd.Parameters.AddWithValue("@k", kljuc);
             cmd.Parameters.AddWithValue("@v", vrednost);

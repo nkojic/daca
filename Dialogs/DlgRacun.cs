@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -25,7 +25,7 @@ namespace WpfAmsterdam
 
         private void dlgPlacanje_Load(object sender, EventArgs e)
         {
-            tblPromet = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT * FROM fncPromet('" + Window2.BrojStola + "')");
+            tblPromet = DatabaseHelper.FuncPromet(Window2.konekcija, Window2.BrojStola);
 
             suma = 0;
             foreach (DataRow redd in tblPromet.Rows)

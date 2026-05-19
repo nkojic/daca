@@ -1,28 +1,107 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
     public static class DatabaseHelper
     {
+        private static string _dbPath;
+
+        public static string GetConnectionString()
+        {
+            if (_dbPath == null)
+            {
+                _dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "amsterdam.db");
+            }
+            return "Data Source=" + _dbPath;
+        }
+
+        public static void InitializeDatabase()
+        {
+            string connStr = GetConnectionString();
+            bool novaDb = !File.Exists(_dbPath);
+
+            using (SqliteConnection con = new SqliteConnection(connStr))
+            {
+                con.Open();
+
+                if (novaDb)
+                {
+                    // Kreiraj šemu
+                    string sqlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "create_sqlite_db.sql");
+                    if (File.Exists(sqlPath))
+                    {
+                        string sql = File.ReadAllText(sqlPath);
+                        using (SqliteCommand cmd = new SqliteCommand(sql, con))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Importuj podatke
+                    string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "import_sqlite_data.sql");
+                    if (File.Exists(dataPath))
+                    {
+                        string dataSql = File.ReadAllText(dataPath);
+                        // SQLite ne može da izvrši hiljade INSERT-a odjednom bez transakcije
+                        using (SqliteTransaction txn = con.BeginTransaction())
+                        {
+                            foreach (string line in dataSql.Split('\n'))
+                            {
+                                string trimmed = line.Trim();
+                                if (trimmed.StartsWith("INSERT"))
+                                {
+                                    using (SqliteCommand cmd = new SqliteCommand(trimmed, con, txn))
+                                    {
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                            txn.Commit();
+                        }
+                    }
+                }
+                else
+                {
+                    // Osiguraj da nove tabele postoje (za postojeće baze)
+                    string[] ensureTables = new string[]
+                    {
+                        "CREATE TABLE IF NOT EXISTS PasivniElementi (Id INTEGER PRIMARY KEY AUTOINCREMENT, Tip TEXT NOT NULL, Naziv TEXT NOT NULL DEFAULT '', PosX REAL NOT NULL DEFAULT 0, PosY REAL NOT NULL DEFAULT 0, Sirina REAL NOT NULL DEFAULT 0, Visina REAL NOT NULL DEFAULT 0, Boja TEXT NOT NULL DEFAULT '#E8F4FD')",
+                        "CREATE TABLE IF NOT EXISTS Konfiguracija (Kljuc TEXT PRIMARY KEY, Vrednost TEXT NOT NULL)",
+                        "INSERT OR IGNORE INTO Konfiguracija (Kljuc, Vrednost) VALUES ('KoristiKartice', '1')"
+                    };
+                    foreach (string sql in ensureTables)
+                    {
+                        using (SqliteCommand cmd = new SqliteCommand(sql, con))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+        }
+
         public static DataTable ReaderTabela(string kon, string tekstKomande)
         {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = tekstKomande;
             DataTable tabela = new DataTable();
             try
             {
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-                tabela.Load(rdr, LoadOption.Upsert);
-                con.Close();
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(tekstKomande, con))
+                    {
+                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        {
+                            tabela.Load(rdr);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -31,31 +110,27 @@ namespace WpfAmsterdam
             return tabela;
         }
 
-        private static void PorukaGlavna(object sender, SqlInfoMessageEventArgs e)
-        {
-            if (!e.Message.StartsWith("Warning"))
-            {
-                MessageBox.Show(e.Message, "Poruka", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
+        // BrisanjeStola - ranije stored procedura
         public static void ProcBrisanjeStola(string kon, string brojStola)
         {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "BrisanjeStola";
-            SqlParameter param = new SqlParameter("@BrojStola", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            param.DbType = DbType.String;
-            cmd.Parameters.Add(param);
-            cmd.Parameters["@BrojStola"].Value = brojStola;
             try
             {
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "DELETE FROM KonobariStolovi WHERE BrojStola = @BrojStola", con))
+                    {
+                        cmd.Parameters.AddWithValue("@BrojStola", brojStola);
+                        cmd.ExecuteNonQuery();
+                    }
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "DELETE FROM KonobStoloviStavke WHERE BrojStola = @BrojStola", con))
+                    {
+                        cmd.Parameters.AddWithValue("@BrojStola", brojStola);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -63,83 +138,69 @@ namespace WpfAmsterdam
             }
         }
 
+        // ZamenaStolova - ranije stored procedura
         public static void ProcZamenaStolova(string kon, string string1, string string2)
         {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "ZamenaStolova";
-            SqlParameter param = new SqlParameter("@BrojStola1", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            param.DbType = DbType.String;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@BrojStola2", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            param.DbType = DbType.String;
-            cmd.Parameters.Add(param);
-            cmd.Parameters["@BrojStola1"].Value = string1;
-            cmd.Parameters["@BrojStola2"].Value = string2;
             try
             {
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        public static void ProcZamenaKonobara(string kon, int string1, int string2)
-        {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "ZamenaKonobara";
-            SqlParameter param = new SqlParameter("@KonobarPreuzima", SqlDbType.Int);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@KonobarOdlazi", SqlDbType.Int);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            cmd.Parameters["@KonobarPreuzima"].Value = string1;
-            cmd.Parameters["@KonobarOdlazi"].Value = string2;
-            try
-            {
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        public static void ProcDict(string kon, List<SqlParameter> dictPar, string procedura)
-        {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            con.InfoMessage += new SqlInfoMessageEventHandler(PorukaGlavna);
-
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = procedura;
-            if (dictPar != null)
-            {
-                foreach (SqlParameter parm in dictPar)
+                using (SqliteConnection con = new SqliteConnection(kon))
                 {
-                    cmd.Parameters.Add(parm);
+                    con.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "UPDATE KonobariStolovi SET BrojStola = @Sto2 WHERE BrojStola = @Sto1", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Sto1", string1);
+                        cmd.Parameters.AddWithValue("@Sto2", string2);
+                        cmd.ExecuteNonQuery();
+                    }
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "UPDATE KonobStoloviStavke SET BrojStola = @Sto2 WHERE BrojStola = @Sto1", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Sto1", string1);
+                        cmd.Parameters.AddWithValue("@Sto2", string2);
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        // ZamenaKonobara - ranije stored procedura
+        public static void ProcZamenaKonobara(string kon, int konobarPreuzima, int konobarOdlazi)
+        {
             try
             {
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+                    // Dobavi ime konobara koji preuzima
+                    string ime = "";
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "SELECT Ime FROM Konobari WHERE IdKonobar = @Id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", konobarPreuzima);
+                        object result = cmd.ExecuteScalar();
+                        if (result != null) ime = result.ToString();
+                    }
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "UPDATE KonobariStolovi SET IdKonobar = @Preuzima, Ime = @Ime WHERE IdKonobar = @Odlazi", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Preuzima", konobarPreuzima);
+                        cmd.Parameters.AddWithValue("@Ime", ime);
+                        cmd.Parameters.AddWithValue("@Odlazi", konobarOdlazi);
+                        cmd.ExecuteNonQuery();
+                    }
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "UPDATE KonobStoloviStavke SET IdKonobar = @Preuzima WHERE IdKonobar = @Odlazi", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Preuzima", konobarPreuzima);
+                        cmd.Parameters.AddWithValue("@Odlazi", konobarOdlazi);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -147,101 +208,116 @@ namespace WpfAmsterdam
             }
         }
 
+        // NovoZaglavlje - ranije stored procedura
         public static int ProcInsertNarucenoZ(string kon, double iznos, string komentar,
                                                bool belo, string fiskalTekst,
                                                string sto, string konobar)
         {
-            int rdr = 0;
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "NovoZaglavlje";
-            SqlParameter param = new SqlParameter("@Iznos", SqlDbType.Float);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@komentar", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@kuhinja", SqlDbType.Bit);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@FiskalTekst", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Sto", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@Konobar", SqlDbType.NVarChar);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            cmd.Parameters["@Iznos"].Value = iznos;
-            cmd.Parameters["@komentar"].Value = komentar;
-            cmd.Parameters["@kuhinja"].Value = belo;
-            cmd.Parameters["@FiskalTekst"].Value = fiskalTekst;
-            cmd.Parameters["@Sto"].Value = sto;
-            cmd.Parameters["@Konobar"].Value = konobar;
+            int id = 0;
             try
             {
-                con.Open();
-                rdr = Convert.ToInt32(cmd.ExecuteScalar());
-                con.Close();
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+                    string tabela = belo ? "NarucenoZaglavlje" : "KuhinjaZaglavlje";
+                    string sql = "INSERT INTO " + tabela +
+                        " (vremePlacanja, Iznos, komentar, FiskalTekst, Sto, Konobar) " +
+                        "VALUES (datetime('now','localtime'), @Iznos, @komentar, @FiskalTekst, @Sto, @Konobar); " +
+                        "SELECT last_insert_rowid();";
+                    using (SqliteCommand cmd = new SqliteCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@Iznos", iznos);
+                        cmd.Parameters.AddWithValue("@komentar", komentar);
+                        cmd.Parameters.AddWithValue("@FiskalTekst", fiskalTekst);
+                        cmd.Parameters.AddWithValue("@Sto", sto);
+                        cmd.Parameters.AddWithValue("@Konobar", konobar);
+                        id = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            return rdr;
+            return id;
         }
 
-        public static void ProcZatvoriSto(string kon, int id, bool belo)
+        // ZatvoriSto - ranije stored procedura
+        public static void ProcZatvoriSto(string kon, int idZaglavlje, bool belo)
         {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "ZatvoriSto";
-            SqlParameter param = new SqlParameter("@IdZaglavlje", SqlDbType.Float);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            param = new SqlParameter("@kuhinja", SqlDbType.Bit);
-            param.Direction = ParameterDirection.Input;
-            cmd.Parameters.Add(param);
-            cmd.Parameters["@IdZaglavlje"].Value = id;
-            cmd.Parameters["@kuhinja"].Value = belo;
             try
             {
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+
+                    string tblZag = belo ? "NarucenoZaglavlje" : "KuhinjaZaglavlje";
+                    string tblStavke = belo ? "NarucenoStavke" : "KuhinjaStavke";
+
+                    // Update zaglavlje sa podacima iz KonobariStolovi
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "UPDATE " + tblZag + " SET Datum = K.vreme, Popust = K.popust, IdPromo = K.IdPromo " +
+                        "FROM KonobariStolovi AS K " +
+                        "WHERE " + tblZag + ".Sto = K.BrojStola AND " + tblZag + ".IdZaglavlje = @Id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", idZaglavlje);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    // Dobavi broj stola
+                    string brSto = "";
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "SELECT Sto FROM " + tblZag + " WHERE IdZaglavlje = @Id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", idZaglavlje);
+                        object result = cmd.ExecuteScalar();
+                        if (result != null) brSto = result.ToString();
+                    }
+
+                    // Kopiraj stavke
+                    using (SqliteCommand cmd = new SqliteCommand(
+                        "INSERT INTO " + tblStavke + " (IdZaglavlje, Id, IdArtikal, DeoPorcije, Cena, Komada, Komentar) " +
+                        "SELECT @Id, Id, IdArtikal, DeoPorcije, Cena, Komada, Komentar " +
+                        "FROM KonobStoloviStavke WHERE BrojStola = @BrSto", con))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", idZaglavlje);
+                        cmd.Parameters.AddWithValue("@BrSto", brSto);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
             catch (Exception ex)
             {
-                // MsgBox(ex.Message)
+                // Tiho ignorisanje kao u originalu
             }
         }
 
-        public static DataTable FProcDict(string kon, List<SqlParameter> dictPar, string procedura)
+        // fncPromet - ranije SQL funkcija
+        public static DataTable FuncPromet(string kon, string brojStola)
         {
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = kon;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = procedura;
-            if (dictPar != null)
-            {
-                foreach (SqlParameter parm in dictPar)
-                {
-                    cmd.Parameters.Add(parm);
-                }
-            }
             DataTable tabela = new DataTable();
             try
             {
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-                tabela.Load(rdr, LoadOption.Upsert);
-                con.Close();
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+                    string sql =
+                        "SELECT MIN(Id) AS Id, IdArtikal, ImeArtikal, DeoPorcije, " +
+                        "SUM(Komada) AS Komada, JedMere, Cena, " +
+                        "SUM(ROUND(DeoPorcije * Komada * Cena, 2)) AS Ukupno " +
+                        "FROM KonobStoloviStavke " +
+                        "WHERE BrojStola = @BrojStola " +
+                        "GROUP BY IdKonobar, BrojStola, IdArtikal, ImeArtikal, DeoPorcije, JedMere, Cena " +
+                        "HAVING SUM(ROUND(DeoPorcije * Komada * Cena, 2)) <> 0";
+                    using (SqliteCommand cmd = new SqliteCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@BrojStola", brojStola);
+                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        {
+                            tabela.Load(rdr);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -249,6 +325,44 @@ namespace WpfAmsterdam
             }
             return tabela;
         }
+
+        // NajnovijeStavke - ranije SQL view
+        public static DataTable ViewNajnovijeStavke(string kon)
+        {
+            DataTable tabela = new DataTable();
+            try
+            {
+                using (SqliteConnection con = new SqliteConnection(kon))
+                {
+                    con.Open();
+                    string sql =
+                        "SELECT BrojStola, MIN(protek) AS proteklo FROM (" +
+                        "  SELECT BrojStola, " +
+                        "    CASE WHEN (strftime('%s','now','localtime') - strftime('%s', '2000-01-01 ' || vreme)) < 0 " +
+                        "      THEN 1440 + (strftime('%s','now','localtime') - strftime('%s', '2000-01-01 ' || vreme)) / 60.0 " +
+                        "      ELSE (strftime('%s','now','localtime') - strftime('%s', '2000-01-01 ' || vreme)) / 60.0 " +
+                        "    END AS protek " +
+                        "  FROM KonobStoloviStavke" +
+                        ") GROUP BY BrojStola";
+                    using (SqliteCommand cmd = new SqliteCommand(sql, con))
+                    {
+                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        {
+                            tabela.Load(rdr);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return tabela;
+        }
+
+        // ProcDict i FProcDict - zamenjeni inline SQL-om
+        // Ove metode se više ne koriste jer su stored procedure zamenjene
+        // direktnim SQL upitima u specifičnim metodama iznad
 
         public static string UbacenvbCrLf(string rec, int duzina)
         {

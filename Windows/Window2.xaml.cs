@@ -5,19 +5,13 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
     public partial class Window2 : Window
     {
-        public static string konekcijaPom = "User ID=daca;Password=spider2204;Data Source=DACA-PC\\DACAR2;Initial Catalog=AmsterdamSplavNovi";
-        public static string konekcijaPom1 = "User ID=daca;Password=spider2204;Data Source=WIN-PC\\DACASQL14;Initial Catalog=AmsterdamSplavNovi";
-        public static string konekcijaPom2 = "User ID=daca;Password=spider2204;Data Source=DACHA-LAPTOP\\DACASQL14;Initial Catalog=AmsterdamSplavNovi";
-        public static string konekcijaPom3 = "User ID=daca;Password=spider2204;Data Source=LENOVO-PC\\DACASQL2014;Initial Catalog=AmsterdamSplavNovi";
-        public static string konekcijaPom4 = "User ID=daca;Password=spider2204;Data Source=DESKTOP-HP\\SQLEXPRESS16;Initial Catalog=AmsterdamSplavNovi";
-        //public static string konekcija = "User ID=daca;Password=spider2204;Data Source=ELO15E1-PC\\SQLTOUCH2R2;Initial Catalog=AmsterdamSplavNovi";
-        public static string konekcija = "User ID=daca;Password=spider2204;Data Source=DESKTOP-N6QEGP1\\DACASQL;Initial Catalog=AmsterdamSplavNovi;TrustServerCertificate=True";
+        public static string konekcija;
 
         private Form1 _frm1;
         public static System.Windows.Forms.Timer Timer1 = new System.Windows.Forms.Timer();
@@ -35,43 +29,21 @@ namespace WpfAmsterdam
         public static string Sto1 = string.Empty;
         public static string Sto2 = string.Empty;
         private string myValue = string.Empty;
-        private SqlConnection connectionInsert = null;
-        private SqlCommand commandInsert = null;
+        private SqliteConnection connectionInsert = null;
+        private SqliteCommand commandInsert = null;
         private Dictionary<string, Button> dctButton;
 
         public Window2()
         {
             InitializeComponent();
-            try
-            {
-                if (Environment.MachineName == "DACA-PC")
-                {
-                    konekcija = konekcijaPom;
-                }
-                else if (Environment.MachineName == "WIN-PC")
-                {
-                    konekcija = konekcijaPom1;
-                }
-                else if (Environment.MachineName == "DACHA-LAPTOP")
-                {
-                    konekcija = konekcijaPom2;
-                }
-                else if (Environment.MachineName == "LENOVO-PC")
-                {
-                    konekcija = konekcijaPom3;
-                }
-                else if (Environment.MachineName == "DESKTOP-HP")
-                {
-                    konekcija = konekcijaPom4;
-                }
-            }
-            catch (Exception)
-            {
-            }
 
-            string tekstKonobari = "SELECT dbo.Konobari.IdKonobar, dbo.Konobari.Ime, dbo.KonobariKodoviKartica.Kod ";
-            tekstKonobari += "FROM dbo.Konobari INNER JOIN dbo.KonobariKodoviKartica ON ";
-            tekstKonobari += "dbo.Konobari.BrojKartice = dbo.KonobariKodoviKartica.IdKod WHERE aktivan = 'TRUE'";
+            // Inicijalizacija SQLite baze
+            DatabaseHelper.InitializeDatabase();
+            konekcija = DatabaseHelper.GetConnectionString();
+
+            string tekstKonobari = "SELECT K.IdKonobar, K.Ime, KK.Kod " +
+                "FROM Konobari K INNER JOIN KonobariKodoviKartica KK ON " +
+                "K.BrojKartice = KK.IdKod WHERE K.aktivan = 1";
             tblKonobari = DatabaseHelper.ReaderTabela(konekcija, tekstKonobari);
 
             // Učitaj konfiguraciju
@@ -122,7 +94,7 @@ namespace WpfAmsterdam
             try
             {
                 DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                    "SELECT Kljuc, Vrednost FROM dbo.Konfiguracija");
+                    "SELECT Kljuc, Vrednost FROM Konfiguracija");
                 foreach (DataRow row in dt.Rows)
                 {
                     string kljuc = row["Kljuc"].ToString();
@@ -268,7 +240,7 @@ namespace WpfAmsterdam
             dctButton.Clear();
 
             tblStolovi = DatabaseHelper.ReaderTabela(konekcija,
-                "SELECT BrojStola, PosX, PosY, TipStola FROM dbo.Stolovi");
+                "SELECT BrojStola, PosX, PosY, TipStola FROM Stolovi");
 
             foreach (DataRow row in tblStolovi.Rows)
             {
@@ -394,7 +366,7 @@ namespace WpfAmsterdam
             }
             if (daliAdmin)
             {
-                tblNajnovijeStavke = DatabaseHelper.ReaderTabela(konekcija, "SELECT BrojStola, proteklo FROM NajnovijeStavke");
+                tblNajnovijeStavke = DatabaseHelper.ViewNajnovijeStavke(konekcija);
                 foreach (DataRow red in tblNajnovijeStavke.Rows)
                 {
                     string brojStola = red["BrojStola"].ToString();
@@ -439,40 +411,20 @@ namespace WpfAmsterdam
             txtDatum.Text = DateTime.Now.ToString("dd. MMMM yyyy.  |  HH:mm", new CultureInfo("sr-Latn-RS"));
         }
 
-        private string GetSQLInsert()
-        {
-            return "INSERT INTO dbo.KonobariStolovi (IDKonobar, BrojStola, Ime) " +
-                   "VALUES (@IdKonobar, @BrojStola, @Ime)";
-        }
-
         private void InsertStola()
         {
-            if (connectionInsert == null)
+            using (SqliteConnection con = new SqliteConnection(konekcija))
             {
-                connectionInsert = new SqlConnection(konekcija);
+                con.Open();
+                using (SqliteCommand cmd = new SqliteCommand(
+                    "INSERT INTO KonobariStolovi (IDKonobar, BrojStola, Ime) VALUES (@IdKonobar, @BrojStola, @Ime)", con))
+                {
+                    cmd.Parameters.AddWithValue("@BrojStola", BrojStola);
+                    cmd.Parameters.AddWithValue("@Ime", KonobarIme);
+                    cmd.Parameters.AddWithValue("@IdKonobar", KonobarId);
+                    cmd.ExecuteNonQuery();
+                }
             }
-            if (commandInsert == null)
-            {
-                commandInsert = new SqlCommand(GetSQLInsert(), connectionInsert);
-                SqlParameter param = new SqlParameter("@BrojStola", SqlDbType.NVarChar);
-                param.Direction = ParameterDirection.Input;
-                param.DbType = DbType.String;
-                commandInsert.Parameters.Add(param);
-                param = new SqlParameter("@Ime", SqlDbType.NVarChar);
-                param.Direction = ParameterDirection.Input;
-                param.DbType = DbType.String;
-                commandInsert.Parameters.Add(param);
-                param = new SqlParameter("@IdKonobar", SqlDbType.Int);
-                param.Direction = ParameterDirection.Input;
-                param.DbType = DbType.Int32;
-                commandInsert.Parameters.Add(param);
-            }
-            commandInsert.Parameters["@BrojStola"].Value = BrojStola;
-            commandInsert.Parameters["@ime"].Value = KonobarIme;
-            commandInsert.Parameters["@IdKonobar"].Value = KonobarId;
-            connectionInsert.Open();
-            int rowsAffected = commandInsert.ExecuteNonQuery();
-            connectionInsert.Close();
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
         }
 

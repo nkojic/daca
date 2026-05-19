@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 using System.ComponentModel;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace WpfAmsterdam
 {
@@ -84,12 +84,7 @@ namespace WpfAmsterdam
 
     public class KategorijaTableAdapter
     {
-        private SqlDataAdapter adapter;
         private string connectionString;
-
-        public KategorijaTableAdapter()
-        {
-        }
 
         public string ConnectionString
         {
@@ -99,21 +94,24 @@ namespace WpfAmsterdam
 
         public void Fill(DataTable dataTable)
         {
-            adapter = new SqlDataAdapter(
-                "SELECT IdKat, Kategorija, aktivna FROM dbo.Kategorija WHERE aktivna = 1",
-                connectionString);
-            adapter.Fill(dataTable);
+            using (SqliteConnection con = new SqliteConnection(connectionString))
+            {
+                con.Open();
+                using (SqliteCommand cmd = new SqliteCommand(
+                    "SELECT IdKat, Kategorija, aktivna FROM Kategorija WHERE aktivna = 1", con))
+                {
+                    using (SqliteDataReader rdr = cmd.ExecuteReader())
+                    {
+                        dataTable.Load(rdr);
+                    }
+                }
+            }
         }
     }
 
     public class Kategorija1TableAdapter
     {
-        private SqlDataAdapter adapter;
         private string connectionString;
-
-        public Kategorija1TableAdapter()
-        {
-        }
 
         public string ConnectionString
         {
@@ -123,21 +121,24 @@ namespace WpfAmsterdam
 
         public void Fill(DataTable dataTable)
         {
-            adapter = new SqlDataAdapter(
-                "SELECT IdKat1, IdKat, PodKat, aktivna FROM dbo.Kategorija1 WHERE aktivna = 1",
-                connectionString);
-            adapter.Fill(dataTable);
+            using (SqliteConnection con = new SqliteConnection(connectionString))
+            {
+                con.Open();
+                using (SqliteCommand cmd = new SqliteCommand(
+                    "SELECT IdKat1, IdKat, PodKat, aktivna FROM Kategorija1 WHERE aktivna = 1", con))
+                {
+                    using (SqliteDataReader rdr = cmd.ExecuteReader())
+                    {
+                        dataTable.Load(rdr);
+                    }
+                }
+            }
         }
     }
 
     public class ArtikliTableAdapter
     {
-        private SqlDataAdapter adapter;
         private string connectionString;
-
-        public ArtikliTableAdapter()
-        {
-        }
 
         public string ConnectionString
         {
@@ -147,11 +148,19 @@ namespace WpfAmsterdam
 
         public void Fill(DataTable dataTable)
         {
-            adapter = new SqlDataAdapter(
-                "SELECT IdArtikal, IdKat1, broj, Naziv, Tip, ProdajnaJedMere, Price, NazivKasa, Cost " +
-                "FROM Artikli WHERE (aktivan = 1) AND (daliProdaja = 1) ORDER BY broj",
-                connectionString);
-            adapter.Fill(dataTable);
+            using (SqliteConnection con = new SqliteConnection(connectionString))
+            {
+                con.Open();
+                using (SqliteCommand cmd = new SqliteCommand(
+                    "SELECT IdArtikal, IdKat1, broj, Naziv, Tip, ProdajnaJedMere, Price, NazivKasa, Cost " +
+                    "FROM Artikli WHERE aktivan = 1 AND daliProdaja = 1 ORDER BY broj", con))
+                {
+                    using (SqliteDataReader rdr = cmd.ExecuteReader())
+                    {
+                        dataTable.Load(rdr);
+                    }
+                }
+            }
         }
     }
 }
