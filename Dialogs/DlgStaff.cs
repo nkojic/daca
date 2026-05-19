@@ -241,7 +241,7 @@ namespace WpfAmsterdam
             dgm.Text = capt;
             dgm.Width = 100;
             dgm.Height = 58;
-            dgm.Font = new Font("Segoe UI", 10F, FontStyle.SemiBold);
+            dgm.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             dgm.BackColor = ThemeManager.WfButtonBg;
             dgm.ForeColor = ThemeManager.WfTextColor;
             dgm.FlatStyle = FlatStyle.Flat;
