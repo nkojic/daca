@@ -13,6 +13,7 @@ namespace WpfAmsterdam
         public DlgKartica()
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
         }
 
         private void dlgKartica_Load(object sender, EventArgs e)

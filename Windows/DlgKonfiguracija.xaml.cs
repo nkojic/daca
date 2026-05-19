@@ -46,7 +46,7 @@ namespace WpfAmsterdam
                 ThemeManager.CurrentTheme = tema;
 
                 System.Windows.Forms.MessageBox.Show(
-                    "Konfiguracija je sačuvana.\nPromenjena tema se primenjuje nakon ponovnog pokretanja.",
+                    "Konfiguracija je sačuvana.",
                     "Uspeh",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Information);

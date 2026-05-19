@@ -11,6 +11,7 @@ namespace WpfAmsterdam
         public DlgKalkPlacanje()
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
         }
 
         private void btn1_Click(object sender, EventArgs e)

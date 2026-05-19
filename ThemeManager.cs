@@ -490,5 +490,184 @@ namespace WpfAmsterdam
             brush.GradientStops.Add(new GradientStop(c2, 1));
             return brush;
         }
+
+        // --- WinForms tema helper ---
+        public static System.Drawing.Color WfBackground
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(20, 20, 35);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(50, 28, 18);
+                    default: return System.Drawing.Color.FromArgb(245, 246, 248);
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfPanel
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(26, 26, 46);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(58, 34, 24);
+                    default: return System.Drawing.Color.White;
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfTextColor
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(224, 224, 224);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(245, 236, 215);
+                    default: return System.Drawing.Color.FromArgb(45, 52, 54);
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfAccent
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(99, 102, 241);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(201, 169, 78);
+                    default: return System.Drawing.Color.FromArgb(9, 132, 227);
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfButtonBg
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(35, 35, 55);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(74, 44, 26);
+                    default: return System.Drawing.Color.FromArgb(240, 242, 245);
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfButtonDa
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(16, 185, 129);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(90, 140, 90);
+                    default: return System.Drawing.Color.FromArgb(0, 184, 148);
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfButtonNe
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(220, 38, 38);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(163, 59, 44);
+                    default: return System.Drawing.Color.FromArgb(225, 112, 85);
+                }
+            }
+        }
+
+        public static System.Drawing.Color WfHeader
+        {
+            get
+            {
+                switch (CurrentTheme)
+                {
+                    case "Dark Modern": return System.Drawing.Color.FromArgb(30, 30, 50);
+                    case "Luxury Restaurant": return System.Drawing.Color.FromArgb(74, 44, 26);
+                    default: return System.Drawing.Color.FromArgb(99, 110, 114);
+                }
+            }
+        }
+
+        public static void ApplyWinFormsTheme(System.Windows.Forms.Form form)
+        {
+            form.BackColor = WfBackground;
+            form.ForeColor = WfTextColor;
+            ApplyThemeToControls(form.Controls);
+        }
+
+        private static void ApplyThemeToControls(System.Windows.Forms.Control.ControlCollection controls)
+        {
+            foreach (System.Windows.Forms.Control ctrl in controls)
+            {
+                if (ctrl is System.Windows.Forms.Button btn)
+                {
+                    if (btn.Text == "DA" || btn.Text == "OK")
+                    {
+                        btn.BackColor = WfButtonDa;
+                        btn.ForeColor = System.Drawing.Color.White;
+                        btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                        btn.FlatAppearance.BorderSize = 0;
+                    }
+                    else if (btn.Text == "NE" || btn.Text == "Cancel")
+                    {
+                        btn.BackColor = WfButtonNe;
+                        btn.ForeColor = System.Drawing.Color.White;
+                        btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                        btn.FlatAppearance.BorderSize = 0;
+                    }
+                    else
+                    {
+                        btn.BackColor = WfButtonBg;
+                        btn.ForeColor = WfTextColor;
+                        btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                        btn.FlatAppearance.BorderSize = 0;
+                    }
+                }
+                else if (ctrl is System.Windows.Forms.Label lbl)
+                {
+                    if (lbl.BackColor != System.Drawing.Color.Transparent &&
+                        lbl.BackColor != System.Drawing.SystemColors.Control)
+                    {
+                        lbl.BackColor = WfHeader;
+                        lbl.ForeColor = System.Drawing.Color.White;
+                    }
+                    else
+                    {
+                        lbl.ForeColor = WfTextColor;
+                    }
+                }
+                else if (ctrl is System.Windows.Forms.Panel || ctrl is System.Windows.Forms.FlowLayoutPanel)
+                {
+                    ctrl.BackColor = WfPanel;
+                    ctrl.ForeColor = WfTextColor;
+                }
+                else if (ctrl is System.Windows.Forms.TextBox || ctrl is System.Windows.Forms.ComboBox)
+                {
+                    ctrl.BackColor = WfPanel;
+                    ctrl.ForeColor = WfTextColor;
+                }
+                else if (ctrl is System.Windows.Forms.DataGridView dgv)
+                {
+                    dgv.BackgroundColor = WfPanel;
+                    dgv.DefaultCellStyle.BackColor = WfPanel;
+                    dgv.DefaultCellStyle.ForeColor = WfTextColor;
+                    dgv.ColumnHeadersDefaultCellStyle.BackColor = WfHeader;
+                    dgv.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                    dgv.EnableHeadersVisualStyles = false;
+                    dgv.GridColor = WfBackground;
+                }
+
+                if (ctrl.HasChildren)
+                    ApplyThemeToControls(ctrl.Controls);
+            }
+        }
     }
 }

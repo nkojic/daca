@@ -87,6 +87,7 @@ namespace WpfAmsterdam
         public Form1(Window2 win2)
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
 
             _win2 = win2;
 

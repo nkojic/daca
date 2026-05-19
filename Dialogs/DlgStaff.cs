@@ -23,6 +23,7 @@ namespace WpfAmsterdam
         public DlgStaff()
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
         }
 
         private void dlgPlacanje_Load(object sender, EventArgs e)

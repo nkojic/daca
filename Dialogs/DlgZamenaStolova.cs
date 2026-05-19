@@ -7,7 +7,7 @@ namespace WpfAmsterdam
 {
     public partial class DlgZamenaStolova : Form
     {
-        public DlgZamenaStolova() { InitializeComponent(); }
+        public DlgZamenaStolova() { InitializeComponent(); ThemeManager.ApplyWinFormsTheme(this); }
 
         private void dlgZamenaStolova_Load(object sender, EventArgs e)
         {

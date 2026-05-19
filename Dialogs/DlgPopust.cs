@@ -14,6 +14,7 @@ namespace WpfAmsterdam
         public DlgPopust(DataTable Ime, DataTable potpis)
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
             tblZaposleni = Ime;
             tblPotpisi = potpis;
         }

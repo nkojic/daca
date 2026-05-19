@@ -8,6 +8,7 @@ namespace WpfAmsterdam
         public DlgOkno(string poruka)
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
             this.Label1.Text = poruka;
         }
 

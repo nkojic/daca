@@ -14,6 +14,7 @@ namespace WpfAmsterdam
         public DlgPrilozi(DataTable prilog)
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
             tblArtikliPrilog = prilog;
         }
 

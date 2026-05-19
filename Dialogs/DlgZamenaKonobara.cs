@@ -9,7 +9,7 @@ namespace WpfAmsterdam
     {
         private int IdKonobarNovi = 0;
 
-        public DlgZamenaKonobara() { InitializeComponent(); }
+        public DlgZamenaKonobara() { InitializeComponent(); ThemeManager.ApplyWinFormsTheme(this); }
 
         private void dlgZamenaKonobara_Load(object sender, EventArgs e)
         {

@@ -31,6 +31,7 @@ namespace WpfAmsterdam
         public DlgPlacanje(DataTable artikal, DataTable Ime, DataTable potpis)
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
             tblArtikal = artikal;
             tblIme = Ime;
             tblPotpis = potpis;

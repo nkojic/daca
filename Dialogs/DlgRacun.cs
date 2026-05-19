@@ -21,6 +21,7 @@ namespace WpfAmsterdam
         public DlgRacun()
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
         }
 
         private void dlgPlacanje_Load(object sender, EventArgs e)

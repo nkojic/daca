@@ -27,7 +27,7 @@
                        Margin="0,0,0,8"/>
             <ComboBox x:Name="cmbTema" Width="220" Height="30" FontSize="13"
                       HorizontalAlignment="Left" Margin="0,0,0,6"/>
-            <TextBlock Text="Promena teme se primenjuje nakon ponovnog pokretanja aplikacije."
+            <TextBlock Text="Promena teme se primenjuje odmah nakon čuvanja."
                        FontSize="11" Foreground="#B2BEC3" Margin="0,0,0,16" TextWrapping="Wrap"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">

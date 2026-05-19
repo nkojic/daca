@@ -12,6 +12,7 @@ namespace WpfAmsterdam
         public DlgKalk(bool daliCena)
         {
             InitializeComponent();
+            ThemeManager.ApplyWinFormsTheme(this);
             _daliCena = daliCena;
         }
 
