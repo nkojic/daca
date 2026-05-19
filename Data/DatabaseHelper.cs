@@ -48,7 +48,9 @@ namespace WpfAmsterdam
                     if (File.Exists(dataPath))
                     {
                         string dataSql = File.ReadAllText(dataPath);
-                        // SQLite ne može da izvrši hiljade INSERT-a odjednom bez transakcije
+                        int imported = 0;
+                        int errors = 0;
+                        string lastError = "";
                         using (SqliteTransaction txn = con.BeginTransaction())
                         {
                             foreach (string line in dataSql.Split('\n'))
@@ -56,13 +58,27 @@ namespace WpfAmsterdam
                                 string trimmed = line.Trim();
                                 if (trimmed.StartsWith("INSERT"))
                                 {
-                                    using (SqliteCommand cmd = new SqliteCommand(trimmed, con, txn))
+                                    try
                                     {
-                                        cmd.ExecuteNonQuery();
+                                        using (SqliteCommand cmd = new SqliteCommand(trimmed, con, txn))
+                                        {
+                                            cmd.ExecuteNonQuery();
+                                            imported++;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        errors++;
+                                        if (errors <= 3) lastError = ex.Message + "\n" + trimmed.Substring(0, Math.Min(200, trimmed.Length));
                                     }
                                 }
                             }
                             txn.Commit();
+                        }
+                        if (errors > 0)
+                        {
+                            MessageBox.Show("Import: " + imported + " uspešno, " + errors + " grešaka.\n\n" + lastError,
+                                "Import podataka", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
                 }
