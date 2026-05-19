@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using Microsoft.Data.Sqlite;
@@ -225,6 +226,17 @@ namespace WpfAmsterdam
             return cmd;
         }
 
+        private void RoundButton(Button btn, int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            path.AddArc(0, 0, radius, radius, 180, 90);
+            path.AddArc(btn.Width - radius, 0, radius, radius, 270, 90);
+            path.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90);
+            path.AddArc(0, btn.Height - radius, radius, radius, 90, 90);
+            path.CloseFigure();
+            btn.Region = new Region(path);
+        }
+
         private Button Dugme(string capt, string ime)
         {
             Button dgm = new Button();
@@ -239,6 +251,7 @@ namespace WpfAmsterdam
             dgm.FlatAppearance.BorderSize = 0;
             dgm.Margin = new Padding(3);
             dgm.Cursor = Cursors.Hand;
+            RoundButton(dgm, 16);
             return dgm;
         }
 
@@ -256,6 +269,7 @@ namespace WpfAmsterdam
             dgm.FlatAppearance.BorderSize = 0;
             dgm.Margin = new Padding(3);
             dgm.Cursor = Cursors.Hand;
+            RoundButton(dgm, 16);
             return dgm;
         }
 
@@ -274,6 +288,7 @@ namespace WpfAmsterdam
             dgm.FlatAppearance.BorderSize = 1;
             dgm.Margin = new Padding(3);
             dgm.Cursor = Cursors.Hand;
+            RoundButton(dgm, 16);
             return dgm;
         }
     }

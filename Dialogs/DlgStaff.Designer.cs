@@ -163,7 +163,7 @@ namespace WpfAmsterdam
             this.DoubleBuffered = true;
             this.Name = "DlgStaff";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Zaposleni";
+            this.Text = "Zaposleni v2";
             this.Load += new System.EventHandler(this.dlgPlacanje_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView2)).EndInit();
             this.ResumeLayout(false);
