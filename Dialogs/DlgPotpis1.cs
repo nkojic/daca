@@ -79,6 +79,7 @@ namespace WpfAmsterdam
             dgm.FlatAppearance.BorderSize = 0;
             dgm.Margin = new Padding(3);
             dgm.Cursor = Cursors.Hand;
+            ThemeManager.RoundControl(dgm, 20);
             return dgm;
         }
 
@@ -97,6 +98,7 @@ namespace WpfAmsterdam
             dgm.FlatAppearance.BorderSize = 1;
             dgm.Margin = new Padding(3);
             dgm.Cursor = Cursors.Hand;
+            ThemeManager.RoundControl(dgm, 20);
             return dgm;
         }
     }

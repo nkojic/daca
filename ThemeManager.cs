@@ -684,6 +684,19 @@ namespace WpfAmsterdam
             }
         }
 
+        public static void RoundControl(System.Windows.Forms.Control ctrl, int radius)
+        {
+            System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+            int w = ctrl.Width;
+            int h = ctrl.Height;
+            path.AddArc(0, 0, radius, radius, 180, 90);
+            path.AddArc(w - radius, 0, radius, radius, 270, 90);
+            path.AddArc(w - radius, h - radius, radius, radius, 0, 90);
+            path.AddArc(0, h - radius, radius, radius, 90, 90);
+            path.CloseFigure();
+            ctrl.Region = new System.Drawing.Region(path);
+        }
+
         public static void ApplyWinFormsTheme(System.Windows.Forms.Form form)
         {
             form.BackColor = WfBackground;
@@ -697,27 +710,26 @@ namespace WpfAmsterdam
             {
                 if (ctrl is System.Windows.Forms.Button btn)
                 {
+                    btn.Font = new System.Drawing.Font("Segoe UI", btn.Font.Size, System.Drawing.FontStyle.Bold);
+                    btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                    btn.FlatAppearance.BorderSize = 0;
+                    btn.Cursor = System.Windows.Forms.Cursors.Hand;
                     if (btn.Text == "DA" || btn.Text == "OK")
                     {
                         btn.BackColor = WfButtonDa;
                         btn.ForeColor = System.Drawing.Color.White;
-                        btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                        btn.FlatAppearance.BorderSize = 0;
                     }
                     else if (btn.Text == "NE" || btn.Text == "Cancel")
                     {
                         btn.BackColor = WfButtonNe;
                         btn.ForeColor = System.Drawing.Color.White;
-                        btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                        btn.FlatAppearance.BorderSize = 0;
                     }
                     else
                     {
                         btn.BackColor = WfButtonBg;
                         btn.ForeColor = WfTextColor;
-                        btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                        btn.FlatAppearance.BorderSize = 0;
                     }
+                    RoundControl(btn, 20);
                 }
                 else if (ctrl is System.Windows.Forms.Label lbl)
                 {
