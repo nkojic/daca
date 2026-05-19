@@ -82,8 +82,6 @@ namespace WpfAmsterdam
             if (daliAdmin)
             {
                 btnKonfiguracija.Visibility = Visibility.Visible;
-                System.Windows.Forms.MessageBox.Show("Admin mode aktivan - dugme prikazano",
-                    "Debug", System.Windows.Forms.MessageBoxButtons.OK);
             }
         }
 
