@@ -89,6 +89,15 @@ namespace WpfAmsterdam
             InitializeComponent();
             ThemeManager.ApplyWinFormsTheme(this);
 
+            // Kategorije levo - posebno stilizovanje
+            KategorijaDataGridView.DefaultCellStyle.BackColor = ThemeManager.WfAccent;
+            KategorijaDataGridView.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            KategorijaDataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            KategorijaDataGridView.DefaultCellStyle.SelectionBackColor = ThemeManager.WfHeader;
+            KategorijaDataGridView.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            KategorijaDataGridView.RowTemplate.DefaultCellStyle.BackColor = ThemeManager.WfAccent;
+            KategorijaDataGridView.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
+
             _win2 = win2;
 
             switch (Environment.MachineName)

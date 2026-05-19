@@ -30,6 +30,7 @@ namespace WpfAmsterdam
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(broj)) return;
             if (_daliCena)
             {
                 Form1.cenaArt = Convert.ToDouble(broj);
