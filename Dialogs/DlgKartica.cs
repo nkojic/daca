@@ -23,6 +23,9 @@ namespace WpfAmsterdam
                 if (myValue == "Daca")
                 {
                     Window2.daliAdmin = true;
+                    Window2.KonobarIme = "Admin";
+                    this.DialogResult = DialogResult.OK;
+                    break;
                 }
                 redovi = Window2.tblKonobari.Select("kod = '" + myValue + "'");
                 if (redovi.Length == 1)
