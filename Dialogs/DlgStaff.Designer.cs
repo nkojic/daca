@@ -37,7 +37,7 @@ namespace WpfAmsterdam
             this.btnNE.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnNE.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnNE.ForeColor = System.Drawing.Color.White;
-            this.btnNE.Location = new System.Drawing.Point(678, 386);
+            this.btnNE.Location = new System.Drawing.Point(732, 445);
             this.btnNE.Name = "btnNE";
             this.btnNE.Size = new System.Drawing.Size(91, 69);
             this.btnNE.TabIndex = 4;
@@ -49,7 +49,7 @@ namespace WpfAmsterdam
             this.btnDA.BackColor = System.Drawing.Color.Red;
             this.btnDA.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnDA.ForeColor = System.Drawing.Color.White;
-            this.btnDA.Location = new System.Drawing.Point(774, 385);
+            this.btnDA.Location = new System.Drawing.Point(856, 445);
             this.btnDA.Name = "btnDA";
             this.btnDA.Size = new System.Drawing.Size(91, 69);
             this.btnDA.TabIndex = 3;
@@ -57,14 +57,14 @@ namespace WpfAmsterdam
             this.btnDA.UseVisualStyleBackColor = false;
             this.btnDA.Click += new System.EventHandler(this.btnDA_Click);
             //
-            // Panel1
+            // Panel1 - kategorije levo
             //
             this.Panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.Panel1.BackColor = System.Drawing.Color.Transparent;
             this.Panel1.Location = new System.Drawing.Point(3, 7);
             this.Panel1.Name = "Panel1";
-            this.Panel1.Size = new System.Drawing.Size(97, 447);
+            this.Panel1.Size = new System.Drawing.Size(120, 500);
             this.Panel1.TabIndex = 16;
             //
             // DataGridView2
@@ -78,11 +78,11 @@ namespace WpfAmsterdam
             this.DataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IdArtikal1,
             this.Cena});
-            this.DataGridView2.Location = new System.Drawing.Point(678, 77);
+            this.DataGridView2.Location = new System.Drawing.Point(732, 86);
             this.DataGridView2.Name = "DataGridView2";
             this.DataGridView2.ReadOnly = true;
             this.DataGridView2.RowHeadersWidth = 11;
-            this.DataGridView2.Size = new System.Drawing.Size(187, 302);
+            this.DataGridView2.Size = new System.Drawing.Size(220, 350);
             this.DataGridView2.TabIndex = 25;
             //
             // IdArtikal1
@@ -102,47 +102,47 @@ namespace WpfAmsterdam
             this.Cena.ReadOnly = true;
             this.Cena.Width = 50;
             //
-            // Panel3
+            // Panel3 - imena zaposlenih
             //
             this.Panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.Panel3.BackColor = System.Drawing.Color.Transparent;
-            this.Panel3.Location = new System.Drawing.Point(106, 7);
+            this.Panel3.Location = new System.Drawing.Point(130, 7);
             this.Panel3.Name = "Panel3";
-            this.Panel3.Size = new System.Drawing.Size(270, 447);
+            this.Panel3.Size = new System.Drawing.Size(250, 500);
             this.Panel3.TabIndex = 29;
             //
             // Label1
             //
-            this.Label1.BackColor = System.Drawing.Color.DarkOliveGreen;
-            this.Label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Label1.BackColor = System.Drawing.Color.FromArgb(44, 43, 74);
+            this.Label1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Label1.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.Label1.ForeColor = System.Drawing.Color.White;
-            this.Label1.Location = new System.Drawing.Point(678, 7);
+            this.Label1.Location = new System.Drawing.Point(732, 7);
             this.Label1.Name = "Label1";
-            this.Label1.Size = new System.Drawing.Size(185, 35);
+            this.Label1.Size = new System.Drawing.Size(220, 38);
             this.Label1.TabIndex = 30;
             this.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
-            // Panel2
+            // Panel2 - artikli
             //
             this.Panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.Panel2.BackColor = System.Drawing.Color.Transparent;
-            this.Panel2.Location = new System.Drawing.Point(382, 7);
+            this.Panel2.Location = new System.Drawing.Point(386, 7);
             this.Panel2.Name = "Panel2";
-            this.Panel2.Size = new System.Drawing.Size(290, 447);
+            this.Panel2.Size = new System.Drawing.Size(340, 500);
             this.Panel2.TabIndex = 31;
             //
             // Label2
             //
-            this.Label2.BackColor = System.Drawing.Color.DarkOliveGreen;
-            this.Label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.Label2.ForeColor = System.Drawing.Color.White;
-            this.Label2.Location = new System.Drawing.Point(678, 42);
+            this.Label2.BackColor = System.Drawing.Color.FromArgb(44, 43, 74);
+            this.Label2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.Label2.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.Label2.ForeColor = System.Drawing.Color.FromArgb(39, 174, 96);
+            this.Label2.Location = new System.Drawing.Point(732, 45);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(185, 35);
+            this.Label2.Size = new System.Drawing.Size(220, 38);
             this.Label2.TabIndex = 32;
             this.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
@@ -150,7 +150,7 @@ namespace WpfAmsterdam
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(871, 456);
+            this.ClientSize = new System.Drawing.Size(960, 520);
             this.ControlBox = true;
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.Panel2);
