@@ -3,7 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Raspored stolova" Height="750" Width="1200" MinHeight="600" MinWidth="900"
     WindowStartupLocation="CenterScreen" Loaded="Window_Loaded"
-    Background="#F5F6F8">
+    Background="#F5F6F8"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType">
 
     <Window.Resources>
         <Style TargetType="Button" x:Key="StoKvadrat">

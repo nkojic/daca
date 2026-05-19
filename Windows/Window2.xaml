@@ -2,7 +2,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Window2" Height="710" Width="1310" MinHeight="700" MinWidth="1300" WindowState="Maximized"
-    Background="#F5F6F8">
+    Background="#F5F6F8"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType">
 
     <Window.Resources>
         <!-- Stil za kvadratne stolove -->

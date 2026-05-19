@@ -235,6 +235,9 @@ namespace WpfAmsterdam
             canvasTables.Children.Clear();
             dctButton.Clear();
 
+            // Učitaj pasivne elemente (zone, labele, zidove) - pre stolova da budu ispod
+            LoadPassiveElements();
+
             tblStolovi = DatabaseHelper.ReaderTabela(konekcija,
                 "SELECT BrojStola, PosX, PosY, TipStola FROM Stolovi");
 
@@ -270,6 +273,97 @@ namespace WpfAmsterdam
             // Ažuriraj waiter strip
             txtKonobarIme.Text = KonobarIme;
             txtDatum.Text = DateTime.Now.ToString("dd. MMMM yyyy.  |  HH:mm", new CultureInfo("sr-Latn-RS"));
+        }
+
+        private void LoadPassiveElements()
+        {
+            try
+            {
+                // Zone
+                DataTable dtZone = DatabaseHelper.ReaderTabela(konekcija,
+                    "SELECT Naziv, PosX, PosY, Sirina, Visina, Boja FROM PasivniElementi WHERE Tip = 'zona'");
+                foreach (DataRow row in dtZone.Rows)
+                {
+                    string boja = row["Boja"].ToString();
+                    string borderColor = "#B2BEC3";
+                    // Mapiranje boja zona na border boje
+                    string[] bgPalette = { "#E8F4FD", "#E8F8E8", "#FFF3E0", "#FCE4EC", "#F3E5F5", "#E0F2F1", "#FFF9C4", "#E8EAF6" };
+                    string[] brPalette = { "#90CAF9", "#A5D6A7", "#FFB74D", "#F48FB1", "#CE93D8", "#80CBC4", "#FFF176", "#9FA8DA" };
+                    int idx = Array.IndexOf(bgPalette, boja);
+                    if (idx >= 0) borderColor = brPalette[idx];
+
+                    System.Windows.Controls.Border border = new System.Windows.Controls.Border
+                    {
+                        Width = Convert.ToDouble(row["Sirina"]),
+                        Height = Convert.ToDouble(row["Visina"]),
+                        Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(boja)),
+                        BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(borderColor)),
+                        BorderThickness = new Thickness(2),
+                        CornerRadius = new CornerRadius(8),
+                        Opacity = 0.7,
+                        IsHitTestVisible = false
+                    };
+                    border.Child = new System.Windows.Controls.TextBlock
+                    {
+                        Text = row["Naziv"].ToString(),
+                        FontSize = 13,
+                        FontWeight = FontWeights.SemiBold,
+                        Foreground = new SolidColorBrush(Color.FromRgb(99, 110, 114)),
+                        Margin = new Thickness(8, 6, 0, 0)
+                    };
+                    Canvas.SetLeft(border, Convert.ToDouble(row["PosX"]));
+                    Canvas.SetTop(border, Convert.ToDouble(row["PosY"]));
+                    System.Windows.Controls.Panel.SetZIndex(border, -1);
+                    canvasTables.Children.Add(border);
+                }
+
+                // Labele
+                DataTable dtLabele = DatabaseHelper.ReaderTabela(konekcija,
+                    "SELECT Naziv, PosX, PosY FROM PasivniElementi WHERE Tip = 'labela'");
+                foreach (DataRow row in dtLabele.Rows)
+                {
+                    System.Windows.Controls.TextBlock text = new System.Windows.Controls.TextBlock
+                    {
+                        Text = row["Naziv"].ToString(),
+                        FontSize = 12,
+                        FontWeight = FontWeights.SemiBold,
+                        Foreground = new SolidColorBrush(Color.FromRgb(99, 110, 114)),
+                        Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255)),
+                        Padding = new Thickness(6, 3, 6, 3),
+                        IsHitTestVisible = false
+                    };
+                    Canvas.SetLeft(text, Convert.ToDouble(row["PosX"]));
+                    Canvas.SetTop(text, Convert.ToDouble(row["PosY"]));
+                    canvasTables.Children.Add(text);
+                }
+
+                // Zidovi
+                DataTable dtZidovi = DatabaseHelper.ReaderTabela(konekcija,
+                    "SELECT PosX, PosY, Sirina, Visina FROM PasivniElementi WHERE Tip = 'zid'");
+                foreach (DataRow row in dtZidovi.Rows)
+                {
+                    double duzina = Convert.ToDouble(row["Sirina"]);
+                    bool vertikalan = Convert.ToDouble(row["Visina"]) == 1;
+                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line
+                    {
+                        X1 = 0, Y1 = 0,
+                        X2 = vertikalan ? 0 : duzina,
+                        Y2 = vertikalan ? duzina : 0,
+                        Stroke = new SolidColorBrush(Color.FromRgb(99, 110, 114)),
+                        StrokeThickness = 4,
+                        StrokeStartLineCap = System.Windows.Media.PenLineCap.Round,
+                        StrokeEndLineCap = System.Windows.Media.PenLineCap.Round,
+                        IsHitTestVisible = false
+                    };
+                    Canvas.SetLeft(line, Convert.ToDouble(row["PosX"]));
+                    Canvas.SetTop(line, Convert.ToDouble(row["PosY"]));
+                    canvasTables.Children.Add(line);
+                }
+            }
+            catch
+            {
+                // Tabela možda još ne postoji
+            }
         }
 
         private void RasporedStolova_Click(object sender, RoutedEventArgs e)
