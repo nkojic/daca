@@ -20,7 +20,7 @@ namespace WpfAmsterdam
             while (true)
             {
                 myValue = Microsoft.VisualBasic.Interaction.InputBox(poruka, "Prijava", "");
-                if (myValue == "1953212")
+                if (myValue == "Daca")
                 {
                     Window2.daliAdmin = true;
                 }

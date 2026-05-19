@@ -377,7 +377,7 @@ namespace WpfAmsterdam
             this.Hide();
             _win2.Show();
             _win2.WindowState = System.Windows.WindowState.Maximized;
-            if (!Window2.daliAdmin)
+            if (!Window2.daliAdmin && Window2.KoristiKartice)
             {
                 DlgOkno frrm = new DlgOkno("Da li želite da nastavite unos?");
                 if (frrm.ShowDialog() == DialogResult.OK)
@@ -574,7 +574,7 @@ namespace WpfAmsterdam
             this.Hide();
             _win2.Show();
             _win2.WindowState = System.Windows.WindowState.Maximized;
-            if (!Window2.daliAdmin)
+            if (!Window2.daliAdmin && Window2.KoristiKartice)
             {
                 Window2.Timer1.Interval = 700;
                 Window2.Timer1.Start();

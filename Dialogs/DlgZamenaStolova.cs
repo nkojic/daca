@@ -25,7 +25,8 @@ namespace WpfAmsterdam
 
         private void btnNE_Click(object sender, EventArgs e)
         {
-            Window2.Timer1.Start();
+            if (Window2.KoristiKartice)
+                Window2.Timer1.Start();
             this.Close();
         }
 

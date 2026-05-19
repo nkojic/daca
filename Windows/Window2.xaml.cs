@@ -30,6 +30,7 @@ namespace WpfAmsterdam
         public static int IdImee = 0;
         public static string Korisnik = string.Empty;
         public static bool daliAdmin = false;
+        public static bool KoristiKartice = true;
         public static string BrojStola = string.Empty;
         public static string Sto1 = string.Empty;
         public static string Sto2 = string.Empty;
@@ -73,6 +74,9 @@ namespace WpfAmsterdam
             tekstKonobari += "dbo.Konobari.BrojKartice = dbo.KonobariKodoviKartica.IdKod WHERE aktivan = 'TRUE'";
             tblKonobari = DatabaseHelper.ReaderTabela(konekcija, tekstKonobari);
 
+            // Učitaj konfiguraciju
+            LoadKonfiguracija();
+
             dctButton = new Dictionary<string, Button>();
             ReloadTablesFromDatabase();
 
@@ -87,7 +91,12 @@ namespace WpfAmsterdam
             _frm1 = new Form1(this);
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
             BojenjeStolova();
-            Timer1.Start();
+
+            // Pokreni timer samo ako se koriste kartice
+            if (KoristiKartice)
+            {
+                Timer1.Start();
+            }
 
             // Registracija Click event-a za kontrolna dugmad
             exp.Click += exp_Click;
@@ -96,6 +105,43 @@ namespace WpfAmsterdam
             ZamenaStolova.Click += ZamenaStolova_Click;
             ZamenaKonobara.Click += ZamenaKonobara_Click;
             RasporedStolova.Click += RasporedStolova_Click;
+            btnKonfiguracija.Click += Konfiguracija_Click;
+
+            // Admin dugme vidljivo samo za admina
+            btnKonfiguracija.Visibility = daliAdmin ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void LoadKonfiguracija()
+        {
+            try
+            {
+                DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
+                    "SELECT Vrednost FROM dbo.Konfiguracija WHERE Kljuc = 'KoristiKartice'");
+                if (dt.Rows.Count > 0)
+                {
+                    KoristiKartice = dt.Rows[0]["Vrednost"].ToString() == "1";
+                }
+            }
+            catch
+            {
+                // Tabela možda još ne postoji - podrazumevano koristi kartice
+                KoristiKartice = true;
+            }
+        }
+
+        private void Konfiguracija_Click(object sender, RoutedEventArgs e)
+        {
+            Timer1.Stop();
+            DlgKonfiguracija dlg = new DlgKonfiguracija();
+            dlg.ShowDialog();
+            if (!KoristiKartice && !daliAdmin)
+            {
+                // Ako su kartice isključene, ne pokreći timer
+            }
+            else if (!daliAdmin)
+            {
+                Timer1.Start();
+            }
         }
 
         // Boje za status stolova (Light Minimalist paleta)
@@ -156,7 +202,7 @@ namespace WpfAmsterdam
             ReloadTablesFromDatabase();
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
             BojenjeStolova();
-            Timer1.Start();
+            if (KoristiKartice) Timer1.Start();
         }
 
         private void staf_Click(object sender, RoutedEventArgs e)
@@ -164,7 +210,7 @@ namespace WpfAmsterdam
             Timer1.Stop();
             DlgStaff frfrm = new DlgStaff();
             frfrm.ShowDialog();
-            Timer1.Start();
+            if (KoristiKartice) Timer1.Start();
         }
 
         private void exp_Click(object sender, RoutedEventArgs e)
@@ -194,7 +240,7 @@ namespace WpfAmsterdam
                     }
                     else
                     {
-                        Timer1.Start();
+                        if (KoristiKartice) Timer1.Start();
                         return;
                     }
                 }
@@ -202,7 +248,7 @@ namespace WpfAmsterdam
                 {
                     string konobar = tblOtvoreniStolovi.Select("BrojStola = '" + BrojStola + "'")[0]["Ime"].ToString();
                     System.Windows.Forms.MessageBox.Show(konobar);
-                    Timer1.Start();
+                    if (KoristiKartice) Timer1.Start();
                     return;
                 }
             }
@@ -332,7 +378,7 @@ namespace WpfAmsterdam
 
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
             BojenjeStolova();
-            if (!daliAdmin)
+            if (!daliAdmin && KoristiKartice)
             {
                 Timer1.Interval = 5000;
                 Timer1.Start();
@@ -354,18 +400,18 @@ namespace WpfAmsterdam
                     if (tblOtvoreniStolovi.Select("BrojStola = '" + Sto2 + "'").Length != 0)
                     {
                         System.Windows.Forms.MessageBox.Show("Sto " + Sto2 + " je već otvoren");
-                        Timer1.Start();
+                        if (KoristiKartice) Timer1.Start();
                         return;
                     }
                     else if (tblOtvoreniStolovi.Select("BrojStola = '" + Sto1 + "'").Length == 0)
                     {
                         System.Windows.Forms.MessageBox.Show("Sto " + Sto1 + " nije otvoren");
-                        Timer1.Start();
+                        if (KoristiKartice) Timer1.Start();
                         return;
                     }
                     DatabaseHelper.ProcZamenaStolova(konekcija, Sto1, Sto2);
                     Timer1.Interval = 500;
-                    Timer1.Start();
+                    if (KoristiKartice) Timer1.Start();
                 }
             }
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
@@ -378,7 +424,7 @@ namespace WpfAmsterdam
             if (frmZamena.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 Timer1.Interval = 500;
-                Timer1.Start();
+                if (KoristiKartice) Timer1.Start();
             }
         }
     }

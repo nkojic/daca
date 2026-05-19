@@ -152,6 +152,38 @@
                     <!-- Separator -->
                     <Border Width="2" Height="30" Background="#DFE6E9" Margin="10,0"/>
 
+                    <!-- Pasivni elementi -->
+                    <Button x:Name="btnDodajZonu" Style="{StaticResource BtnToolbar}"
+                            Content="+ Zona" Margin="0,0,6,0" Click="btnDodajZonu_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#81ECEC" Offset="0"/>
+                                <GradientStop Color="#00CEC9" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="btnDodajLabelu" Style="{StaticResource BtnToolbar}"
+                            Content="+ Labela" Margin="0,0,6,0" Click="btnDodajLabelu_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#DFE6E9" Offset="0"/>
+                                <GradientStop Color="#B2BEC3" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="btnDodajZid" Style="{StaticResource BtnToolbar}"
+                            Content="+ Zid" Margin="0,0,6,0" Click="btnDodajZid_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#636E72" Offset="0"/>
+                                <GradientStop Color="#2D3436" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+
+                    <!-- Separator -->
+                    <Border Width="2" Height="30" Background="#DFE6E9" Margin="10,0"/>
+
                     <!-- Snimi / Zatvori -->
                     <Button x:Name="btnSnimi" Style="{StaticResource BtnToolbar}"
                             Content="Snimi" Margin="0,0,6,0" Click="btnSnimi_Click">
@@ -192,6 +224,9 @@
                     </TextBlock>
                     <TextBlock x:Name="txtMode" Margin="20,0,0,0" VerticalAlignment="Center"
                                FontSize="11" FontWeight="Bold" Foreground="#555" Text=""/>
+                    <TextBlock Margin="30,0,0,0" VerticalAlignment="Center" FontSize="11"
+                               Foreground="#B2BEC3" FontStyle="Italic"
+                               Text="Dvoklik za promenu imena  |  Zone: ivice za resize  |  Zid: dvoklik rotira"/>
                 </StackPanel>
             </Border>
 
