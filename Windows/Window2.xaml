@@ -98,9 +98,6 @@
 
     <Border CornerRadius="16" Background="White"
             Margin="12" ClipToBounds="True">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="24" ShadowDepth="2" Opacity="0.06" Color="Black"/>
-        </Border.Effect>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

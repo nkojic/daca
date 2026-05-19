@@ -3,12 +3,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Konfiguracija" Height="400" Width="420"
     WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
-    Background="#F5F6F8">
+    Background="#F5F6F8"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType">
 
     <Border CornerRadius="12" Background="White" Margin="10">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="16" ShadowDepth="2" Opacity="0.06" Color="Black"/>
-        </Border.Effect>
         <StackPanel Margin="24">
             <TextBlock Text="Podešavanja" FontSize="18" FontWeight="Bold"
                        Foreground="#2D3436" Margin="0,0,0,20"/>
