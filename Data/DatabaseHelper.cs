@@ -75,11 +75,7 @@ namespace WpfAmsterdam
                             }
                             txn.Commit();
                         }
-                        if (errors > 0)
-                        {
-                            MessageBox.Show("Import: " + imported + " uspešno, " + errors + " grešaka.\n\n" + lastError,
-                                "Import podataka", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
+                        // Import završen tiho
                     }
                 }
                 else
