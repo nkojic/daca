@@ -52,10 +52,12 @@ namespace WpfAmsterdam
 
             Timer1.Tick += Tikovanje;
             Timer1.Interval = 5000;
-            DlgKartica dlgfrm = new DlgKartica();
-            if (dlgfrm.ShowDialog() == System.Windows.Forms.DialogResult.Abort)
+            DlgLogin dlgLogin = new DlgLogin();
+            dlgLogin.ShowDialog();
+            if (dlgLogin.Izlaz || !dlgLogin.LoginUspeo)
             {
                 this.Close();
+                return;
             }
 
             ApplyTheme();
@@ -529,10 +531,12 @@ namespace WpfAmsterdam
         {
             this.Hide();
             Timer1.Stop();
-            DlgKartica dlgfrm = new DlgKartica();
-            if (dlgfrm.ShowDialog() == System.Windows.Forms.DialogResult.Abort)
+            DlgLogin dlgLogin = new DlgLogin();
+            dlgLogin.ShowDialog();
+            if (dlgLogin.Izlaz)
             {
                 this.Close();
+                return;
             }
             this.Show();
 
