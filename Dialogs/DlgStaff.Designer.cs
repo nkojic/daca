@@ -37,7 +37,8 @@ namespace WpfAmsterdam
             this.btnNE.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnNE.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnNE.ForeColor = System.Drawing.Color.White;
-            this.btnNE.Location = new System.Drawing.Point(732, 445);
+            this.btnNE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNE.Location = new System.Drawing.Point(832, 530);
             this.btnNE.Name = "btnNE";
             this.btnNE.Size = new System.Drawing.Size(91, 69);
             this.btnNE.TabIndex = 4;
@@ -49,7 +50,8 @@ namespace WpfAmsterdam
             this.btnDA.BackColor = System.Drawing.Color.Red;
             this.btnDA.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnDA.ForeColor = System.Drawing.Color.White;
-            this.btnDA.Location = new System.Drawing.Point(856, 445);
+            this.btnDA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDA.Location = new System.Drawing.Point(980, 530);
             this.btnDA.Name = "btnDA";
             this.btnDA.Size = new System.Drawing.Size(91, 69);
             this.btnDA.TabIndex = 3;
@@ -78,11 +80,13 @@ namespace WpfAmsterdam
             this.DataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IdArtikal1,
             this.Cena});
+            this.DataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.DataGridView2.Location = new System.Drawing.Point(732, 86);
             this.DataGridView2.Name = "DataGridView2";
             this.DataGridView2.ReadOnly = true;
             this.DataGridView2.RowHeadersWidth = 11;
-            this.DataGridView2.Size = new System.Drawing.Size(220, 350);
+            this.DataGridView2.Size = new System.Drawing.Size(350, 400);
             this.DataGridView2.TabIndex = 25;
             //
             // IdArtikal1
@@ -114,13 +118,14 @@ namespace WpfAmsterdam
             //
             // Label1
             //
+            this.Label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.Label1.BackColor = System.Drawing.Color.FromArgb(44, 43, 74);
             this.Label1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.Label1.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.Label1.ForeColor = System.Drawing.Color.White;
             this.Label1.Location = new System.Drawing.Point(732, 7);
             this.Label1.Name = "Label1";
-            this.Label1.Size = new System.Drawing.Size(220, 38);
+            this.Label1.Size = new System.Drawing.Size(350, 38);
             this.Label1.TabIndex = 30;
             this.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
@@ -136,13 +141,14 @@ namespace WpfAmsterdam
             //
             // Label2
             //
+            this.Label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.Label2.BackColor = System.Drawing.Color.FromArgb(44, 43, 74);
             this.Label2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.Label2.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.Label2.ForeColor = System.Drawing.Color.FromArgb(39, 174, 96);
             this.Label2.Location = new System.Drawing.Point(732, 45);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(220, 38);
+            this.Label2.Size = new System.Drawing.Size(350, 38);
             this.Label2.TabIndex = 32;
             this.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
@@ -150,7 +156,8 @@ namespace WpfAmsterdam
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(960, 520);
+            this.ClientSize = new System.Drawing.Size(1100, 600);
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ControlBox = true;
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.Panel2);

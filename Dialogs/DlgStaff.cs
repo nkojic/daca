@@ -89,8 +89,9 @@ namespace WpfAmsterdam
             DataGridView2.BorderStyle = BorderStyle.None;
             DataGridView2.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             DataGridView2.RowHeadersVisible = false;
-            DataGridView2.Columns["IdArtikal1"].Width = 150;
-            DataGridView2.Columns["Cena"].Width = 60;
+            DataGridView2.Columns["IdArtikal1"].Width = 220;
+            DataGridView2.Columns["IdArtikal1"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            DataGridView2.Columns["Cena"].Width = 70;
 
             btnNE.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             btnDA.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
