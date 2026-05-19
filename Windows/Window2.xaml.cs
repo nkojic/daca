@@ -438,7 +438,16 @@ namespace WpfAmsterdam
             {
                 if (tblOtvoreniStolovi.Select("BrojStola = '" + BrojStola + "'").Length == 0)
                 {
-                    return;
+                    DlgOkno frrm = new DlgOkno("Da li želite da otvorite sto " + BrojStola + " ?");
+                    if (frrm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        TT.Background = Brushes.Red;
+                        InsertStola();
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 else
                 {
