@@ -112,6 +112,13 @@ namespace WpfAmsterdam
             Timer1.Stop();
             DlgKonfiguracija dlg = new DlgKonfiguracija();
             dlg.ShowDialog();
+
+            // Primeni temu odmah
+            ApplyTheme();
+            ReloadTablesFromDatabase();
+            tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
+            BojenjeStolova();
+
             if (!KoristiKartice && !daliAdmin)
             {
                 // Ako su kartice isključene, ne pokreći timer
