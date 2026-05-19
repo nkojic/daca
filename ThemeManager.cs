@@ -727,7 +727,9 @@ namespace WpfAmsterdam
                     else
                     {
                         btn.BackColor = WfButtonBg;
-                        btn.ForeColor = WfTextColor;
+                        // Na tamnoj pozadini beo tekst, na svetloj taman
+                        bool isDark = WfButtonBg.GetBrightness() < 0.5;
+                        btn.ForeColor = isDark ? System.Drawing.Color.White : WfTextColor;
                     }
                     RoundControl(btn, 20);
                 }
@@ -756,13 +758,22 @@ namespace WpfAmsterdam
                 }
                 else if (ctrl is System.Windows.Forms.DataGridView dgv)
                 {
-                    dgv.BackgroundColor = WfPanel;
-                    dgv.DefaultCellStyle.BackColor = WfPanel;
-                    dgv.DefaultCellStyle.ForeColor = WfTextColor;
-                    dgv.ColumnHeadersDefaultCellStyle.BackColor = WfHeader;
-                    dgv.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-                    dgv.EnableHeadersVisualStyles = false;
-                    dgv.GridColor = WfBackground;
+                    // Preskoči DataGridView sa ButtonColumn (kategorije) - stilizuje se posebno
+                    bool hasButtonCol = false;
+                    foreach (System.Windows.Forms.DataGridViewColumn col in dgv.Columns)
+                    {
+                        if (col is System.Windows.Forms.DataGridViewButtonColumn) { hasButtonCol = true; break; }
+                    }
+                    if (!hasButtonCol)
+                    {
+                        dgv.BackgroundColor = WfPanel;
+                        dgv.DefaultCellStyle.BackColor = WfPanel;
+                        dgv.DefaultCellStyle.ForeColor = WfTextColor;
+                        dgv.ColumnHeadersDefaultCellStyle.BackColor = WfHeader;
+                        dgv.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                        dgv.EnableHeadersVisualStyles = false;
+                        dgv.GridColor = WfBackground;
+                    }
                 }
 
                 if (ctrl.HasChildren)
