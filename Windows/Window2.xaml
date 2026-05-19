@@ -114,10 +114,10 @@
                         <GradientStop Color="#F0F2F5" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Kraj -->
-                    <Button Name="izlaz" Style="{StaticResource BtnControl}"
-                            Width="70" Height="40" Content="Kraj" Margin="0,0,10,0">
+                <DockPanel VerticalAlignment="Center">
+                    <!-- Kraj - skroz desno -->
+                    <Button Name="izlaz" DockPanel.Dock="Right" Style="{StaticResource BtnControl}"
+                            Width="70" Height="40" Content="Kraj" Margin="10,0,0,0">
                         <Button.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#FF7675" Offset="0"/>
@@ -125,67 +125,70 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <!-- Stolovi -->
-                    <Button Name="ZamenaStolova" Style="{StaticResource BtnControl}"
-                            Width="85" Height="40" Content="Stolovi" Margin="0,0,10,0">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#74B9FF" Offset="0"/>
-                                <GradientStop Color="#0984E3" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <!-- Konobari -->
-                    <Button Name="ZamenaKonobara" Style="{StaticResource BtnControl}"
-                            Width="95" Height="40" Content="Konobari" Margin="0,0,10,0">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#A29BFE" Offset="0"/>
-                                <GradientStop Color="#6C5CE7" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <!-- Raspored -->
-                    <Button Name="RasporedStolova" Style="{StaticResource BtnControl}"
-                            Width="95" Height="40" Content="Raspored" Margin="0,0,10,0">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#55EFC4" Offset="0"/>
-                                <GradientStop Color="#00B894" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <!-- exp -->
-                    <Button Name="exp" Style="{StaticResource BtnSecondary}"
-                            Width="60" Height="40" Content="exp" Margin="0,0,10,0">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#F0F2F5" Offset="0"/>
-                                <GradientStop Color="#DFE6E9" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <!-- staf -->
-                    <Button Name="staf" Style="{StaticResource BtnSecondary}"
-                            Width="95" Height="40" Content="Zaposleni" Margin="0,0,10,0">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#F0F2F5" Offset="0"/>
-                                <GradientStop Color="#DFE6E9" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <!-- Admin konfiguracija (vidljivo samo za admina, kontroliše se iz koda) -->
-                    <Button Name="btnKonfiguracija" Style="{StaticResource BtnControl}"
-                            Width="120" Height="40" Content="⚙ Admin" Visibility="Collapsed" Margin="10,0,0,0">
-                        <Button.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#FDCB6E" Offset="0"/>
-                                <GradientStop Color="#F0932B" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                </StackPanel>
+                    <!-- Ostala dugmad levo -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Stolovi -->
+                        <Button Name="ZamenaStolova" Style="{StaticResource BtnControl}"
+                                Width="85" Height="40" Content="Stolovi" Margin="0,0,10,0">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#74B9FF" Offset="0"/>
+                                    <GradientStop Color="#0984E3" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <!-- Konobari -->
+                        <Button Name="ZamenaKonobara" Style="{StaticResource BtnControl}"
+                                Width="95" Height="40" Content="Konobari" Margin="0,0,10,0">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#A29BFE" Offset="0"/>
+                                    <GradientStop Color="#6C5CE7" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <!-- Raspored -->
+                        <Button Name="RasporedStolova" Style="{StaticResource BtnControl}"
+                                Width="95" Height="40" Content="Raspored" Margin="0,0,10,0">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#55EFC4" Offset="0"/>
+                                    <GradientStop Color="#00B894" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <!-- exp -->
+                        <Button Name="exp" Style="{StaticResource BtnSecondary}"
+                                Width="60" Height="40" Content="exp" Margin="0,0,10,0">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#F0F2F5" Offset="0"/>
+                                    <GradientStop Color="#DFE6E9" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <!-- Zaposleni -->
+                        <Button Name="staf" Style="{StaticResource BtnSecondary}"
+                                Width="95" Height="40" Content="Zaposleni" Margin="0,0,10,0">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#F0F2F5" Offset="0"/>
+                                    <GradientStop Color="#DFE6E9" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <!-- Admin konfiguracija -->
+                        <Button Name="btnKonfiguracija" Style="{StaticResource BtnControl}"
+                                Width="120" Height="40" Content="⚙ Admin" Visibility="Collapsed" Margin="10,0,0,0">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FDCB6E" Offset="0"/>
+                                    <GradientStop Color="#F0932B" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
             </Border>
 
             <!-- Waiter info strip -->
