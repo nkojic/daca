@@ -47,6 +47,12 @@ namespace WpfAmsterdam
                     string dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "import_sqlite_data.sql");
                     if (File.Exists(dataPath))
                     {
+                        // Isključi FOREIGN KEY proveru tokom importa
+                        using (SqliteCommand fkOff = new SqliteCommand("PRAGMA foreign_keys = OFF", con))
+                        {
+                            fkOff.ExecuteNonQuery();
+                        }
+
                         string dataSql = File.ReadAllText(dataPath);
                         int imported = 0;
                         int errors = 0;
@@ -75,7 +81,11 @@ namespace WpfAmsterdam
                             }
                             txn.Commit();
                         }
-                        // Import završen tiho
+                        // Uključi FOREIGN KEY proveru nazad
+                        using (SqliteCommand fkOn = new SqliteCommand("PRAGMA foreign_keys = ON", con))
+                        {
+                            fkOn.ExecuteNonQuery();
+                        }
                     }
                 }
                 else
