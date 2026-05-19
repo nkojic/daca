@@ -237,7 +237,7 @@ namespace WpfAmsterdam
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(475, 338);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.lblUkupno);
             this.Controls.Add(this.Button3);
             this.Controls.Add(this.btnOK);

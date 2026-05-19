@@ -90,7 +90,7 @@ namespace WpfAmsterdam
             // DlgZamenaKonobara
             //
             this.ClientSize = new System.Drawing.Size(784, 359);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.Label1);
             this.Controls.Add(this.btnDA);

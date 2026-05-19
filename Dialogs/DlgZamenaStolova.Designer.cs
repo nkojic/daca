@@ -129,7 +129,7 @@ namespace WpfAmsterdam
             // DlgZamenaStolova
             //
             this.ClientSize = new System.Drawing.Size(1294, 645);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.btnDA);
             this.Controls.Add(this.btnNE);
             this.Controls.Add(this.Label4);

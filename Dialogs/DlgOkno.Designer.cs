@@ -68,7 +68,7 @@ namespace WpfAmsterdam
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnNE;
             this.ClientSize = new System.Drawing.Size(243, 187);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.Label1);
             this.Controls.Add(this.btnNE);
             this.Controls.Add(this.btnDA);
