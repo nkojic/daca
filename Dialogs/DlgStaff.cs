@@ -61,6 +61,31 @@ namespace WpfAmsterdam
 
             DataGridView2.AutoGenerateColumns = false;
             DataGridView2.DataSource = bsZaposleni;
+
+            // Stilizovanje nakon kreiranja kontrola
+            Label1.BackColor = ThemeManager.WfHeader;
+            Label1.ForeColor = Color.White;
+            Label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            Label1.BorderStyle = BorderStyle.None;
+
+            Label2.BackColor = ThemeManager.WfHeader;
+            Label2.ForeColor = ThemeManager.WfButtonDa;
+            Label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            Label2.BorderStyle = BorderStyle.None;
+
+            DataGridView2.BackgroundColor = ThemeManager.WfPanel;
+            DataGridView2.DefaultCellStyle.BackColor = ThemeManager.WfPanel;
+            DataGridView2.DefaultCellStyle.ForeColor = ThemeManager.WfTextColor;
+            DataGridView2.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+            DataGridView2.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.WfHeader;
+            DataGridView2.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            DataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            DataGridView2.EnableHeadersVisualStyles = false;
+            DataGridView2.GridColor = ThemeManager.WfBackground;
+            DataGridView2.BorderStyle = BorderStyle.None;
+
+            btnNE.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            btnDA.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
         }
 
         private void Button_Click(object sender, EventArgs e)
