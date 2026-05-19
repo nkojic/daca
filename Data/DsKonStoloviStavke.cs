@@ -123,7 +123,9 @@ namespace WpfAmsterdam
                 {
                     try
                     {
-                        foreach (DataRow row in dataTable.GetChanges(DataRowState.Deleted)?.Rows ?? new DataRow[0])
+                        DataTable deleted = dataTable.GetChanges(DataRowState.Deleted);
+                        if (deleted != null)
+                        foreach (DataRow row in deleted.Rows)
                         {
                             using (SqliteCommand cmd = new SqliteCommand(
                                 "DELETE FROM KonobStoloviStavke WHERE IdKonobar = @IdKonobar " +

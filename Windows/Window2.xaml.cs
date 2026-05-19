@@ -29,9 +29,7 @@ namespace WpfAmsterdam
         public static string Sto1 = string.Empty;
         public static string Sto2 = string.Empty;
         private string myValue = string.Empty;
-        private SqliteConnection connectionInsert = null;
-        private SqliteCommand commandInsert = null;
-        private Dictionary<string, Button> dctButton;
+            private Dictionary<string, Button> dctButton;
 
         public Window2()
         {
