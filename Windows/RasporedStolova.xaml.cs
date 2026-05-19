@@ -647,7 +647,6 @@ namespace WpfAmsterdam
             line.MouseLeftButtonDown += Wall_MouseLeftButtonDown;
             line.MouseMove += Wall_MouseMove;
             line.MouseLeftButtonUp += Wall_MouseLeftButtonUp;
-            line.MouseDoubleClick += Wall_DoubleClick;
         }
 
         private void Wall_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -659,6 +658,15 @@ namespace WpfAmsterdam
             if (deleteMode)
             {
                 ObrisiZid(wall);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.ClickCount == 2)
+            {
+                wall.Vertikalan = !wall.Vertikalan;
+                line.X2 = wall.Vertikalan ? 0 : wall.Duzina;
+                line.Y2 = wall.Vertikalan ? wall.Duzina : 0;
                 e.Handled = true;
                 return;
             }
@@ -698,21 +706,6 @@ namespace WpfAmsterdam
                 draggedWall.PosY = Canvas.GetTop(draggedWall.UiLine);
                 draggedWall = null;
             }
-        }
-
-        private void Wall_DoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (deleteMode) return;
-
-            Line line = sender as Line;
-            WallItem wall = wallItems.Find(w => w.UiLine == line);
-            if (wall == null) return;
-
-            // Dvoklik menja orijentaciju (horizontalan <-> vertikalan)
-            wall.Vertikalan = !wall.Vertikalan;
-            line.X2 = wall.Vertikalan ? 0 : wall.Duzina;
-            line.Y2 = wall.Vertikalan ? wall.Duzina : 0;
-            e.Handled = true;
         }
 
         private void ObrisiZid(WallItem wall)
@@ -775,7 +768,6 @@ namespace WpfAmsterdam
             text.MouseLeftButtonDown += Label_MouseLeftButtonDown;
             text.MouseMove += Label_MouseMove;
             text.MouseLeftButtonUp += Label_MouseLeftButtonUp;
-            text.MouseDoubleClick += Label_DoubleClick;
         }
 
         private void Label_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -787,6 +779,19 @@ namespace WpfAmsterdam
             if (deleteMode)
             {
                 ObrisiLabelu(label);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.ClickCount == 2)
+            {
+                string newText = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Unesite novi tekst:", "Izmena labele", label.Naziv);
+                if (!string.IsNullOrWhiteSpace(newText) && newText != label.Naziv)
+                {
+                    label.Naziv = newText;
+                    label.UiText.Text = newText;
+                }
                 e.Handled = true;
                 return;
             }
@@ -823,25 +828,6 @@ namespace WpfAmsterdam
                 draggedLabel.PosY = Canvas.GetTop(draggedLabel.UiText);
                 draggedLabel = null;
             }
-        }
-
-        private void Label_DoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (deleteMode) return;
-
-            TextBlock text = sender as TextBlock;
-            LabelItem label = labelItems.Find(l => l.UiText == text);
-            if (label == null) return;
-
-            string newText = Microsoft.VisualBasic.Interaction.InputBox(
-                "Unesite novi tekst:", "Izmena labele", label.Naziv);
-
-            if (string.IsNullOrWhiteSpace(newText) || newText == label.Naziv)
-                return;
-
-            label.Naziv = newText;
-            label.UiText.Text = newText;
-            e.Handled = true;
         }
 
         private void ObrisiLabelu(LabelItem label)
@@ -932,7 +918,6 @@ namespace WpfAmsterdam
             border.MouseLeftButtonDown += Zone_MouseLeftButtonDown;
             border.MouseMove += Zone_MouseMove;
             border.MouseLeftButtonUp += Zone_MouseLeftButtonUp;
-            border.MouseDoubleClick += Zone_DoubleClick;
         }
 
         private void Zone_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -944,6 +929,19 @@ namespace WpfAmsterdam
             if (deleteMode)
             {
                 ObrisiZonu(zone);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.ClickCount == 2)
+            {
+                string newName = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Unesite novi naziv zone:", "Preimenovanje zone", zone.Naziv);
+                if (!string.IsNullOrWhiteSpace(newName) && newName != zone.Naziv)
+                {
+                    zone.Naziv = newName;
+                    zone.UiLabel.Text = newName;
+                }
                 e.Handled = true;
                 return;
             }
@@ -1075,25 +1073,6 @@ namespace WpfAmsterdam
                 resizingZone = null;
                 resizeDirection = null;
             }
-        }
-
-        private void Zone_DoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (deleteMode) return;
-
-            Border border = sender as Border;
-            ZoneItem zone = zoneItems.Find(z => z.UiBorder == border);
-            if (zone == null) return;
-
-            string newName = Microsoft.VisualBasic.Interaction.InputBox(
-                "Unesite novi naziv zone:", "Preimenovanje zone", zone.Naziv);
-
-            if (string.IsNullOrWhiteSpace(newName) || newName == zone.Naziv)
-                return;
-
-            zone.Naziv = newName;
-            zone.UiLabel.Text = newName;
-            e.Handled = true;
         }
 
         private void ObrisiZonu(ZoneItem zone)
