@@ -72,9 +72,13 @@ namespace WpfAmsterdam
             dgm.Text = capt;
             dgm.Width = 81;
             dgm.Height = 69;
-            dgm.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular);
-            dgm.BackColor = Color.DarkGoldenrod;
+            dgm.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgm.BackColor = ThemeManager.WfAccent;
             dgm.ForeColor = Color.White;
+            dgm.FlatStyle = FlatStyle.Flat;
+            dgm.FlatAppearance.BorderSize = 0;
+            dgm.Margin = new Padding(3);
+            dgm.Cursor = Cursors.Hand;
             return dgm;
         }
 
@@ -85,9 +89,14 @@ namespace WpfAmsterdam
             dgm.Text = capt;
             dgm.Width = 81;
             dgm.Height = 69;
-            dgm.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular);
-            dgm.BackColor = Color.IndianRed;
-            dgm.ForeColor = Color.White;
+            dgm.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgm.BackColor = ThemeManager.WfButtonBg;
+            dgm.ForeColor = ThemeManager.WfTextColor;
+            dgm.FlatStyle = FlatStyle.Flat;
+            dgm.FlatAppearance.BorderColor = ThemeManager.WfAccent;
+            dgm.FlatAppearance.BorderSize = 1;
+            dgm.Margin = new Padding(3);
+            dgm.Cursor = Cursors.Hand;
             return dgm;
         }
     }

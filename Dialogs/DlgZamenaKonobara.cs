@@ -49,8 +49,14 @@ namespace WpfAmsterdam
             Button dgm = new Button();
             dgm.Name = ime; dgm.Text = capt;
             dgm.Width = 103; dgm.Height = 85;
-            dgm.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular);
-            dgm.BackColor = Color.DarkGoldenrod; dgm.ForeColor = Color.White;
+            dgm.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgm.BackColor = ThemeManager.WfButtonBg;
+            dgm.ForeColor = ThemeManager.WfTextColor;
+            dgm.FlatStyle = FlatStyle.Flat;
+            dgm.FlatAppearance.BorderColor = ThemeManager.WfAccent;
+            dgm.FlatAppearance.BorderSize = 1;
+            dgm.Margin = new Padding(3);
+            dgm.Cursor = Cursors.Hand;
             return dgm;
         }
 
