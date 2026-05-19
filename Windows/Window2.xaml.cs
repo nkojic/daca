@@ -88,6 +88,7 @@ namespace WpfAmsterdam
                 this.Close();
             }
 
+            ApplyTheme();
             _frm1 = new Form1(this);
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
             BojenjeStolova();
@@ -116,15 +117,19 @@ namespace WpfAmsterdam
             try
             {
                 DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                    "SELECT Vrednost FROM dbo.Konfiguracija WHERE Kljuc = 'KoristiKartice'");
-                if (dt.Rows.Count > 0)
+                    "SELECT Kljuc, Vrednost FROM dbo.Konfiguracija");
+                foreach (DataRow row in dt.Rows)
                 {
-                    KoristiKartice = dt.Rows[0]["Vrednost"].ToString() == "1";
+                    string kljuc = row["Kljuc"].ToString();
+                    string vrednost = row["Vrednost"].ToString();
+                    if (kljuc == "KoristiKartice")
+                        KoristiKartice = vrednost == "1";
+                    else if (kljuc == "Tema")
+                        ThemeManager.CurrentTheme = vrednost;
                 }
             }
             catch
             {
-                // Tabela možda još ne postoji - podrazumevano koristi kartice
                 KoristiKartice = true;
             }
         }
@@ -144,12 +149,113 @@ namespace WpfAmsterdam
             }
         }
 
-        // Boje za status stolova (Light Minimalist paleta)
-        private static readonly SolidColorBrush BrushEmpty = new SolidColorBrush(Color.FromRgb(240, 242, 245));
-        private static readonly SolidColorBrush BrushMine = new SolidColorBrush(Color.FromRgb(184, 245, 216));
-        private static readonly SolidColorBrush BrushOther = new SolidColorBrush(Color.FromRgb(255, 224, 178));
-        private static readonly SolidColorBrush BrushNewOrder = new SolidColorBrush(Color.FromRgb(255, 184, 184));
-        private static readonly SolidColorBrush BrushNewOrderRecent = new SolidColorBrush(Color.FromRgb(255, 118, 117));
+        public void ApplyTheme()
+        {
+            // Window pozadina
+            this.Background = new SolidColorBrush(ThemeManager.WindowBackground);
+
+            // Container (glavni Border)
+            if (this.Content is System.Windows.Controls.Border mainBorder)
+            {
+                mainBorder.Background = new SolidColorBrush(ThemeManager.ContainerBackground);
+
+                if (mainBorder.Child is Grid grid)
+                {
+                    // Header (Row 0)
+                    if (grid.Children[0] is System.Windows.Controls.Border headerBorder)
+                    {
+                        headerBorder.Background = ThemeManager.MakeGradient(
+                            ThemeManager.HeaderGradient1, ThemeManager.HeaderGradient2);
+                        headerBorder.BorderBrush = new SolidColorBrush(ThemeManager.HeaderBorder);
+
+                        // Dugmad u headeru
+                        if (headerBorder.Child is StackPanel headerStack)
+                        {
+                            // Kraj
+                            izlaz.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnKraj1, ThemeManager.BtnKraj2);
+                            // Stolovi
+                            ZamenaStolova.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnStolovi1, ThemeManager.BtnStolovi2);
+                            // Konobari
+                            ZamenaKonobara.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnKonobari1, ThemeManager.BtnKonobari2);
+                            // Raspored
+                            RasporedStolova.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnRaspored1, ThemeManager.BtnRaspored2);
+                            // Secondary dugmad
+                            exp.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnSecondary1, ThemeManager.BtnSecondary2);
+                            exp.Foreground = new SolidColorBrush(ThemeManager.BtnSecondaryFg);
+                            staf.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnSecondary1, ThemeManager.BtnSecondary2);
+                            staf.Foreground = new SolidColorBrush(ThemeManager.BtnSecondaryFg);
+                            // Admin
+                            btnKonfiguracija.Background = ThemeManager.MakeGradient(
+                                ThemeManager.BtnAdmin1, ThemeManager.BtnAdmin2);
+                        }
+                    }
+
+                    // Waiter info strip (Row 1)
+                    if (grid.Children[1] is System.Windows.Controls.Border waiterBorder)
+                    {
+                        waiterBorder.Background = new SolidColorBrush(ThemeManager.FooterBackground);
+                        waiterBorder.BorderBrush = new SolidColorBrush(ThemeManager.HeaderBorder);
+                    }
+                    txtKonobarIme.Foreground = new SolidColorBrush(ThemeManager.WaiterAccent);
+                    txtDatum.Foreground = new SolidColorBrush(ThemeManager.TextMuted);
+
+                    // Canvas border (Row 2)
+                    if (grid.Children[2] is System.Windows.Controls.Border canvasBorder)
+                    {
+                        canvasBorder.BorderBrush = new SolidColorBrush(ThemeManager.HeaderBorder);
+                        // Grid pattern pozadina
+                        DrawingBrush gridBrush = new DrawingBrush();
+                        gridBrush.TileMode = TileMode.Tile;
+                        gridBrush.Viewport = new Rect(0, 0, 30, 30);
+                        gridBrush.ViewportUnits = BrushMappingMode.Absolute;
+                        DrawingGroup dg = new DrawingGroup();
+                        dg.Children.Add(new GeometryDrawing(
+                            new SolidColorBrush(ThemeManager.CanvasBackground),
+                            null,
+                            new RectangleGeometry(new Rect(0, 0, 30, 30))));
+                        Pen gridPen = new Pen(new SolidColorBrush(ThemeManager.GridLine), 0.5);
+                        GeometryGroup gg = new GeometryGroup();
+                        gg.Children.Add(new LineGeometry(new System.Windows.Point(30, 0), new System.Windows.Point(30, 30)));
+                        gg.Children.Add(new LineGeometry(new System.Windows.Point(0, 30), new System.Windows.Point(30, 30)));
+                        dg.Children.Add(new GeometryDrawing(null, gridPen, gg));
+                        gridBrush.Drawing = dg;
+                        canvasBorder.Background = gridBrush;
+                    }
+
+                    // Legenda (Row 3)
+                    if (grid.Children[3] is System.Windows.Controls.Border legendBorder)
+                    {
+                        legendBorder.Background = new SolidColorBrush(ThemeManager.FooterBackground);
+                        legendBorder.BorderBrush = new SolidColorBrush(ThemeManager.HeaderBorder);
+                    }
+                }
+            }
+
+            // Ažuriraj status brusheve
+            UpdateStatusBrushes();
+        }
+
+        private void UpdateStatusBrushes()
+        {
+            BrushEmpty = new SolidColorBrush(ThemeManager.StatusEmpty);
+            BrushMine = new SolidColorBrush(ThemeManager.StatusMine);
+            BrushOther = new SolidColorBrush(ThemeManager.StatusOther);
+            BrushNewOrder = new SolidColorBrush(ThemeManager.StatusNewOrder);
+            BrushNewOrderRecent = new SolidColorBrush(ThemeManager.StatusNewOrderRecent);
+        }
+
+        // Boje za status stolova
+        private static SolidColorBrush BrushEmpty = new SolidColorBrush(Color.FromRgb(240, 242, 245));
+        private static SolidColorBrush BrushMine = new SolidColorBrush(Color.FromRgb(184, 245, 216));
+        private static SolidColorBrush BrushOther = new SolidColorBrush(Color.FromRgb(255, 224, 178));
+        private static SolidColorBrush BrushNewOrder = new SolidColorBrush(Color.FromRgb(255, 184, 184));
+        private static SolidColorBrush BrushNewOrderRecent = new SolidColorBrush(Color.FromRgb(255, 118, 117));
 
         public void ReloadTablesFromDatabase()
         {
@@ -170,7 +276,7 @@ namespace WpfAmsterdam
                 btn.Content = name;
                 btn.Tag = name;
                 btn.Background = BrushEmpty;
-                btn.Foreground = new SolidColorBrush(Color.FromRgb(178, 190, 195));
+                btn.Foreground = new SolidColorBrush(ThemeManager.StatusEmptyFg);
                 btn.Click += exp_Click;
 
                 if (type == "round")
@@ -271,10 +377,10 @@ namespace WpfAmsterdam
 
         private void BojenjeStolova()
         {
-            SolidColorBrush fgEmpty = new SolidColorBrush(Color.FromRgb(178, 190, 195));
-            SolidColorBrush fgMine = new SolidColorBrush(Color.FromRgb(0, 184, 148));
-            SolidColorBrush fgOther = new SolidColorBrush(Color.FromRgb(225, 112, 85));
-            SolidColorBrush fgNew = new SolidColorBrush(Color.FromRgb(214, 48, 49));
+            SolidColorBrush fgEmpty = new SolidColorBrush(ThemeManager.StatusEmptyFg);
+            SolidColorBrush fgMine = new SolidColorBrush(ThemeManager.StatusMineFg);
+            SolidColorBrush fgOther = new SolidColorBrush(ThemeManager.StatusOtherFg);
+            SolidColorBrush fgNew = new SolidColorBrush(ThemeManager.StatusNewOrderFg);
 
             foreach (Button dugme in dctButton.Values)
             {

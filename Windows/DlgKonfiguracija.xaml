@@ -1,7 +1,7 @@
 <Window x:Class="WpfAmsterdam.DlgKonfiguracija"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Konfiguracija" Height="250" Width="420"
+    Title="Konfiguracija" Height="320" Width="420"
     WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
     Background="#F5F6F8">
 
@@ -13,12 +13,21 @@
             <TextBlock Text="Podešavanja" FontSize="18" FontWeight="Bold"
                        Foreground="#2D3436" Margin="0,0,0,20"/>
 
+            <!-- Kartice -->
             <CheckBox x:Name="chkKoristiKartice" FontSize="14" Foreground="#636E72"
                       Margin="0,0,0,8" VerticalContentAlignment="Center">
                 <TextBlock Text="Koristiti kartice konobara" TextWrapping="Wrap"/>
             </CheckBox>
             <TextBlock Text="Ako je isključeno, nakon prvog logovanja ne zahteva se ponovna prijava."
-                       FontSize="11" Foreground="#B2BEC3" Margin="20,0,0,20" TextWrapping="Wrap"/>
+                       FontSize="11" Foreground="#B2BEC3" Margin="20,0,0,16" TextWrapping="Wrap"/>
+
+            <!-- Tema -->
+            <TextBlock Text="Tema aplikacije:" FontSize="14" Foreground="#636E72"
+                       Margin="0,0,0,8"/>
+            <ComboBox x:Name="cmbTema" Width="220" Height="30" FontSize="13"
+                      HorizontalAlignment="Left" Margin="0,0,0,6"/>
+            <TextBlock Text="Promena teme se primenjuje nakon ponovnog pokretanja aplikacije."
+                       FontSize="11" Foreground="#B2BEC3" Margin="0,0,0,16" TextWrapping="Wrap"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
                 <Button Content="Sačuvaj" Width="90" Height="36" FontSize="13" FontWeight="SemiBold"
