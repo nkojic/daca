@@ -158,11 +158,16 @@ namespace WpfAmsterdam
             Button dgm = new Button();
             dgm.Name = ime;
             dgm.Text = capt;
-            dgm.Width = 90;
-            dgm.Height = 90;
-            dgm.Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular);
-            dgm.BackColor = Color.Orange;
-            dgm.ForeColor = Color.Black;
+            dgm.Width = 100;
+            dgm.Height = 80;
+            dgm.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            dgm.BackColor = ThemeManager.WfAccent;
+            dgm.ForeColor = Color.White;
+            dgm.FlatStyle = FlatStyle.Flat;
+            dgm.FlatAppearance.BorderSize = 0;
+            dgm.Margin = new Padding(3);
+            dgm.Cursor = Cursors.Hand;
+            ThemeManager.RoundControl(dgm, 16);
             return dgm;
         }
 
@@ -172,10 +177,16 @@ namespace WpfAmsterdam
             dgm.Name = ime;
             dgm.Text = capt;
             dgm.Width = 110;
-            dgm.Height = 85;
-            dgm.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular);
-            dgm.BackColor = Color.DarkGoldenrod;
-            dgm.ForeColor = Color.White;
+            dgm.Height = 75;
+            dgm.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+            dgm.BackColor = ThemeManager.WfButtonBg;
+            dgm.ForeColor = ThemeManager.WfTextColor;
+            dgm.FlatStyle = FlatStyle.Flat;
+            dgm.FlatAppearance.BorderColor = ThemeManager.WfAccent;
+            dgm.FlatAppearance.BorderSize = 2;
+            dgm.Margin = new Padding(3);
+            dgm.Cursor = Cursors.Hand;
+            ThemeManager.RoundControl(dgm, 16);
             return dgm;
         }
 
