@@ -167,7 +167,7 @@
                     </Button>
                     <!-- staf -->
                     <Button Name="staf" Style="{StaticResource BtnSecondary}"
-                            Width="60" Height="40" Content="staf" Margin="0,0,10,0">
+                            Width="95" Height="40" Content="Zaposleni" Margin="0,0,10,0">
                         <Button.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#F0F2F5" Offset="0"/>
