@@ -78,12 +78,20 @@ namespace WpfAmsterdam
             DataGridView2.DefaultCellStyle.BackColor = ThemeManager.WfPanel;
             DataGridView2.DefaultCellStyle.ForeColor = ThemeManager.WfTextColor;
             DataGridView2.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+            DataGridView2.DefaultCellStyle.SelectionBackColor = ThemeManager.WfAccent;
+            DataGridView2.DefaultCellStyle.SelectionForeColor = Color.White;
+            DataGridView2.DefaultCellStyle.Padding = new Padding(4, 2, 4, 2);
+            DataGridView2.AlternatingRowsDefaultCellStyle.BackColor = ThemeManager.WfBackground;
             DataGridView2.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.WfHeader;
             DataGridView2.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             DataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             DataGridView2.EnableHeadersVisualStyles = false;
             DataGridView2.GridColor = ThemeManager.WfBackground;
             DataGridView2.BorderStyle = BorderStyle.None;
+            DataGridView2.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            DataGridView2.RowHeadersVisible = false;
+            DataGridView2.Columns["IdArtikal1"].Width = 150;
+            DataGridView2.Columns["Cena"].Width = 60;
 
             btnNE.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             btnDA.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
@@ -242,7 +250,7 @@ namespace WpfAmsterdam
             Button dgm = new Button();
             dgm.Name = ime;
             dgm.Text = capt;
-            dgm.Width = 110;
+            dgm.Width = 140;
             dgm.Height = 48;
             dgm.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             dgm.BackColor = ThemeManager.WfAccent;
@@ -278,17 +286,16 @@ namespace WpfAmsterdam
             Button dgm = new Button();
             dgm.Name = ime.ToString();
             dgm.Text = capt;
-            dgm.Width = 100;
+            dgm.Width = 110;
             dgm.Height = 58;
             dgm.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dgm.BackColor = ThemeManager.WfButtonBg;
+            dgm.BackColor = ThemeManager.WfPanel;
             dgm.ForeColor = ThemeManager.WfTextColor;
             dgm.FlatStyle = FlatStyle.Flat;
             dgm.FlatAppearance.BorderColor = ThemeManager.WfAccent;
-            dgm.FlatAppearance.BorderSize = 1;
-            dgm.Margin = new Padding(3);
+            dgm.FlatAppearance.BorderSize = 2;
+            dgm.Margin = new Padding(4);
             dgm.Cursor = Cursors.Hand;
-            RoundButton(dgm, 16);
             return dgm;
         }
     }

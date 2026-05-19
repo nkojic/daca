@@ -64,7 +64,7 @@ namespace WpfAmsterdam
             this.Panel1.BackColor = System.Drawing.Color.Transparent;
             this.Panel1.Location = new System.Drawing.Point(3, 7);
             this.Panel1.Name = "Panel1";
-            this.Panel1.Size = new System.Drawing.Size(120, 500);
+            this.Panel1.Size = new System.Drawing.Size(150, 500);
             this.Panel1.TabIndex = 16;
             //
             // DataGridView2
@@ -107,7 +107,7 @@ namespace WpfAmsterdam
             this.Panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.Panel3.BackColor = System.Drawing.Color.Transparent;
-            this.Panel3.Location = new System.Drawing.Point(130, 7);
+            this.Panel3.Location = new System.Drawing.Point(158, 7);
             this.Panel3.Name = "Panel3";
             this.Panel3.Size = new System.Drawing.Size(250, 500);
             this.Panel3.TabIndex = 29;
@@ -129,7 +129,7 @@ namespace WpfAmsterdam
             this.Panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.Panel2.BackColor = System.Drawing.Color.Transparent;
-            this.Panel2.Location = new System.Drawing.Point(386, 7);
+            this.Panel2.Location = new System.Drawing.Point(420, 7);
             this.Panel2.Name = "Panel2";
             this.Panel2.Size = new System.Drawing.Size(340, 500);
             this.Panel2.TabIndex = 31;
@@ -163,7 +163,7 @@ namespace WpfAmsterdam
             this.DoubleBuffered = true;
             this.Name = "DlgStaff";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Zaposleni v2";
+            this.Text = "Zaposleni";
             this.Load += new System.EventHandler(this.dlgPlacanje_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView2)).EndInit();
             this.ResumeLayout(false);
