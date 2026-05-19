@@ -256,9 +256,11 @@ namespace WpfAmsterdam
 
                     // Update zaglavlje sa podacima iz KonobariStolovi
                     using (SqliteCommand cmd = new SqliteCommand(
-                        "UPDATE " + tblZag + " SET Datum = K.vreme, Popust = K.popust, IdPromo = K.IdPromo " +
-                        "FROM KonobariStolovi AS K " +
-                        "WHERE " + tblZag + ".Sto = K.BrojStola AND " + tblZag + ".IdZaglavlje = @Id", con))
+                        "UPDATE " + tblZag + " SET " +
+                        "Datum = (SELECT vreme FROM KonobariStolovi WHERE BrojStola = " + tblZag + ".Sto), " +
+                        "Popust = (SELECT popust FROM KonobariStolovi WHERE BrojStola = " + tblZag + ".Sto), " +
+                        "IdPromo = (SELECT IdPromo FROM KonobariStolovi WHERE BrojStola = " + tblZag + ".Sto) " +
+                        "WHERE IdZaglavlje = @Id", con))
                     {
                         cmd.Parameters.AddWithValue("@Id", idZaglavlje);
                         cmd.ExecuteNonQuery();

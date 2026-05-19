@@ -63,14 +63,13 @@ namespace WpfAmsterdam
 
         private void SaveConfig(SqliteConnection con, string kljuc, string vrednost)
         {
-            SqliteCommand cmd = new SqliteCommand(
-                "IF EXISTS (SELECT 1 FROM Konfiguracija WHERE Kljuc = @k) " +
-                "UPDATE Konfiguracija SET Vrednost = @v WHERE Kljuc = @k " +
-                "ELSE INSERT INTO Konfiguracija (Kljuc, Vrednost) VALUES (@k, @v)",
-                con);
-            cmd.Parameters.AddWithValue("@k", kljuc);
-            cmd.Parameters.AddWithValue("@v", vrednost);
-            cmd.ExecuteNonQuery();
+            using (SqliteCommand cmd = new SqliteCommand(
+                "INSERT OR REPLACE INTO Konfiguracija (Kljuc, Vrednost) VALUES (@k, @v)", con))
+            {
+                cmd.Parameters.AddWithValue("@k", kljuc);
+                cmd.Parameters.AddWithValue("@v", vrednost);
+                cmd.ExecuteNonQuery();
+            }
         }
 
         private void btnZatvori_Click(object sender, RoutedEventArgs e)

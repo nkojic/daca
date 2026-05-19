@@ -279,7 +279,7 @@ namespace WpfAmsterdam
                 novaStavka["IdKonobar"] = Window2.KonobarId;
                 novaStavka["IdArtikal"] = IdArt;
                 novaStavka["Komada"] = kom;
-                novaStavka["vreme"] = DateTime.Now.TimeOfDay;
+                novaStavka["vreme"] = DateTime.Now.TimeOfDay.ToString();
                 try
                 {
                     novaStavka["DeoPorcije"] = deo;
@@ -320,7 +320,7 @@ namespace WpfAmsterdam
                         novaStavka["IdKonobar"] = Window2.KonobarId;
                         novaStavka["IdArtikal"] = IdArt;
                         novaStavka["Komada"] = kom;
-                        novaStavka["vreme"] = DateTime.Now.TimeOfDay;
+                        novaStavka["vreme"] = DateTime.Now.TimeOfDay.ToString();
                         try
                         {
                             novaStavka["DeoPorcije"] = deo;
@@ -588,7 +588,7 @@ namespace WpfAmsterdam
             if (popust > 0)
             {
                 tekst = "UPDATE KonobariStolovi SET daliRacun = 1, popust = " + popust.ToString() +
-                    ", IdIme = " + Window2.IdImee.ToString() + ", Korisnik = N'" + Window2.Korisnik +
+                    ", IdIme = " + Window2.IdImee.ToString() + ", Korisnik = '" + Window2.Korisnik +
                     "' WHERE brojStola = '" + Window2.BrojStola + "'";
             }
             return tekst;
