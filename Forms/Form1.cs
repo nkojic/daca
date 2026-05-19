@@ -89,7 +89,7 @@ namespace WpfAmsterdam
             InitializeComponent();
             ThemeManager.ApplyWinFormsTheme(this);
 
-            // Kategorije levo - posebno stilizovanje
+            // Kategorije levo - šire i tematske boje
             KategorijaDataGridView.DefaultCellStyle.BackColor = ThemeManager.WfAccent;
             KategorijaDataGridView.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
             KategorijaDataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
@@ -97,6 +97,28 @@ namespace WpfAmsterdam
             KategorijaDataGridView.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             KategorijaDataGridView.RowTemplate.DefaultCellStyle.BackColor = ThemeManager.WfAccent;
             KategorijaDataGridView.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            KategorijaDataGridView.AlternatingRowsDefaultCellStyle.BackColor = ThemeManager.WfAccent;
+            KategorijaDataGridView.AlternatingRowsDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+
+            // Zatvori sto, Račun - beo tekst na tematskoj boji
+            btnZatvoriSto.BackColor = ThemeManager.WfButtonNe;
+            btnZatvoriSto.ForeColor = System.Drawing.Color.White;
+            btnZatvoriSto.FlatStyle = FlatStyle.Flat;
+            btnZatvoriSto.FlatAppearance.BorderSize = 0;
+            btnZatvoriSto.Font = new Font("Segoe UI", 13, FontStyle.Bold);
+            btnRacun.BackColor = ThemeManager.WfButtonDa;
+            btnRacun.ForeColor = System.Drawing.Color.White;
+            btnRacun.FlatStyle = FlatStyle.Flat;
+            btnRacun.FlatAppearance.BorderSize = 0;
+            btnRacun.Font = new Font("Segoe UI", 13, FontStyle.Bold);
+
+            // Komada, deo porcije, cena - beo tekst
+            lblKomada.BackColor = ThemeManager.WfHeader;
+            lblKomada.ForeColor = System.Drawing.Color.White;
+            lblKomada.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            lblCena.BackColor = ThemeManager.WfHeader;
+            lblCena.ForeColor = System.Drawing.Color.White;
+            lblCena.Font = new Font("Segoe UI", 12, FontStyle.Bold);
 
             _win2 = win2;
 
