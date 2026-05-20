@@ -130,6 +130,12 @@
                     <Border Width="2" Height="30" Background="#DFE6E9" Margin="10,0"/>
 
                     <!-- Dodavanje -->
+                    <ComboBox x:Name="cmbDodajSize" Width="75" Height="28" FontSize="11"
+                              SelectedIndex="0" Margin="0,0,6,0">
+                        <ComboBoxItem Content="Mali"/>
+                        <ComboBoxItem Content="Srednji"/>
+                        <ComboBoxItem Content="Veliki"/>
+                    </ComboBox>
                     <Button x:Name="btnDodajKvadrat" Style="{StaticResource BtnToolbar}"
                             Content="+ Kvadratni" Margin="0,0,6,0" Click="btnDodajKvadrat_Click">
                         <Button.Background>

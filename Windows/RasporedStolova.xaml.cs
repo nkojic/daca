@@ -392,11 +392,12 @@ namespace WpfAmsterdam
 
         private void DodajSto(string type)
         {
+            string size = ((System.Windows.Controls.ComboBoxItem)cmbDodajSize.SelectedItem).Content.ToString().ToLower();
             string name = GetNextName();
             double x = 30;
             double y = 30;
 
-            Button btn = CreateTableButton(name, type);
+            Button btn = CreateTableButton(name, type, size);
             Canvas.SetLeft(btn, x);
             Canvas.SetTop(btn, y);
             canvasStolovi.Children.Add(btn);
@@ -404,7 +405,7 @@ namespace WpfAmsterdam
             tableItems.Add(new TableItem
             {
                 BrojStola = name, PosX = x, PosY = y,
-                TipStola = type, UiButton = btn
+                TipStola = type, Velicina = size, UiButton = btn
             });
 
             UpdateCounts();
