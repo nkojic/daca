@@ -19,6 +19,7 @@ namespace WpfAmsterdam
             public double PosX { get; set; }
             public double PosY { get; set; }
             public string TipStola { get; set; }
+            public string Velicina { get; set; } = "mali";
             public Button UiButton { get; set; }
         }
 
@@ -108,7 +109,7 @@ namespace WpfAmsterdam
             LoadWallsFromDatabase();
 
             DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                "SELECT BrojStola, PosX, PosY, TipStola FROM Stolovi");
+                "SELECT BrojStola, PosX, PosY, TipStola, COALESCE(Velicina,'mali') AS Velicina FROM Stolovi");
 
             if (dt.Rows.Count > 0)
             {
@@ -118,8 +119,9 @@ namespace WpfAmsterdam
                     string type = row["TipStola"].ToString();
                     double posX = Convert.ToDouble(row["PosX"]);
                     double posY = Convert.ToDouble(row["PosY"]);
+                    string velicina = row["Velicina"].ToString();
 
-                    Button btn = CreateTableButton(name, type);
+                    Button btn = CreateTableButton(name, type, velicina);
                     Canvas.SetLeft(btn, posX);
                     Canvas.SetTop(btn, posY);
                     canvasStolovi.Children.Add(btn);
@@ -130,6 +132,7 @@ namespace WpfAmsterdam
                         PosX = posX,
                         PosY = posY,
                         TipStola = type,
+                        Velicina = velicina,
                         UiButton = btn
                     });
 
@@ -242,26 +245,43 @@ namespace WpfAmsterdam
             txtRoundCount.Text = rd.ToString();
         }
 
-        private Button CreateTableButton(string name, string type)
+        private double GetSizeMultiplier(string size)
+        {
+            switch (size)
+            {
+                case "srednji": return 1.5;
+                case "veliki": return 2.0;
+                default: return 1.0;
+            }
+        }
+
+        private Button CreateTableButton(string name, string type, string size = "mali")
         {
             Button btn = new Button();
             btn.Content = name;
             btn.Tag = name;
             btn.Background = Brushes.White;
 
+            double mult = GetSizeMultiplier(size);
+
             if (type == "round")
             {
                 btn.Style = (Style)FindResource("StoKrug");
+                btn.Width = 60 * mult;
+                btn.Height = 60 * mult;
             }
             else
             {
                 btn.Style = (Style)FindResource("StoKvadrat");
+                btn.Width = 45 * mult;
+                btn.Height = 45 * mult;
             }
+
+            btn.FontSize = 14 * mult;
 
             btn.PreviewMouseLeftButtonDown += Table_MouseLeftButtonDown;
             btn.PreviewMouseMove += Table_MouseMove;
             btn.PreviewMouseLeftButtonUp += Table_MouseLeftButtonUp;
-            btn.MouseDoubleClick += Table_DoubleClick;
 
             return btn;
         }
@@ -294,7 +314,14 @@ namespace WpfAmsterdam
             double canvasWidth = canvasStolovi.ActualWidth;
             if (canvasWidth < 100) canvasWidth = 1000;
 
-            int maxCols = (int)((canvasWidth - 20) / 75);
+            string sqSize = ((System.Windows.Controls.ComboBoxItem)cmbSquareSize.SelectedItem).Content.ToString().ToLower();
+            string rdSize = ((System.Windows.Controls.ComboBoxItem)cmbRoundSize.SelectedItem).Content.ToString().ToLower();
+            double sqMult = GetSizeMultiplier(sqSize);
+            double rdMult = GetSizeMultiplier(rdSize);
+            double sqSpacing = 55 * sqMult + 10;
+            double rdSpacing = 70 * rdMult + 10;
+
+            int maxCols = (int)((canvasWidth - 20) / sqSpacing);
             if (maxCols < 1) maxCols = 10;
             int col = 0;
             int row = 0;
@@ -302,10 +329,10 @@ namespace WpfAmsterdam
             for (int i = 0; i < squareCount; i++)
             {
                 string name = GetNextName();
-                double x = 20 + col * 75;
-                double y = 20 + row * 75;
+                double x = 20 + col * sqSpacing;
+                double y = 20 + row * sqSpacing;
 
-                Button btn = CreateTableButton(name, "square");
+                Button btn = CreateTableButton(name, "square", sqSize);
                 Canvas.SetLeft(btn, x);
                 Canvas.SetTop(btn, y);
                 canvasStolovi.Children.Add(btn);
@@ -313,7 +340,7 @@ namespace WpfAmsterdam
                 tableItems.Add(new TableItem
                 {
                     BrojStola = name, PosX = x, PosY = y,
-                    TipStola = "square", UiButton = btn
+                    TipStola = "square", Velicina = sqSize, UiButton = btn
                 });
 
                 col++;
@@ -321,14 +348,17 @@ namespace WpfAmsterdam
             }
 
             if (squareCount > 0) { col = 0; row++; }
+            int maxColsRd = (int)((canvasWidth - 20) / rdSpacing);
+            if (maxColsRd < 1) maxColsRd = 10;
+            col = 0;
 
             for (int i = 0; i < roundCount; i++)
             {
                 string name = GetNextName();
-                double x = 15 + col * 80;
-                double y = 20 + row * 80;
+                double x = 15 + col * rdSpacing;
+                double y = 20 + row * rdSpacing;
 
-                Button btn = CreateTableButton(name, "round");
+                Button btn = CreateTableButton(name, "round", rdSize);
                 Canvas.SetLeft(btn, x);
                 Canvas.SetTop(btn, y);
                 canvasStolovi.Children.Add(btn);
@@ -336,11 +366,11 @@ namespace WpfAmsterdam
                 tableItems.Add(new TableItem
                 {
                     BrojStola = name, PosX = x, PosY = y,
-                    TipStola = "round", UiButton = btn
+                    TipStola = "round", Velicina = rdSize, UiButton = btn
                 });
 
                 col++;
-                if (col >= maxCols) { col = 0; row++; }
+                if (col >= maxColsRd) { col = 0; row++; }
             }
 
             UpdateCounts();
@@ -442,6 +472,34 @@ namespace WpfAmsterdam
             if (deleteMode)
             {
                 ObrisiSto(btn);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.ClickCount == 2)
+            {
+                TableItem item = tableItems.Find(t => t.UiButton == btn);
+                if (item == null) return;
+
+                string newName = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Unesite novo ime stola:", "Preimenovanje", item.BrojStola);
+
+                if (!string.IsNullOrWhiteSpace(newName) && newName != item.BrojStola)
+                {
+                    if (tableItems.Exists(t => t.BrojStola == newName))
+                    {
+                        System.Windows.Forms.MessageBox.Show(
+                            "Sto sa imenom \"" + newName + "\" već postoji!",
+                            "Greška", System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        item.BrojStola = newName;
+                        btn.Content = newName;
+                        btn.Tag = newName;
+                    }
+                }
                 e.Handled = true;
                 return;
             }
@@ -1116,12 +1174,13 @@ namespace WpfAmsterdam
                         foreach (TableItem item in tableItems)
                         {
                             SqliteCommand cmdIns = new SqliteCommand(
-                                "INSERT INTO Stolovi (BrojStola, PosX, PosY, TipStola) VALUES (@b, @x, @y, @t)",
+                                "INSERT INTO Stolovi (BrojStola, PosX, PosY, TipStola, Velicina) VALUES (@b, @x, @y, @t, @v)",
                                 con, txn);
                             cmdIns.Parameters.AddWithValue("@b", item.BrojStola);
                             cmdIns.Parameters.AddWithValue("@x", item.PosX);
                             cmdIns.Parameters.AddWithValue("@y", item.PosY);
                             cmdIns.Parameters.AddWithValue("@t", item.TipStola);
+                            cmdIns.Parameters.AddWithValue("@v", item.Velicina ?? "mali");
                             cmdIns.ExecuteNonQuery();
                         }
 

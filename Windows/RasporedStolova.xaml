@@ -97,7 +97,13 @@
                         <Border Width="20" Height="20" BorderBrush="#DFE6E9" BorderThickness="2"
                                 CornerRadius="4" Background="#F0F2F5" Margin="5,0,4,0"/>
                         <TextBlock Text="Kvadratni" FontSize="12" FontWeight="SemiBold"
-                                   Foreground="#636E72" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                   Foreground="#636E72" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <ComboBox x:Name="cmbSquareSize" Width="75" Height="28" FontSize="11"
+                                  SelectedIndex="0" Margin="0,0,12,0">
+                            <ComboBoxItem Content="Mali"/>
+                            <ComboBoxItem Content="Srednji"/>
+                            <ComboBoxItem Content="Veliki"/>
+                        </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
                         <TextBox x:Name="txtRoundCount" Width="50" Height="30" FontSize="15"
@@ -106,7 +112,13 @@
                         <Border Width="22" Height="22" BorderBrush="#DFE6E9" BorderThickness="2"
                                 CornerRadius="11" Background="#F0F2F5" Margin="5,0,4,0"/>
                         <TextBlock Text="Kružni" FontSize="12" FontWeight="SemiBold"
-                                   Foreground="#636E72" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                   Foreground="#636E72" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <ComboBox x:Name="cmbRoundSize" Width="75" Height="28" FontSize="11"
+                                  SelectedIndex="0" Margin="0,0,12,0">
+                            <ComboBoxItem Content="Mali"/>
+                            <ComboBoxItem Content="Srednji"/>
+                            <ComboBoxItem Content="Veliki"/>
+                        </ComboBox>
                     </StackPanel>
                     <Button x:Name="btnPrikazi" Style="{StaticResource BtnToolbar}"
                             Content="Prikaži" Margin="0,0,6,0" Click="btnPrikazi_Click">

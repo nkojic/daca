@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS Stolovi (
     Konobar INTEGER DEFAULT 0,
     PosX REAL NOT NULL DEFAULT 0,
     PosY REAL NOT NULL DEFAULT 0,
-    TipStola TEXT NOT NULL DEFAULT 'square'
+    TipStola TEXT NOT NULL DEFAULT 'square',
+    Velicina TEXT NOT NULL DEFAULT 'mali'
 );
 
 CREATE TABLE IF NOT EXISTS KonobariStolovi (
