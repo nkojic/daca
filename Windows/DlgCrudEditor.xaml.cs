@@ -32,7 +32,16 @@ namespace WpfAmsterdam
 
         private void LoadData()
         {
-            dataTable = DatabaseHelper.ReaderTabela(konekcija, selectQuery);
+            try
+            {
+                dataTable = DatabaseHelper.ReaderTabela(konekcija, selectQuery);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Greška pri učitavanju: " + ex.Message);
+                dataTable = new DataTable();
+                return;
+            }
 
             dataGrid.Columns.Clear();
             foreach (string col in columns)
@@ -162,7 +171,7 @@ namespace WpfAmsterdam
                                     for (int i = 0; i < columns.Length; i++)
                                     {
                                         object val = row[columns[i]];
-                                        if (val == null || val == DBNull.Value) val = "";
+                                        if (val == null || val == DBNull.Value) val = 0;
                                         cmd.Parameters.AddWithValue("@p" + i, val);
                                     }
                                     cmd.ExecuteNonQuery();
@@ -189,10 +198,10 @@ namespace WpfAmsterdam
                                     {
                                         if (columns[i] == pkColumn) continue;
                                         object val = row[columns[i]];
-                                        if (val == null || val == DBNull.Value) val = "";
+                                        if (val == null || val == DBNull.Value) val = 0;
                                         cmd.Parameters.AddWithValue("@p" + i, val);
                                     }
-                                    cmd.Parameters.AddWithValue("@pk", row[pkColumn]);
+                                    cmd.Parameters.AddWithValue("@pk", Convert.ToInt64(row[pkColumn]));
                                     cmd.ExecuteNonQuery();
                                     updated++;
                                 }
@@ -211,7 +220,8 @@ namespace WpfAmsterdam
                     "Uspeh", System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Information);
 
-                dataTable.AcceptChanges();
+                // Ponovo učitaj podatke iz baze da budu konzistentni
+                LoadData();
             }
             catch (Exception ex)
             {
