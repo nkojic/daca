@@ -161,6 +161,27 @@ namespace WpfAmsterdam
             this.KategorijaTableAdapter.Fill(this.DsArtikli.Kategorija);
             Label1.Text = Window2.BrojStola + "  " + Window2.KonobarIme;
 
+            // Generiši tastere za kategorije umesto DataGridView
+            KategorijaDataGridView.Visible = false;
+            foreach (DataRow red in DsArtikli.Kategorija.Rows)
+            {
+                Button btn = new Button();
+                btn.Name = red["IdKat"].ToString();
+                btn.Text = red["Kategorija"].ToString();
+                btn.Width = 126;
+                btn.Height = 55;
+                btn.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+                btn.BackColor = ThemeManager.WfAccent;
+                btn.ForeColor = Color.White;
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.FlatAppearance.BorderSize = 0;
+                btn.Margin = new Padding(2);
+                btn.Cursor = Cursors.Hand;
+                ThemeManager.RoundControl(btn, 16);
+                btn.Click += KategorijaBtn_Click;
+                flPanelKategorije.Controls.Add(btn);
+            }
+
             tblIme = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT * FROM Ime WHERE (IdPotpis <> 24) AND (aktivan = 1)");
             tblPotpis = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT * FROM tblPotpis WHERE IdPotpis BETWEEN 1 AND 20");
             tblArtikliKojiImajuPrilog = DatabaseHelper.ReaderTabela(Window2.konekcija, "SELECT IdArtikal FROM ArtikliKojiImajuPrilog");
@@ -169,11 +190,23 @@ namespace WpfAmsterdam
             dsPrebacivanje.KonobStoloviStavke.Columns["Odneto"].DefaultValue = false;
         }
 
+        private void KategorijaBtn_Click(object sender, EventArgs e)
+        {
+            int idkat = Convert.ToInt32(((Button)sender).Name);
+            DataRow[] redovi = DsArtikli.Kategorija1.Select("IdKat = " + idkat);
+            KategorijaDataGridView_PopuniPodkategorije(idkat, redovi);
+        }
+
         private void KategorijaDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
             int idkat = Convert.ToInt32(((DataRowView)KategorijaBindingSource.Current).Row["IdKat"]);
             DataRow[] redovi = DsArtikli.Kategorija1.Select("IdKat = " + idkat);
+            KategorijaDataGridView_PopuniPodkategorije(idkat, redovi);
+        }
+
+        private void KategorijaDataGridView_PopuniPodkategorije(int idkat, DataRow[] redovi)
+        {
             flPanel1.Controls.Clear();
             foreach (DataRow red in redovi)
             {

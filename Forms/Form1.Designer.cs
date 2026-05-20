@@ -651,7 +651,7 @@ namespace WpfAmsterdam
             this.BackColor = System.Drawing.Color.Gray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1025, 588);
-            this.ControlBox = false;
+            this.ControlBox = true;
             this.Controls.Add(this.flPanel2);
             this.Controls.Add(this.btnRacun);
             this.Controls.Add(this.lblKomada);
@@ -660,6 +660,14 @@ namespace WpfAmsterdam
             this.Controls.Add(this.Button1);
             this.Controls.Add(this.Label1);
             this.Controls.Add(this.KategorijaDataGridView);
+            // Panel za kategorije tastere
+            this.flPanelKategorije = new System.Windows.Forms.FlowLayoutPanel();
+            this.flPanelKategorije.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
+            this.flPanelKategorije.Location = new System.Drawing.Point(2, 8);
+            this.flPanelKategorije.Size = new System.Drawing.Size(132, 536);
+            this.flPanelKategorije.AutoScroll = true;
+            this.flPanelKategorije.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.flPanelKategorije);
             this.Controls.Add(this.btnUpisi);
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.SplitContainer2);
@@ -734,5 +742,6 @@ namespace WpfAmsterdam
         internal System.Windows.Forms.DataGridViewTextBoxColumn Cena1;
         internal System.Windows.Forms.DataGridViewTextBoxColumn Ukupno1;
         internal System.Windows.Forms.DataGridViewTextBoxColumn vreme;
+        internal System.Windows.Forms.FlowLayoutPanel flPanelKategorije;
     }
 }
