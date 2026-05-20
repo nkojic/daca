@@ -130,6 +130,10 @@ namespace WpfAmsterdam
                 using (SqliteConnection con = new SqliteConnection(konekcija))
                 {
                     con.Open();
+
+                    using (SqliteCommand fkOff = new SqliteCommand("PRAGMA foreign_keys = OFF", con))
+                        fkOff.ExecuteNonQuery();
+
                     using (SqliteTransaction txn = con.BeginTransaction())
                     {
                         // Obriši sve i ponovo upiši
@@ -167,6 +171,9 @@ namespace WpfAmsterdam
 
                         txn.Commit();
                     }
+
+                    using (SqliteCommand fkOn = new SqliteCommand("PRAGMA foreign_keys = ON", con))
+                        fkOn.ExecuteNonQuery();
                 }
 
                 System.Windows.Forms.MessageBox.Show(
