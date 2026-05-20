@@ -659,12 +659,11 @@ namespace WpfAmsterdam
             this.Controls.Add(this.flPanel1);
             this.Controls.Add(this.Button1);
             this.Controls.Add(this.Label1);
-            this.Controls.Add(this.KategorijaDataGridView);
-            // Panel za kategorije tastere
+            // Panel za kategorije tastere (zamena za KategorijaDataGridView)
             this.flPanelKategorije = new System.Windows.Forms.FlowLayoutPanel();
             this.flPanelKategorije.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
             this.flPanelKategorije.Location = new System.Drawing.Point(2, 8);
-            this.flPanelKategorije.Size = new System.Drawing.Size(132, 536);
+            this.flPanelKategorije.Size = new System.Drawing.Size(132, 570);
             this.flPanelKategorije.AutoScroll = true;
             this.flPanelKategorije.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.flPanelKategorije);
