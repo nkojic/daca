@@ -266,9 +266,19 @@ namespace WpfAmsterdam
 
             if (type == "round")
             {
+                double d = 60 * mult;
                 btn.Style = (Style)FindResource("StoKrug");
-                btn.Width = 60 * mult;
-                btn.Height = 60 * mult;
+                btn.Width = d;
+                btn.Height = d;
+                // Override CornerRadius za veće krugove
+                btn.Loaded += (s, ev) =>
+                {
+                    if (System.Windows.Media.VisualTreeHelper.GetChildrenCount(btn) > 0)
+                    {
+                        var border = System.Windows.Media.VisualTreeHelper.GetChild(btn, 0) as System.Windows.Controls.Border;
+                        if (border != null) border.CornerRadius = new CornerRadius(d / 2);
+                    }
+                };
             }
             else
             {
