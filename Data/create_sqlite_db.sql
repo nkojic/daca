@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS Kategorija1 (
     IdKat INTEGER NOT NULL,
     PodKat TEXT NOT NULL,
     aktivna INTEGER DEFAULT 1,
+    IdGrupniTip INTEGER,
     FOREIGN KEY (IdKat) REFERENCES Kategorija(IdKat)
 );
 
