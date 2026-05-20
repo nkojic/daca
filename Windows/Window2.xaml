@@ -260,6 +260,10 @@
                             BorderBrush="#FF7675" BorderThickness="2" Margin="0,0,6,0"/>
                     <TextBlock Text="Nova porudžbina" FontSize="13" Foreground="#636E72"
                                VerticalAlignment="Center" Margin="0,0,0,0"/>
+                    <!-- Verzija -->
+                    <TextBlock x:Name="txtVerzija" FontSize="11" Foreground="#B2BEC3"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Margin="30,0,0,0"/>
                 </StackPanel>
             </Border>
         </Grid>

@@ -61,9 +61,13 @@ namespace WpfAmsterdam
             }
 
             ApplyTheme();
+            txtVerzija.Text = "v" + AppVersion.Current;
             _frm1 = new Form1(this);
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
             BojenjeStolova();
+
+            // Proveri ažuriranja u pozadini
+            _ = AutoUpdater.CheckForUpdatesAsync();
 
             // Pokreni timer samo ako se koriste kartice
             if (KoristiKartice)
