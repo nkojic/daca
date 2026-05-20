@@ -24,7 +24,7 @@ namespace WpfAmsterdam
         public static int IdImee = 0;
         public static string Korisnik = string.Empty;
         public static bool daliAdmin = false;
-        public static bool KoristiKartice = true;
+        public static bool KoristiKartice = false;
         public static string BrojStola = string.Empty;
         public static string Sto1 = string.Empty;
         public static string Sto2 = string.Empty;
@@ -105,7 +105,7 @@ namespace WpfAmsterdam
             }
             catch
             {
-                KoristiKartice = true;
+                KoristiKartice = false;
             }
         }
 

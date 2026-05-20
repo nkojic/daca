@@ -95,7 +95,7 @@ namespace WpfAmsterdam
                     {
                         "CREATE TABLE IF NOT EXISTS PasivniElementi (Id INTEGER PRIMARY KEY AUTOINCREMENT, Tip TEXT NOT NULL, Naziv TEXT NOT NULL DEFAULT '', PosX REAL NOT NULL DEFAULT 0, PosY REAL NOT NULL DEFAULT 0, Sirina REAL NOT NULL DEFAULT 0, Visina REAL NOT NULL DEFAULT 0, Boja TEXT NOT NULL DEFAULT '#E8F4FD')",
                         "CREATE TABLE IF NOT EXISTS Konfiguracija (Kljuc TEXT PRIMARY KEY, Vrednost TEXT NOT NULL)",
-                        "INSERT OR IGNORE INTO Konfiguracija (Kljuc, Vrednost) VALUES ('KoristiKartice', '1')"
+                        "INSERT OR IGNORE INTO Konfiguracija (Kljuc, Vrednost) VALUES ('KoristiKartice', '0')"
                     };
                     foreach (string sql in ensureTables)
                     {

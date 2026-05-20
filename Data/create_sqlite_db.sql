@@ -216,4 +216,4 @@ CREATE TABLE IF NOT EXISTS Konfiguracija (
 );
 
 -- Podrazumevana konfiguracija
-INSERT OR IGNORE INTO Konfiguracija (Kljuc, Vrednost) VALUES ('KoristiKartice', '1');
+INSERT OR IGNORE INTO Konfiguracija (Kljuc, Vrednost) VALUES ('KoristiKartice', '0');
