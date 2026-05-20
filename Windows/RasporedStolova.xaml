@@ -137,6 +137,7 @@
                         <ComboBoxItem Content="Mali"/>
                         <ComboBoxItem Content="Srednji"/>
                         <ComboBoxItem Content="Veliki"/>
+                        <ComboBoxItem Content="Extra veliki"/>
                     </ComboBox>
                     <Button x:Name="btnDodajKvadrat" Style="{StaticResource BtnToolbar}"
                             Content="+ Kvadratni" Margin="0,0,6,0" Click="btnDodajKvadrat_Click">
