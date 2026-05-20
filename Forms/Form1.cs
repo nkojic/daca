@@ -161,6 +161,9 @@ namespace WpfAmsterdam
             this.KategorijaTableAdapter.Fill(this.DsArtikli.Kategorija);
             Label1.Text = Window2.BrojStola + "  " + Window2.KonobarIme;
 
+            // Sakrij stari DataGridView za kategorije
+            KategorijaDataGridView.Visible = false;
+
             // Generiši tastere za kategorije
             foreach (DataRow red in DsArtikli.Kategorija.Rows)
             {

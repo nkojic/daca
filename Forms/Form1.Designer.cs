@@ -373,10 +373,13 @@ namespace WpfAmsterdam
             // btnUpisi
             //
             this.btnUpisi.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
-            this.btnUpisi.BackColor = System.Drawing.SystemColors.Control;
+            this.btnUpisi.BackColor = System.Drawing.Color.FromArgb(41, 128, 185);
             this.btnUpisi.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnUpisi.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            this.btnUpisi.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             this.btnUpisi.ForeColor = System.Drawing.Color.White;
+            this.btnUpisi.Text = "Upiši";
+            this.btnUpisi.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpisi.FlatAppearance.BorderSize = 0;
             this.btnUpisi.Location = new System.Drawing.Point(729, 2);
             this.btnUpisi.Name = "btnUpisi";
             this.btnUpisi.Size = new System.Drawing.Size(90, 62);
