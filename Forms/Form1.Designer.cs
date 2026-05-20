@@ -211,9 +211,8 @@ namespace WpfAmsterdam
             //
             // SplitContainer2
             //
-            this.SplitContainer2.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right);
-            this.SplitContainer2.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right);
-            this.SplitContainer2.Location = new System.Drawing.Point(873, 65);
+            this.SplitContainer2.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
+            this.SplitContainer2.Location = new System.Drawing.Point(723, 65);
             this.SplitContainer2.Name = "SplitContainer2";
             this.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             //
@@ -227,7 +226,7 @@ namespace WpfAmsterdam
             this.SplitContainer2.Panel2.Controls.Add(this.lblSuma);
             this.SplitContainer2.Panel2.Controls.Add(this.DataGridView2);
             this.SplitContainer2.Panel2.Controls.Add(this.rtb1);
-            this.SplitContainer2.Size = new System.Drawing.Size(150, 479);
+            this.SplitContainer2.Size = new System.Drawing.Size(300, 479);
             this.SplitContainer2.SplitterDistance = 120;
             this.SplitContainer2.TabIndex = 0;
             //
