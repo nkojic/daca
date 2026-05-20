@@ -72,6 +72,33 @@ namespace WpfAmsterdam
             }
         }
 
+        private void btnKategorije_Click(object sender, RoutedEventArgs e)
+        {
+            DlgCrudEditor dlg = new DlgCrudEditor("Kategorija",
+                "SELECT IdKat, Kategorija, aktivna FROM Kategorija",
+                new string[] { "IdKat", "Kategorija", "aktivna" },
+                "IdKat", "aktivna");
+            dlg.ShowDialog();
+        }
+
+        private void btnKategorije1_Click(object sender, RoutedEventArgs e)
+        {
+            DlgCrudEditor dlg = new DlgCrudEditor("Kategorija1",
+                "SELECT IdKat1, IdKat, PodKat, aktivna FROM Kategorija1",
+                new string[] { "IdKat1", "IdKat", "PodKat", "aktivna" },
+                "IdKat1", "aktivna");
+            dlg.ShowDialog();
+        }
+
+        private void btnArtikli_Click(object sender, RoutedEventArgs e)
+        {
+            DlgCrudEditor dlg = new DlgCrudEditor("Artikli",
+                "SELECT IdArtikal, IdKat1, broj, Naziv, NazivKasa, Tip, ProdajnaJedMere, Price, Cost, aktivan, daliProdaja FROM Artikli",
+                new string[] { "IdArtikal", "IdKat1", "broj", "Naziv", "NazivKasa", "Tip", "ProdajnaJedMere", "Price", "Cost", "aktivan", "daliProdaja" },
+                "IdArtikal", "aktivan");
+            dlg.ShowDialog();
+        }
+
         private void btnZatvori_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

@@ -1,7 +1,7 @@
 <Window x:Class="WpfAmsterdam.DlgKonfiguracija"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Konfiguracija" Height="400" Width="420"
+    Title="Konfiguracija" Height="520" Width="420"
     WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
     Background="#F5F6F8"
     UseLayoutRounding="True"
@@ -29,6 +29,60 @@
                       HorizontalAlignment="Left" Margin="0,0,0,6"/>
             <TextBlock Text="Promena teme se primenjuje odmah nakon čuvanja."
                        FontSize="11" Foreground="#B2BEC3" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+            <!-- Upravljanje podacima -->
+            <TextBlock Text="Upravljanje podacima:" FontSize="14" FontWeight="SemiBold"
+                       Foreground="#2D3436" Margin="0,8,0,10"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <Button Content="Kategorije" Width="110" Height="34" FontSize="12" FontWeight="SemiBold"
+                        Foreground="White" Cursor="Hand" Click="btnKategorije_Click" Margin="0,0,8,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#74B9FF" Offset="0"/>
+                            <GradientStop Color="#0984E3" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button Content="Podkategorije" Width="120" Height="34" FontSize="12" FontWeight="SemiBold"
+                        Foreground="White" Cursor="Hand" Click="btnKategorije1_Click" Margin="0,0,8,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#A29BFE" Offset="0"/>
+                            <GradientStop Color="#6C5CE7" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button Content="Artikli" Width="90" Height="34" FontSize="12" FontWeight="SemiBold"
+                        Foreground="White" Cursor="Hand" Click="btnArtikli_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FDCB6E" Offset="0"/>
+                            <GradientStop Color="#F0932B" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
                 <Button Content="Sačuvaj" Width="90" Height="36" FontSize="13" FontWeight="SemiBold"
