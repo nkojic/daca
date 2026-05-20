@@ -174,6 +174,7 @@ namespace WpfAmsterdam
             if (e.RowIndex < 0) return;
             int idkat = Convert.ToInt32(((DataRowView)KategorijaBindingSource.Current).Row["IdKat"]);
             DataRow[] redovi = DsArtikli.Kategorija1.Select("IdKat = " + idkat);
+            MessageBox.Show("IdKat=" + idkat + " podkat=" + redovi.Length + " artikli=" + DsArtikli.Artikli.Rows.Count + " kat1=" + DsArtikli.Kategorija1.Rows.Count);
             flPanel1.Controls.Clear();
             foreach (DataRow red in redovi)
             {
