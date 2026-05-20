@@ -127,6 +127,9 @@ namespace WpfAmsterdam
         {
             try
             {
+                int updated = 0;
+                int inserted = 0;
+
                 using (SqliteConnection con = new SqliteConnection(konekcija))
                 {
                     con.Open();
@@ -136,36 +139,63 @@ namespace WpfAmsterdam
 
                     using (SqliteTransaction txn = con.BeginTransaction())
                     {
-                        // Obriši sve i ponovo upiši
-                        using (SqliteCommand cmdDel = new SqliteCommand(
-                            "DELETE FROM " + tableName, con, txn))
-                        {
-                            cmdDel.ExecuteNonQuery();
-                        }
-
                         foreach (DataRow row in dataTable.Rows)
                         {
                             if (row.RowState == DataRowState.Deleted) continue;
+                            if (row.RowState == DataRowState.Unchanged) continue;
 
-                            string cols = string.Join(", ", columns);
-                            string pars = "";
-                            for (int i = 0; i < columns.Length; i++)
+                            if (row.RowState == DataRowState.Added)
                             {
-                                if (i > 0) pars += ", ";
-                                pars += "@p" + i;
-                            }
-
-                            using (SqliteCommand cmd = new SqliteCommand(
-                                "INSERT OR REPLACE INTO " + tableName + " (" + cols + ") VALUES (" + pars + ")",
-                                con, txn))
-                            {
+                                // INSERT novi red
+                                string cols = string.Join(", ", columns);
+                                string parStr = "";
                                 for (int i = 0; i < columns.Length; i++)
                                 {
-                                    object val = row[columns[i]];
-                                    if (val == null || val == DBNull.Value) val = "";
-                                    cmd.Parameters.AddWithValue("@p" + i, val);
+                                    if (i > 0) parStr += ", ";
+                                    parStr += "@p" + i;
                                 }
-                                cmd.ExecuteNonQuery();
+
+                                using (SqliteCommand cmd = new SqliteCommand(
+                                    "INSERT INTO " + tableName + " (" + cols + ") VALUES (" + parStr + ")",
+                                    con, txn))
+                                {
+                                    for (int i = 0; i < columns.Length; i++)
+                                    {
+                                        object val = row[columns[i]];
+                                        if (val == null || val == DBNull.Value) val = "";
+                                        cmd.Parameters.AddWithValue("@p" + i, val);
+                                    }
+                                    cmd.ExecuteNonQuery();
+                                    inserted++;
+                                }
+                            }
+                            else if (row.RowState == DataRowState.Modified)
+                            {
+                                // UPDATE postojeći red
+                                string setClause = "";
+                                for (int i = 0; i < columns.Length; i++)
+                                {
+                                    if (columns[i] == pkColumn) continue;
+                                    if (setClause.Length > 0) setClause += ", ";
+                                    setClause += columns[i] + " = @p" + i;
+                                }
+
+                                using (SqliteCommand cmd = new SqliteCommand(
+                                    "UPDATE " + tableName + " SET " + setClause +
+                                    " WHERE " + pkColumn + " = @pk",
+                                    con, txn))
+                                {
+                                    for (int i = 0; i < columns.Length; i++)
+                                    {
+                                        if (columns[i] == pkColumn) continue;
+                                        object val = row[columns[i]];
+                                        if (val == null || val == DBNull.Value) val = "";
+                                        cmd.Parameters.AddWithValue("@p" + i, val);
+                                    }
+                                    cmd.Parameters.AddWithValue("@pk", row[pkColumn]);
+                                    cmd.ExecuteNonQuery();
+                                    updated++;
+                                }
                             }
                         }
 
@@ -177,7 +207,7 @@ namespace WpfAmsterdam
                 }
 
                 System.Windows.Forms.MessageBox.Show(
-                    "Sačuvano " + dataTable.Rows.Count + " zapisa.",
+                    "Izmenjeno: " + updated + ", Dodato: " + inserted,
                     "Uspeh", System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Information);
 
