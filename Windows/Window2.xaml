@@ -158,12 +158,12 @@
                             </Button.Background>
                         </Button>
                         <!-- exp -->
-                        <Button Name="exp" Style="{StaticResource BtnControl}"
+                        <Button Name="exp" Style="{StaticResource BtnSecondary}"
                                 Width="60" Height="40" Content="exp" Margin="0,0,10,0">
                             <Button.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#81ECEC" Offset="0"/>
-                                    <GradientStop Color="#00CEC9" Offset="1"/>
+                                    <GradientStop Color="#F0F2F5" Offset="0"/>
+                                    <GradientStop Color="#DFE6E9" Offset="1"/>
                                 </LinearGradientBrush>
                             </Button.Background>
                         </Button>

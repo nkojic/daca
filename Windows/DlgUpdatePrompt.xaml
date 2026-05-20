@@ -1,7 +1,7 @@
 <Window x:Class="WpfAmsterdam.DlgUpdatePrompt"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Ažuriranje dostupno" Height="180" Width="380"
+    Title="Ažuriranje dostupno" Height="220" Width="380"
     WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
     WindowStyle="SingleBorderWindow"
     Background="#F5F6F8">
