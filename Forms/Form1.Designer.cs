@@ -254,7 +254,7 @@ namespace WpfAmsterdam
             this.lblSuma.ForeColor = System.Drawing.Color.Black;
             this.lblSuma.Location = new System.Drawing.Point(0, 276);
             this.lblSuma.Name = "lblSuma";
-            this.lblSuma.Size = new System.Drawing.Size(22, 36);
+            this.lblSuma.Size = new System.Drawing.Size(300, 36);
             this.lblSuma.TabIndex = 13;
             this.lblSuma.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
@@ -280,7 +280,7 @@ namespace WpfAmsterdam
             this.rtb1.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right);
             this.rtb1.Location = new System.Drawing.Point(0, 315);
             this.rtb1.Name = "rtb1";
-            this.rtb1.Size = new System.Drawing.Size(22, 35);
+            this.rtb1.Size = new System.Drawing.Size(300, 35);
             this.rtb1.TabIndex = 16;
             this.rtb1.Text = "";
             //
