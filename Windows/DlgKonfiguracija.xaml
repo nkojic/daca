@@ -67,7 +67,7 @@
                     </Button.Background>
                 </Button>
                 <Button Content="Artikli" Width="90" Height="34" FontSize="12" FontWeight="SemiBold"
-                        Foreground="White" Cursor="Hand" Click="btnArtikli_Click">
+                        Foreground="White" Cursor="Hand" Click="btnArtikli_Click" Margin="0,0,8,0">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
@@ -79,6 +79,22 @@
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#FDCB6E" Offset="0"/>
                             <GradientStop Color="#F0932B" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button Content="Konobari" Width="90" Height="34" FontSize="12" FontWeight="SemiBold"
+                        Foreground="White" Cursor="Hand" Click="btnKonobari_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#00CEC9" Offset="0"/>
+                            <GradientStop Color="#00B894" Offset="1"/>
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>

@@ -99,6 +99,15 @@ namespace WpfAmsterdam
             dlg.ShowDialog();
         }
 
+        private void btnKonobari_Click(object sender, RoutedEventArgs e)
+        {
+            DlgCrudEditor dlg = new DlgCrudEditor("Konobari",
+                "SELECT IdKonobar, Ime, Kod, BrojKartice, aktivan FROM Konobari",
+                new string[] { "IdKonobar", "Ime", "Kod", "BrojKartice", "aktivan" },
+                "IdKonobar", "aktivan");
+            dlg.ShowDialog();
+        }
+
         private void btnZatvori_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
