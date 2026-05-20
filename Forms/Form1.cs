@@ -172,8 +172,8 @@ namespace WpfAmsterdam
                 Button btn = new Button();
                 btn.Name = red["IdKat"].ToString();
                 btn.Text = red["Kategorija"].ToString();
-                btn.Width = 126;
-                btn.Height = 55;
+                btn.Width = 84;
+                btn.Height = 50;
                 btn.Font = new Font("Segoe UI", 11, FontStyle.Bold);
                 btn.BackColor = ThemeManager.WfAccent;
                 btn.ForeColor = Color.White;

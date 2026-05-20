@@ -227,7 +227,7 @@ namespace WpfAmsterdam
             this.SplitContainer2.Panel2.Controls.Add(this.lblSuma);
             this.SplitContainer2.Panel2.Controls.Add(this.DataGridView2);
             this.SplitContainer2.Panel2.Controls.Add(this.rtb1);
-            this.SplitContainer2.Size = new System.Drawing.Size(320, 479);
+            this.SplitContainer2.Size = new System.Drawing.Size(400, 479);
             this.SplitContainer2.SplitterDistance = 120;
             this.SplitContainer2.TabIndex = 0;
             //
@@ -352,7 +352,7 @@ namespace WpfAmsterdam
             this.flPanel2.AutoScroll = true;
             this.flPanel2.BackColor = System.Drawing.Color.Transparent;
             this.flPanel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.flPanel2.Location = new System.Drawing.Point(427, 67);
+            this.flPanel2.Location = new System.Drawing.Point(390, 67);
             this.flPanel2.Name = "flPanel2";
             this.flPanel2.Size = new System.Drawing.Size(478, 477);
             this.flPanel2.TabIndex = 15;
@@ -526,7 +526,7 @@ namespace WpfAmsterdam
             this.flPanel1.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
             this.flPanel1.BackColor = System.Drawing.Color.Transparent;
             this.flPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.flPanel1.Location = new System.Drawing.Point(138, 65);
+            this.flPanel1.Location = new System.Drawing.Point(96, 65);
             this.flPanel1.Name = "flPanel1";
             this.flPanel1.Size = new System.Drawing.Size(295, 234);
             this.flPanel1.TabIndex = 4;
@@ -667,7 +667,7 @@ namespace WpfAmsterdam
             this.flPanelKategorije = new System.Windows.Forms.FlowLayoutPanel();
             this.flPanelKategorije.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
             this.flPanelKategorije.Location = new System.Drawing.Point(2, 8);
-            this.flPanelKategorije.Size = new System.Drawing.Size(132, 570);
+            this.flPanelKategorije.Size = new System.Drawing.Size(90, 570);
             this.flPanelKategorije.AutoScroll = true;
             this.flPanelKategorije.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.flPanelKategorije);
