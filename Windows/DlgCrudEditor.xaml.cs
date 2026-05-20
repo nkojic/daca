@@ -66,10 +66,21 @@ namespace WpfAmsterdam
         {
             DataRow newRow = dataTable.NewRow();
 
+            // Izračunaj sledeći ID za PK kolonu
+            int maxId = 0;
+            foreach (DataRow row in dataTable.Rows)
+            {
+                if (row.RowState == DataRowState.Deleted) continue;
+                int id = Convert.ToInt32(row[pkColumn]);
+                if (id > maxId) maxId = id;
+            }
+
             // Postavi default vrednosti
             foreach (DataColumn col in dataTable.Columns)
             {
-                if (col.DataType == typeof(string))
+                if (col.ColumnName == pkColumn)
+                    newRow[col] = maxId + 1;
+                else if (col.DataType == typeof(string))
                     newRow[col] = "";
                 else if (col.DataType == typeof(int) || col.DataType == typeof(long))
                     newRow[col] = 0;
@@ -85,6 +96,7 @@ namespace WpfAmsterdam
 
             dataTable.Rows.Add(newRow);
             dataGrid.ScrollIntoView(dataGrid.Items[dataGrid.Items.Count - 1]);
+            dataGrid.SelectedItem = dataGrid.Items[dataGrid.Items.Count - 1];
             txtCount.Text = dataTable.Rows.Count + " zapisa";
         }
 
@@ -140,7 +152,7 @@ namespace WpfAmsterdam
                             }
 
                             using (SqliteCommand cmd = new SqliteCommand(
-                                "INSERT INTO " + tableName + " (" + cols + ") VALUES (" + pars + ")",
+                                "INSERT OR REPLACE INTO " + tableName + " (" + cols + ") VALUES (" + pars + ")",
                                 con, txn))
                             {
                                 for (int i = 0; i < columns.Length; i++)
