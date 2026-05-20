@@ -148,7 +148,9 @@ namespace WpfAmsterdam
             daPrebacivanje = new KonobStoloviStavkeTableAdapter();
             daPrebacivanje.ConnectionString = Window2.konekcija;
             DataGridView1.AutoGenerateColumns = false;
+            DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DataGridView2.AutoGenerateColumns = false;
+            DataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void Form1_Load(object sender, EventArgs e)
