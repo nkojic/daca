@@ -303,10 +303,13 @@ namespace WpfAmsterdam
             this.KategorijaDataGridView.RowHeadersVisible = false;
             this.KategorijaDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.SaddleBrown;
             this.KategorijaDataGridView.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            this.KategorijaDataGridView.RowTemplate.Height = 80;
+            this.KategorijaDataGridView.RowTemplate.Height = 70;
+            this.KategorijaDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.KategorijaDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
+            this.KategorijaDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.KategorijaDataGridView.RowTemplate.ReadOnly = true;
             this.KategorijaDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.KategorijaDataGridView.Size = new System.Drawing.Size(97, 536);
+            this.KategorijaDataGridView.Size = new System.Drawing.Size(130, 536);
             this.KategorijaDataGridView.TabIndex = 0;
             this.KategorijaDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.KategorijaDataGridView_CellContentClick);
             //
@@ -322,7 +325,8 @@ namespace WpfAmsterdam
             this.btnKat.Name = "btnKat";
             this.btnKat.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.btnKat.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.btnKat.Width = 93;
+            this.btnKat.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.btnKat.Width = 126;
             //
             // KategorijaBindingSource
             //
@@ -347,7 +351,7 @@ namespace WpfAmsterdam
             this.flPanel2.AutoScroll = true;
             this.flPanel2.BackColor = System.Drawing.Color.Transparent;
             this.flPanel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.flPanel2.Location = new System.Drawing.Point(394, 67);
+            this.flPanel2.Location = new System.Drawing.Point(427, 67);
             this.flPanel2.Name = "flPanel2";
             this.flPanel2.Size = new System.Drawing.Size(478, 477);
             this.flPanel2.TabIndex = 15;
@@ -518,7 +522,7 @@ namespace WpfAmsterdam
             this.flPanel1.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left);
             this.flPanel1.BackColor = System.Drawing.Color.Transparent;
             this.flPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.flPanel1.Location = new System.Drawing.Point(105, 65);
+            this.flPanel1.Location = new System.Drawing.Point(138, 65);
             this.flPanel1.Name = "flPanel1";
             this.flPanel1.Size = new System.Drawing.Size(295, 234);
             this.flPanel1.TabIndex = 4;
