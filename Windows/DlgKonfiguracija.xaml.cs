@@ -102,9 +102,36 @@ namespace WpfAmsterdam
         private void btnKonobari_Click(object sender, RoutedEventArgs e)
         {
             DlgCrudEditor dlg = new DlgCrudEditor("Konobari",
-                "SELECT IdKonobar, Ime, Kod, BrojKartice, aktivan FROM Konobari",
-                new string[] { "IdKonobar", "Ime", "Kod", "BrojKartice", "aktivan" },
-                "IdKonobar", "aktivan");
+                "SELECT IdKonobar, Ime, Kod, aktivan FROM Konobari",
+                new string[] { "IdKonobar", "Ime", "Kod", "aktivan" },
+                "IdKonobar", "aktivan",
+                (dataTable, con, txn) =>
+                {
+                    // Sinhronizuj KonobariKodoviKartica sa Kod kolonom
+                    foreach (System.Data.DataRow row in dataTable.Rows)
+                    {
+                        if (row.RowState == System.Data.DataRowState.Deleted) continue;
+                        int id = Convert.ToInt32(row["IdKonobar"]);
+                        string kod = row["Kod"].ToString();
+
+                        // Ažuriraj BrojKartice u Konobari da pokazuje na IdKonobar
+                        using (var cmd = new Microsoft.Data.Sqlite.SqliteCommand(
+                            "UPDATE Konobari SET BrojKartice = @id WHERE IdKonobar = @id", con, txn))
+                        {
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // Upsert u KonobariKodoviKartica
+                        using (var cmd = new Microsoft.Data.Sqlite.SqliteCommand(
+                            "INSERT OR REPLACE INTO KonobariKodoviKartica (IdKod, Kod) VALUES (@id, @kod)", con, txn))
+                        {
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.Parameters.AddWithValue("@kod", kod);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                });
             dlg.ShowDialog();
         }
 

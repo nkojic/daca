@@ -15,9 +15,11 @@ namespace WpfAmsterdam
         private string pkColumn;
         private string activeColumn;
         private DataTable dataTable;
+        private Action<DataTable, SqliteConnection, SqliteTransaction> customSave;
 
         public DlgCrudEditor(string tableName, string selectQuery,
-            string[] columns, string pkColumn, string activeColumn)
+            string[] columns, string pkColumn, string activeColumn,
+            Action<DataTable, SqliteConnection, SqliteTransaction> customSave = null)
         {
             InitializeComponent();
             this.tableName = tableName;
@@ -25,6 +27,7 @@ namespace WpfAmsterdam
             this.columns = columns;
             this.pkColumn = pkColumn;
             this.activeColumn = activeColumn;
+            this.customSave = customSave;
             this.Title = "Editor - " + tableName;
             txtTitle.Text = tableName;
             LoadData();
@@ -207,6 +210,10 @@ namespace WpfAmsterdam
                                 }
                             }
                         }
+
+                        // Custom save logika (npr. za konobari kartice)
+                        if (customSave != null)
+                            customSave(dataTable, con, txn);
 
                         txn.Commit();
                     }
