@@ -211,8 +211,8 @@ namespace WpfAmsterdam
             //
             // SplitContainer2
             //
-            this.SplitContainer2.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
-            this.SplitContainer2.Location = new System.Drawing.Point(723, 65);
+            this.SplitContainer2.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right);
+            this.SplitContainer2.Location = new System.Drawing.Point(873, 65);
             this.SplitContainer2.Name = "SplitContainer2";
             this.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             //
@@ -226,7 +226,7 @@ namespace WpfAmsterdam
             this.SplitContainer2.Panel2.Controls.Add(this.lblSuma);
             this.SplitContainer2.Panel2.Controls.Add(this.DataGridView2);
             this.SplitContainer2.Panel2.Controls.Add(this.rtb1);
-            this.SplitContainer2.Size = new System.Drawing.Size(300, 479);
+            this.SplitContainer2.Size = new System.Drawing.Size(150, 479);
             this.SplitContainer2.SplitterDistance = 120;
             this.SplitContainer2.TabIndex = 0;
             //
@@ -253,7 +253,7 @@ namespace WpfAmsterdam
             this.lblSuma.ForeColor = System.Drawing.Color.Black;
             this.lblSuma.Location = new System.Drawing.Point(0, 276);
             this.lblSuma.Name = "lblSuma";
-            this.lblSuma.Size = new System.Drawing.Size(300, 36);
+            this.lblSuma.Size = new System.Drawing.Size(22, 36);
             this.lblSuma.TabIndex = 13;
             this.lblSuma.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
@@ -279,7 +279,7 @@ namespace WpfAmsterdam
             this.rtb1.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right);
             this.rtb1.Location = new System.Drawing.Point(0, 315);
             this.rtb1.Name = "rtb1";
-            this.rtb1.Size = new System.Drawing.Size(300, 35);
+            this.rtb1.Size = new System.Drawing.Size(22, 35);
             this.rtb1.TabIndex = 16;
             this.rtb1.Text = "";
             //
@@ -679,7 +679,7 @@ namespace WpfAmsterdam
             this.MinimizeBox = false;
             this.Name = "Form1";
             this.Text = "Naručivanje";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView1)).EndInit();
