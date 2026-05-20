@@ -162,8 +162,8 @@
                                 Width="60" Height="40" Content="exp" Margin="0,0,10,0">
                             <Button.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#74B9FF" Offset="0"/>
-                                    <GradientStop Color="#0984E3" Offset="1"/>
+                                    <GradientStop Color="#55EFC4" Offset="0"/>
+                                    <GradientStop Color="#00B894" Offset="1"/>
                                 </LinearGradientBrush>
                             </Button.Background>
                         </Button>
