@@ -1,0 +1,22 @@
+<Window x:Class="WpfAmsterdam.DlgUpdateProgress"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Ažuriranje" Height="180" Width="380"
+    WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+    WindowStyle="ToolWindow"
+    Background="#F5F6F8">
+    <StackPanel Margin="24" VerticalAlignment="Center">
+        <TextBlock x:Name="txtStatus" Text="Preuzimanje ažuriranja..."
+                   FontSize="14" FontWeight="SemiBold" Foreground="#2D3436" Margin="0,0,0,12"/>
+        <ProgressBar x:Name="progressBar" Height="18" IsIndeterminate="True">
+            <ProgressBar.Foreground>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#55EFC4" Offset="0"/>
+                    <GradientStop Color="#00B894" Offset="1"/>
+                </LinearGradientBrush>
+            </ProgressBar.Foreground>
+        </ProgressBar>
+        <TextBlock Text="Aplikacija će se ponovo pokrenuti kada se završi."
+                   FontSize="11" Foreground="#B2BEC3" Margin="0,10,0,0"/>
+    </StackPanel>
+</Window>

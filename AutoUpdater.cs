@@ -32,10 +32,6 @@ namespace WpfAmsterdam
 
                     if (IsNewerVersion(latestVersion, AppVersion.Current))
                     {
-                        string body = "";
-                        if (root.TryGetProperty("body", out JsonElement bodyEl))
-                            body = bodyEl.GetString() ?? "";
-
                         // Pronađi zip asset
                         string downloadUrl = null;
                         if (root.TryGetProperty("assets", out JsonElement assets))
@@ -53,16 +49,13 @@ namespace WpfAmsterdam
 
                         if (downloadUrl == null) return;
 
-                        MessageBoxResult result = MessageBox.Show(
+                        DlgUpdatePrompt prompt = new DlgUpdatePrompt(
                             "Nova verzija " + latestVersion + " je dostupna!\n\n" +
-                            body + "\n\n" +
                             "Trenutna verzija: " + AppVersion.Current + "\n" +
-                            "Da li želite da ažurirate?",
-                            "Ažuriranje dostupno",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Information);
+                            "Da li želite da ažurirate?");
+                        prompt.ShowDialog();
 
-                        if (result == MessageBoxResult.Yes)
+                        if (prompt.Accepted)
                         {
                             await DownloadAndInstall(downloadUrl, latestVersion);
                         }
@@ -91,18 +84,21 @@ namespace WpfAmsterdam
 
         private static async Task DownloadAndInstall(string url, string version)
         {
+            DlgUpdateProgress progressDlg = null;
             try
             {
                 string appDir = AppDomain.CurrentDomain.BaseDirectory;
                 string tempZip = Path.Combine(Path.GetTempPath(), "WpfAmsterdam_update.zip");
                 string tempExtract = Path.Combine(Path.GetTempPath(), "WpfAmsterdam_update");
 
-                // Download
-                MessageBox.Show("Preuzimanje ažuriranja...\nMolimo sačekajte.",
-                    "Ažuriranje", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Prikaži progress dijalog
+                progressDlg = new DlgUpdateProgress();
+                progressDlg.Show();
 
                 byte[] data = await client.GetByteArrayAsync(url);
                 File.WriteAllBytes(tempZip, data);
+
+                progressDlg.SetStatus("Raspakivanje ažuriranja...");
 
                 // Očisti temp folder
                 if (Directory.Exists(tempExtract))
@@ -131,6 +127,10 @@ namespace WpfAmsterdam
 
                 File.WriteAllText(batchPath, batch);
 
+                // Zatvori progress dijalog
+                progressDlg.Close();
+                progressDlg = null;
+
                 // Pokreni batch i zatvori app
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
@@ -146,6 +146,7 @@ namespace WpfAmsterdam
             }
             catch (Exception ex)
             {
+                progressDlg?.Close();
                 MessageBox.Show("Greška pri ažuriranju: " + ex.Message,
                     "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
             }

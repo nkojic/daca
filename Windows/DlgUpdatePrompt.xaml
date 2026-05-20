@@ -1,0 +1,50 @@
+<Window x:Class="WpfAmsterdam.DlgUpdatePrompt"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Ažuriranje dostupno" Height="180" Width="380"
+    WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+    WindowStyle="SingleBorderWindow"
+    Background="#F5F6F8">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="txtMessage" Grid.Row="0" FontSize="13" Foreground="#2D3436"
+                   TextWrapping="Wrap" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Da" Width="80" Height="32" FontSize="13" FontWeight="SemiBold"
+                    Foreground="White" Cursor="Hand" Click="btnDa_Click" Margin="0,0,10,0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="8,4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#55EFC4" Offset="0"/>
+                        <GradientStop Color="#00B894" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Content="Ne" Width="80" Height="32" FontSize="13" FontWeight="SemiBold"
+                    Foreground="#636E72" Cursor="Hand" Click="btnNe_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="8,4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#F0F2F5" Offset="0"/>
+                        <GradientStop Color="#DFE6E9" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

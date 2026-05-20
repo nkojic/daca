@@ -168,12 +168,12 @@
                             </Button.Background>
                         </Button>
                         <!-- Zaposleni -->
-                        <Button Name="staf" Style="{StaticResource BtnSecondary}"
+                        <Button Name="staf" Style="{StaticResource BtnControl}"
                                 Width="95" Height="40" Content="Zaposleni" Margin="0,0,10,0">
                             <Button.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#F0F2F5" Offset="0"/>
-                                    <GradientStop Color="#DFE6E9" Offset="1"/>
+                                    <GradientStop Color="#FD79A8" Offset="0"/>
+                                    <GradientStop Color="#E84393" Offset="1"/>
                                 </LinearGradientBrush>
                             </Button.Background>
                         </Button>
