@@ -251,6 +251,7 @@ namespace WpfAmsterdam
             {
                 case "srednji": return 1.5;
                 case "veliki": return 2.0;
+                case "extra veliki": return 3.0;
                 default: return 1.0;
             }
         }
