@@ -1,0 +1,58 @@
+<Window x:Class="WpfAmsterdam.DlgEnergyStar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="EnergyStar" Height="500" Width="700"
+    WindowStartupLocation="CenterScreen"
+    Background="#F5F6F8"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Padding="16,12" BorderThickness="0,0,0,1" BorderBrush="#E8ECF1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#2C2B4A" Offset="0"/>
+                    <GradientStop Color="#3E3D5E" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <TextBlock Text="EnergyStar" FontSize="18" FontWeight="Bold"
+                       Foreground="White" VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- Sadrzaj -->
+        <Grid Grid.Row="1" Margin="16" x:Name="gridContent">
+        </Grid>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Padding="12,10" Background="#FAFBFC"
+                BorderThickness="0,1,0,0" BorderBrush="#E8ECF1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Zatvori" Width="90" Height="34" FontSize="13" FontWeight="SemiBold"
+                        Foreground="#636E72" Cursor="Hand" Click="btnZatvori_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#F0F2F5" Offset="0"/>
+                            <GradientStop Color="#DFE6E9" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

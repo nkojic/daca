@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,10 +17,13 @@ namespace WpfAmsterdam
         private string activeColumn;
         private DataTable dataTable;
         private Action<DataTable, SqliteConnection, SqliteTransaction> customSave;
+        private Dictionary<string, (string sql, string valueMember, string displayMember)> lookups;
+        private Dictionary<string, DataTable> lookupTables = new Dictionary<string, DataTable>();
 
         public DlgCrudEditor(string tableName, string selectQuery,
             string[] columns, string pkColumn, string activeColumn,
-            Action<DataTable, SqliteConnection, SqliteTransaction> customSave = null)
+            Action<DataTable, SqliteConnection, SqliteTransaction> customSave = null,
+            Dictionary<string, (string sql, string valueMember, string displayMember)> lookups = null)
         {
             InitializeComponent();
             this.tableName = tableName;
@@ -28,9 +32,23 @@ namespace WpfAmsterdam
             this.pkColumn = pkColumn;
             this.activeColumn = activeColumn;
             this.customSave = customSave;
+            this.lookups = lookups ?? new Dictionary<string, (string, string, string)>();
             this.Title = "Editor - " + tableName;
             txtTitle.Text = tableName;
+            LoadLookups();
             LoadData();
+        }
+
+        private void LoadLookups()
+        {
+            foreach (var kv in lookups)
+            {
+                try
+                {
+                    lookupTables[kv.Key] = DatabaseHelper.ReaderTabela(konekcija, kv.Value.sql);
+                }
+                catch { }
+            }
         }
 
         private void LoadData()
@@ -49,25 +67,43 @@ namespace WpfAmsterdam
             dataGrid.Columns.Clear();
             foreach (string col in columns)
             {
-                DataGridTextColumn dgCol = new DataGridTextColumn();
-                dgCol.Header = col;
-                dgCol.Binding = new System.Windows.Data.Binding(col);
+                if (lookupTables.ContainsKey(col))
+                {
+                    var info = lookups[col];
+                    var lt = lookupTables[col];
 
-                if (col == pkColumn)
-                {
-                    dgCol.IsReadOnly = true;
-                    dgCol.Width = 60;
-                }
-                else if (col == activeColumn)
-                {
-                    dgCol.Width = 60;
+                    DataGridComboBoxColumn cbCol = new DataGridComboBoxColumn();
+                    cbCol.Header = info.displayMember;
+                    cbCol.ItemsSource = lt.DefaultView;
+                    cbCol.SelectedValueBinding = new System.Windows.Data.Binding(col);
+                    cbCol.SelectedValuePath = info.valueMember;
+                    cbCol.DisplayMemberPath = info.displayMember;
+                    cbCol.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+
+                    dataGrid.Columns.Add(cbCol);
                 }
                 else
                 {
-                    dgCol.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-                }
+                    DataGridTextColumn dgCol = new DataGridTextColumn();
+                    dgCol.Header = col;
+                    dgCol.Binding = new System.Windows.Data.Binding(col);
 
-                dataGrid.Columns.Add(dgCol);
+                    if (col == pkColumn)
+                    {
+                        dgCol.IsReadOnly = true;
+                        dgCol.Width = 60;
+                    }
+                    else if (col == activeColumn)
+                    {
+                        dgCol.Width = 60;
+                    }
+                    else
+                    {
+                        dgCol.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+                    }
+
+                    dataGrid.Columns.Add(dgCol);
+                }
             }
 
             dataGrid.ItemsSource = dataTable.DefaultView;

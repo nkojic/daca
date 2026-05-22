@@ -137,6 +137,26 @@
                 </Button>
             </StackPanel>
 
+            <!-- EnergyStar -->
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                <Button Content="EnergyStar" Width="120" Height="34" FontSize="12" FontWeight="SemiBold"
+                        Foreground="White" Cursor="Hand" Click="btnEnergyStar_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="8,4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#00B894" Offset="0"/>
+                            <GradientStop Color="#00796B" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+
             </StackPanel>
         </DockPanel>
     </Border>

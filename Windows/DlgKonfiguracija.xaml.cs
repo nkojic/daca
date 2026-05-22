@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Data.Sqlite;
 
@@ -83,19 +84,27 @@ namespace WpfAmsterdam
 
         private void btnKategorije1_Click(object sender, RoutedEventArgs e)
         {
+            var lookups = new Dictionary<string, (string sql, string valueMember, string displayMember)>
+            {
+                { "IdKat", ("SELECT IdKat, Kategorija FROM Kategorija ORDER BY Kategorija", "IdKat", "Kategorija") }
+            };
             DlgCrudEditor dlg = new DlgCrudEditor("Kategorija1",
                 "SELECT IdKat1, IdKat, PodKat, aktivna FROM Kategorija1",
                 new string[] { "IdKat1", "IdKat", "PodKat", "aktivna" },
-                "IdKat1", "aktivna");
+                "IdKat1", "aktivna", lookups: lookups);
             dlg.ShowDialog();
         }
 
         private void btnArtikli_Click(object sender, RoutedEventArgs e)
         {
+            var lookups = new Dictionary<string, (string sql, string valueMember, string displayMember)>
+            {
+                { "IdKat1", ("SELECT IdKat1, PodKat FROM Kategorija1 ORDER BY PodKat", "IdKat1", "PodKat") }
+            };
             DlgCrudEditor dlg = new DlgCrudEditor("Artikli",
                 "SELECT IdArtikal, IdKat1, broj, Naziv, NazivKasa, Tip, ProdajnaJedMere, Price, Cost, aktivan, daliProdaja FROM Artikli",
                 new string[] { "IdArtikal", "IdKat1", "broj", "Naziv", "NazivKasa", "Tip", "ProdajnaJedMere", "Price", "Cost", "aktivan", "daliProdaja" },
-                "IdArtikal", "aktivan");
+                "IdArtikal", "aktivan", lookups: lookups);
             dlg.ShowDialog();
         }
 
@@ -132,6 +141,12 @@ namespace WpfAmsterdam
                         }
                     }
                 });
+            dlg.ShowDialog();
+        }
+
+        private void btnEnergyStar_Click(object sender, RoutedEventArgs e)
+        {
+            DlgEnergyStar dlg = new DlgEnergyStar();
             dlg.ShowDialog();
         }
 
