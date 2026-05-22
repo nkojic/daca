@@ -307,6 +307,7 @@
                     </DrawingBrush>
                 </Border.Background>
                 <Canvas x:Name="canvasStolovi" ClipToBounds="True"
+                        Background="Transparent"
                         MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
                         MouseMove="Canvas_MouseMove"
                         MouseLeftButtonUp="Canvas_MouseLeftButtonUp">
