@@ -66,6 +66,9 @@ namespace WpfAmsterdam
             tblOtvoreniStolovi = DatabaseHelper.ReaderTabela(konekcija, "SELECT * FROM KonobariStolovi");
             BojenjeStolova();
 
+            // Proveri da li je prethodni update uspeo
+            AutoUpdater.CheckUpdateResult();
+
             // Proveri ažuriranja u pozadini
             _ = AutoUpdater.CheckForUpdatesAsync();
 

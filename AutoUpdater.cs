@@ -19,6 +19,28 @@ namespace WpfAmsterdam
             client.DefaultRequestHeaders.Add("User-Agent", "WpfAmsterdam-Updater");
         }
 
+        public static void CheckUpdateResult()
+        {
+            try
+            {
+                string markerPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update_pending.txt");
+                if (File.Exists(markerPath))
+                {
+                    string expectedVersion = File.ReadAllText(markerPath).Trim();
+                    if (AppVersion.Current != expectedVersion)
+                    {
+                        MessageBox.Show(
+                            "Ažuriranje na verziju " + expectedVersion + " nije uspelo.\n" +
+                            "Trenutna verzija je još uvek " + AppVersion.Current + ".\n\n" +
+                            "Preuzmite novu verziju ručno sa GitHub-a.",
+                            "Ažuriranje neuspešno", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    File.Delete(markerPath);
+                }
+            }
+            catch { }
+        }
+
         public static async Task CheckForUpdatesAsync()
         {
             try
@@ -117,13 +139,25 @@ namespace WpfAmsterdam
                 string batchPath = Path.Combine(Path.GetTempPath(), "update_wpfamsterdam.bat");
                 string logPath = Path.Combine(Path.GetTempPath(), "wpfamsterdam_update.log");
                 string exePath = Path.Combine(appDir, "WpfAmsterdam.exe");
+                string markerPath = Path.Combine(appDir, "update_pending.txt");
                 int currentPid = Process.GetCurrentProcess().Id;
+
+                // Zapiši marker fajl sa očekivanom novom verzijom
+                File.WriteAllText(markerPath, version);
+
                 string batch = "@echo off\r\n" +
+                    "chcp 65001 >nul 2>&1\r\n" +
+                    "title WpfAmsterdam - Azuriranje\r\n" +
                     "set LOGFILE=\"" + logPath + "\"\r\n" +
                     "echo === Update started %DATE% %TIME% > %LOGFILE%\r\n" +
                     "echo Source: \"" + sourceDir + "\" >> %LOGFILE%\r\n" +
                     "echo Dest:   \"" + appDir + "\" >> %LOGFILE%\r\n" +
                     "echo PID:    " + currentPid + " >> %LOGFILE%\r\n" +
+                    "echo.\r\n" +
+                    "echo ============================================\r\n" +
+                    "echo   Azuriranje u toku... Ne zatvarajte prozor!\r\n" +
+                    "echo ============================================\r\n" +
+                    "echo.\r\n" +
                     "\r\n" +
                     "echo Cekanje da se proces " + currentPid + " zatvori... >> %LOGFILE%\r\n" +
                     ":WAIT_LOOP\r\n" +
@@ -133,6 +167,9 @@ namespace WpfAmsterdam
                     "    goto WAIT_LOOP\r\n" +
                     ")\r\n" +
                     "echo Proces zatvoren %TIME% >> %LOGFILE%\r\n" +
+                    "\r\n" +
+                    "echo Zaustavljanje svih instanci WpfAmsterdam... >> %LOGFILE%\r\n" +
+                    "taskkill /F /IM WpfAmsterdam.exe >nul 2>&1\r\n" +
                     "timeout /t 3 /nobreak >nul\r\n" +
                     "\r\n" +
                     "echo Pokretanje robocopy... >> %LOGFILE%\r\n" +
@@ -142,12 +179,17 @@ namespace WpfAmsterdam
                     "\r\n" +
                     "if %RC% GEQ 8 (\r\n" +
                     "    echo GRESKA pri kopiranju! Exit code: %RC% >> %LOGFILE%\r\n" +
+                    "    echo.\r\n" +
                     "    echo GRESKA pri azuriranju! Pogledaj log: " + logPath + "\r\n" +
+                    "    echo.\r\n" +
                     "    pause\r\n" +
                     "    exit /b 1\r\n" +
                     ")\r\n" +
                     "\r\n" +
                     "echo Azuriranje zavrseno uspesno %TIME% >> %LOGFILE%\r\n" +
+                    "echo.\r\n" +
+                    "echo Azuriranje zavrseno! Pokretanje aplikacije...\r\n" +
+                    "del \"" + markerPath + "\" 2>nul\r\n" +
                     "start \"\" \"" + exePath + "\"\r\n" +
                     "del \"" + tempZip + "\" 2>nul\r\n" +
                     "rmdir /S /Q \"" + tempExtract + "\" 2>nul\r\n" +
