@@ -19,23 +19,31 @@ namespace WpfAmsterdam
             client.DefaultRequestHeaders.Add("User-Agent", "WpfAmsterdam-Updater");
         }
 
-        public static void CheckUpdateResult()
+        /// <summary>
+        /// Na startupu: obriši .old fajlove od prethodnog update-a
+        /// </summary>
+        public static void CleanupAfterUpdate()
         {
             try
             {
-                string markerPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update_pending.txt");
-                if (File.Exists(markerPath))
+                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string[] oldFiles = Directory.GetFiles(appDir, "*.old", SearchOption.AllDirectories);
+                foreach (string f in oldFiles)
                 {
-                    string expectedVersion = File.ReadAllText(markerPath).Trim();
-                    if (AppVersion.Current != expectedVersion)
-                    {
-                        MessageBox.Show(
-                            "Ažuriranje na verziju " + expectedVersion + " nije uspelo.\n" +
-                            "Trenutna verzija je još uvek " + AppVersion.Current + ".\n\n" +
-                            "Preuzmite novu verziju ručno sa GitHub-a.",
-                            "Ažuriranje neuspešno", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                    File.Delete(markerPath);
+                    try { File.Delete(f); } catch { }
+                }
+
+                // Obriši update temp folder ako postoji
+                string tempExtract = Path.Combine(Path.GetTempPath(), "WpfAmsterdam_update");
+                if (Directory.Exists(tempExtract))
+                {
+                    try { Directory.Delete(tempExtract, true); } catch { }
+                }
+
+                string tempZip = Path.Combine(Path.GetTempPath(), "WpfAmsterdam_update.zip");
+                if (File.Exists(tempZip))
+                {
+                    try { File.Delete(tempZip); } catch { }
                 }
             }
             catch { }
@@ -117,6 +125,7 @@ namespace WpfAmsterdam
                 progressDlg = new DlgUpdateProgress();
                 progressDlg.Show();
 
+                progressDlg.SetStatus("Preuzimanje ažuriranja...");
                 byte[] data = await client.GetByteArrayAsync(url);
                 File.WriteAllBytes(tempZip, data);
 
@@ -135,90 +144,100 @@ namespace WpfAmsterdam
                 if (exeFiles.Length > 0)
                     sourceDir = Path.GetDirectoryName(exeFiles[0]);
 
-                // Napravi batch skriptu za zamenu fajlova posle zatvaranja app
-                string batchPath = Path.Combine(Path.GetTempPath(), "update_wpfamsterdam.bat");
+                progressDlg.SetStatus("Zamena fajlova...");
+
+                // Zameni fajlove direktno - rename zaključanih, pa kopiraj nove
+                int replaced = 0;
+                int failed = 0;
                 string logPath = Path.Combine(Path.GetTempPath(), "wpfamsterdam_update.log");
-                string exePath = Path.Combine(appDir, "WpfAmsterdam.exe");
-                string markerPath = Path.Combine(appDir, "update_pending.txt");
-                int currentPid = Process.GetCurrentProcess().Id;
+                using (var log = new StreamWriter(logPath, false))
+                {
+                    log.WriteLine("=== Update started " + DateTime.Now + " ===");
+                    log.WriteLine("Source: " + sourceDir);
+                    log.WriteLine("Dest:   " + appDir);
+                    log.WriteLine("Version: " + AppVersion.Current + " -> " + version);
+                    log.WriteLine();
 
-                // Zapiši marker fajl sa očekivanom novom verzijom
-                File.WriteAllText(markerPath, version);
+                    ReplaceFiles(sourceDir, appDir, sourceDir, log, ref replaced, ref failed);
 
-                string batch = "@echo off\r\n" +
-                    "chcp 65001 >nul 2>&1\r\n" +
-                    "title WpfAmsterdam - Azuriranje\r\n" +
-                    "set LOGFILE=\"" + logPath + "\"\r\n" +
-                    "echo === Update started %DATE% %TIME% > %LOGFILE%\r\n" +
-                    "echo Source: \"" + sourceDir + "\" >> %LOGFILE%\r\n" +
-                    "echo Dest:   \"" + appDir + "\" >> %LOGFILE%\r\n" +
-                    "echo PID:    " + currentPid + " >> %LOGFILE%\r\n" +
-                    "echo.\r\n" +
-                    "echo ============================================\r\n" +
-                    "echo   Azuriranje u toku... Ne zatvarajte prozor!\r\n" +
-                    "echo ============================================\r\n" +
-                    "echo.\r\n" +
-                    "\r\n" +
-                    "echo Cekanje da se proces " + currentPid + " zatvori... >> %LOGFILE%\r\n" +
-                    ":WAIT_LOOP\r\n" +
-                    "tasklist /FI \"PID eq " + currentPid + "\" 2>nul | find \"" + currentPid + "\" >nul\r\n" +
-                    "if not errorlevel 1 (\r\n" +
-                    "    timeout /t 1 /nobreak >nul\r\n" +
-                    "    goto WAIT_LOOP\r\n" +
-                    ")\r\n" +
-                    "echo Proces zatvoren %TIME% >> %LOGFILE%\r\n" +
-                    "\r\n" +
-                    "echo Zaustavljanje svih instanci WpfAmsterdam... >> %LOGFILE%\r\n" +
-                    "taskkill /F /IM WpfAmsterdam.exe >nul 2>&1\r\n" +
-                    "timeout /t 3 /nobreak >nul\r\n" +
-                    "\r\n" +
-                    "echo Pokretanje robocopy... >> %LOGFILE%\r\n" +
-                    "robocopy \"" + sourceDir + "\" \"" + appDir.TrimEnd('\\') + "\" /E /R:10 /W:3 >> %LOGFILE% 2>&1\r\n" +
-                    "set RC=%ERRORLEVEL%\r\n" +
-                    "echo Robocopy exit code: %RC% >> %LOGFILE%\r\n" +
-                    "\r\n" +
-                    "if %RC% GEQ 8 (\r\n" +
-                    "    echo GRESKA pri kopiranju! Exit code: %RC% >> %LOGFILE%\r\n" +
-                    "    echo.\r\n" +
-                    "    echo GRESKA pri azuriranju! Pogledaj log: " + logPath + "\r\n" +
-                    "    echo.\r\n" +
-                    "    pause\r\n" +
-                    "    exit /b 1\r\n" +
-                    ")\r\n" +
-                    "\r\n" +
-                    "echo Azuriranje zavrseno uspesno %TIME% >> %LOGFILE%\r\n" +
-                    "echo.\r\n" +
-                    "echo Azuriranje zavrseno! Pokretanje aplikacije...\r\n" +
-                    "del \"" + markerPath + "\" 2>nul\r\n" +
-                    "start \"\" \"" + exePath + "\"\r\n" +
-                    "del \"" + tempZip + "\" 2>nul\r\n" +
-                    "rmdir /S /Q \"" + tempExtract + "\" 2>nul\r\n" +
-                    "del \"%~f0\"\r\n";
+                    log.WriteLine();
+                    log.WriteLine("Replaced: " + replaced + ", Failed: " + failed);
+                    log.WriteLine("=== Update finished " + DateTime.Now + " ===");
+                }
 
-                File.WriteAllText(batchPath, batch);
-
-                // Zatvori progress dijalog
                 progressDlg.Close();
                 progressDlg = null;
 
-                // Pokreni batch i zatvori app
-                ProcessStartInfo psi = new ProcessStartInfo
+                if (failed > 0)
                 {
-                    FileName = batchPath,
-                    CreateNoWindow = false,
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Normal
-                };
-                Process.Start(psi);
+                    MessageBox.Show(
+                        "Ažuriranje delimično uspelo (" + replaced + " fajlova zamenjeno, " + failed + " neuspelo).\n" +
+                        "Pogledaj log: " + logPath,
+                        "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
 
-                // Zatvori app
-                Application.Current.Shutdown();
+                // Pokreni novu verziju aplikacije i zatvori trenutnu
+                string exePath = Path.Combine(appDir, "WpfAmsterdam.exe");
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    UseShellExecute = true
+                });
+
+                Environment.Exit(0);
             }
             catch (Exception ex)
             {
                 progressDlg?.Close();
                 MessageBox.Show("Greška pri ažuriranju: " + ex.Message,
                     "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private static void ReplaceFiles(string sourceDir, string destDir, string rootSourceDir, StreamWriter log, ref int replaced, ref int failed)
+        {
+            // Kopiraj fajlove
+            foreach (string sourceFile in Directory.GetFiles(sourceDir))
+            {
+                string fileName = Path.GetFileName(sourceFile);
+                string destFile = Path.Combine(destDir, fileName);
+
+                try
+                {
+                    // Pokušaj direktno kopiranje
+                    File.Copy(sourceFile, destFile, true);
+                    replaced++;
+                    log.WriteLine("OK: " + fileName);
+                }
+                catch
+                {
+                    // Fajl je zaključan - preimenuj stari pa kopiraj novi
+                    try
+                    {
+                        string oldFile = destFile + ".old";
+                        if (File.Exists(oldFile))
+                            File.Delete(oldFile);
+                        File.Move(destFile, oldFile);
+                        File.Copy(sourceFile, destFile, true);
+                        replaced++;
+                        log.WriteLine("OK (rename): " + fileName);
+                    }
+                    catch (Exception ex2)
+                    {
+                        failed++;
+                        log.WriteLine("FAIL: " + fileName + " - " + ex2.Message);
+                    }
+                }
+            }
+
+            // Rekurzivno za poddirektorijume
+            foreach (string subDir in Directory.GetDirectories(sourceDir))
+            {
+                string dirName = Path.GetFileName(subDir);
+                string destSubDir = Path.Combine(destDir, dirName);
+                if (!Directory.Exists(destSubDir))
+                    Directory.CreateDirectory(destSubDir);
+                ReplaceFiles(subDir, destSubDir, rootSourceDir, log, ref replaced, ref failed);
             }
         }
     }

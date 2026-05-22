@@ -13,7 +13,12 @@ namespace WpfAmsterdam
         public DlgLogin()
         {
             InitializeComponent();
-            this.Loaded += (s, e) => txtSifra.Focus();
+            this.Loaded += (s, e) =>
+            {
+                this.Activate();
+                txtSifra.Focus();
+                Keyboard.Focus(txtSifra);
+            };
         }
 
         private void txtSifra_KeyDown(object sender, KeyEventArgs e)

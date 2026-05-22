@@ -9,8 +9,68 @@
     TextOptions.TextFormattingMode="Display"
     TextOptions.TextRenderingMode="ClearType">
 
+    <Window.Resources>
+        <!-- Stil za selektovani red u obe tabele -->
+        <Style x:Key="SelectionRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#FF6B35"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#FAFBFC"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="#FF6B35"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Stil za selektovanu ćeliju -->
+        <Style x:Key="SelectionCellStyle" TargetType="DataGridCell">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#FF6B35"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#FF6B35"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Stil za tastere Upari/Raspari -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="110"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="10" Padding="8,4"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -30,8 +90,32 @@
             </DockPanel>
         </Border>
 
+        <!-- Tasteri Upari / Raspari -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,10,12,4">
+            <Button x:Name="btnUpari" Content="Upari" IsEnabled="False"
+                    Style="{StaticResource ActionButtonStyle}"
+                    Foreground="White" Click="btnUpari_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#00B894" Offset="0"/>
+                        <GradientStop Color="#00A383" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button x:Name="btnRaspari" Content="Raspari" IsEnabled="False"
+                    Style="{StaticResource ActionButtonStyle}"
+                    Foreground="White" Click="btnRaspari_Click">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#E17055" Offset="0"/>
+                        <GradientStop Color="#D63031" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+        </StackPanel>
+
         <!-- Sadržaj: dve tabele -->
-        <Grid Grid.Row="1" Margin="12">
+        <Grid Grid.Row="2" Margin="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="6*"/>
                 <ColumnDefinition Width="8"/>
@@ -52,17 +136,19 @@
                           BorderThickness="1"
                           BorderBrush="#E8ECF1"
                           Background="White"
-                          RowBackground="White"
-                          AlternatingRowBackground="#FAFBFC"
                           HeadersVisibility="Column"
                           FontSize="13"
                           ColumnHeaderHeight="36"
-                          RowHeight="30">
+                          RowHeight="30"
+                          AlternationCount="2"
+                          RowStyle="{StaticResource SelectionRowStyle}"
+                          CellStyle="{StaticResource SelectionCellStyle}"
+                          SelectionChanged="dgArtikli_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Šifra" Binding="{Binding Sifra}" Width="70"/>
-                        <DataGridTextColumn Header="Naziv" Binding="{Binding Naziv}" Width="*"/>
-                        <DataGridTextColumn Header="ES šifra" Binding="{Binding EsSifra}" Width="90"/>
-                        <DataGridTextColumn Header="ES naziv" Binding="{Binding EsNaziv}" Width="*"/>
+                        <DataGridTextColumn Header="ID artikla" Binding="{Binding IdArtikla}" Width="80"/>
+                        <DataGridTextColumn Header="Ime artikla" Binding="{Binding ImeArtikla}" Width="*"/>
+                        <DataGridTextColumn Header="ID artikla EnergyStar" Binding="{Binding IdArtiklaES}" Width="140"/>
+                        <DataGridTextColumn Header="Ime artikla EnergyStar" Binding="{Binding ImeArtiklaES}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
@@ -81,22 +167,24 @@
                           BorderThickness="1"
                           BorderBrush="#E8ECF1"
                           Background="White"
-                          RowBackground="White"
-                          AlternatingRowBackground="#FAFBFC"
                           HeadersVisibility="Column"
                           FontSize="13"
                           ColumnHeaderHeight="36"
-                          RowHeight="30">
+                          RowHeight="30"
+                          AlternationCount="2"
+                          RowStyle="{StaticResource SelectionRowStyle}"
+                          CellStyle="{StaticResource SelectionCellStyle}"
+                          SelectionChanged="dgEnergyStar_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Šifra" Binding="{Binding Sifra}" Width="90"/>
-                        <DataGridTextColumn Header="Naziv" Binding="{Binding Naziv}" Width="*"/>
+                        <DataGridTextColumn Header="ID artikla EnergyStar" Binding="{Binding IdArtiklaES}" Width="140"/>
+                        <DataGridTextColumn Header="Ime artikla EnergyStar" Binding="{Binding ImeArtiklaES}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
         </Grid>
 
         <!-- Footer -->
-        <Border Grid.Row="2" Padding="12,10" Background="#FAFBFC"
+        <Border Grid.Row="3" Padding="12,10" Background="#FAFBFC"
                 BorderThickness="0,1,0,0" BorderBrush="#E8ECF1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Zatvori" Width="90" Height="34" FontSize="13" FontWeight="SemiBold"
