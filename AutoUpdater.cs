@@ -115,12 +115,40 @@ namespace WpfAmsterdam
 
                 // Napravi batch skriptu za zamenu fajlova posle zatvaranja app
                 string batchPath = Path.Combine(Path.GetTempPath(), "update_wpfamsterdam.bat");
+                string logPath = Path.Combine(Path.GetTempPath(), "wpfamsterdam_update.log");
+                string exePath = Path.Combine(appDir, "WpfAmsterdam.exe");
+                int currentPid = Process.GetCurrentProcess().Id;
                 string batch = "@echo off\r\n" +
-                    "echo Ažuriranje u toku...\r\n" +
+                    "set LOGFILE=\"" + logPath + "\"\r\n" +
+                    "echo === Update started %DATE% %TIME% > %LOGFILE%\r\n" +
+                    "echo Source: \"" + sourceDir + "\" >> %LOGFILE%\r\n" +
+                    "echo Dest:   \"" + appDir + "\" >> %LOGFILE%\r\n" +
+                    "echo PID:    " + currentPid + " >> %LOGFILE%\r\n" +
+                    "\r\n" +
+                    "echo Cekanje da se proces " + currentPid + " zatvori... >> %LOGFILE%\r\n" +
+                    ":WAIT_LOOP\r\n" +
+                    "tasklist /FI \"PID eq " + currentPid + "\" 2>nul | find \"" + currentPid + "\" >nul\r\n" +
+                    "if not errorlevel 1 (\r\n" +
+                    "    timeout /t 1 /nobreak >nul\r\n" +
+                    "    goto WAIT_LOOP\r\n" +
+                    ")\r\n" +
+                    "echo Proces zatvoren %TIME% >> %LOGFILE%\r\n" +
                     "timeout /t 3 /nobreak >nul\r\n" +
-                    "xcopy /E /Y /Q \"" + sourceDir + "\\*\" \"" + appDir + "\"\r\n" +
-                    "echo Ažuriranje završeno!\r\n" +
-                    "start \"\" \"" + Path.Combine(appDir, "WpfAmsterdam.exe") + "\"\r\n" +
+                    "\r\n" +
+                    "echo Pokretanje robocopy... >> %LOGFILE%\r\n" +
+                    "robocopy \"" + sourceDir + "\" \"" + appDir.TrimEnd('\\') + "\" /E /R:10 /W:3 >> %LOGFILE% 2>&1\r\n" +
+                    "set RC=%ERRORLEVEL%\r\n" +
+                    "echo Robocopy exit code: %RC% >> %LOGFILE%\r\n" +
+                    "\r\n" +
+                    "if %RC% GEQ 8 (\r\n" +
+                    "    echo GRESKA pri kopiranju! Exit code: %RC% >> %LOGFILE%\r\n" +
+                    "    echo GRESKA pri azuriranju! Pogledaj log: " + logPath + "\r\n" +
+                    "    pause\r\n" +
+                    "    exit /b 1\r\n" +
+                    ")\r\n" +
+                    "\r\n" +
+                    "echo Azuriranje zavrseno uspesno %TIME% >> %LOGFILE%\r\n" +
+                    "start \"\" \"" + exePath + "\"\r\n" +
                     "del \"" + tempZip + "\" 2>nul\r\n" +
                     "rmdir /S /Q \"" + tempExtract + "\" 2>nul\r\n" +
                     "del \"%~f0\"\r\n";
@@ -135,9 +163,9 @@ namespace WpfAmsterdam
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = batchPath,
-                    CreateNoWindow = true,
+                    CreateNoWindow = false,
                     UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Hidden
+                    WindowStyle = ProcessWindowStyle.Normal
                 };
                 Process.Start(psi);
 
