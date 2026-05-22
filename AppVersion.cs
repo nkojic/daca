@@ -2,6 +2,6 @@ namespace WpfAmsterdam
 {
     public static class AppVersion
     {
-        public const string Current = "1.14.0";
+        public const string Current = "1.15.0";
     }
 }

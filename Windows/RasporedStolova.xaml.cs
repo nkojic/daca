@@ -82,6 +82,14 @@ namespace WpfAmsterdam
         private LabelItem draggedLabel = null;
         private Point labelDragOffset;
 
+        // Selekcija pravougaonikom
+        private bool isSelecting = false;
+        private Point selectionStart;
+        private List<TableItem> selectedItems = new List<TableItem>();
+        private bool isDraggingSelection = false;
+        private Point selectionDragStart;
+        private static readonly SolidColorBrush SelectedBorderBrush = new SolidColorBrush(Color.FromRgb(9, 132, 227));
+
         // Zidovi
         private class WallItem
         {
@@ -405,8 +413,46 @@ namespace WpfAmsterdam
         {
             string size = ((System.Windows.Controls.ComboBoxItem)cmbDodajSize.SelectedItem).Content.ToString().ToLower();
             string name = GetNextName();
-            double x = 30;
-            double y = 30;
+            double mult = GetSizeMultiplier(size);
+            double itemW = (type == "round" ? 60 : 45) * mult;
+            double itemH = itemW;
+            double spacing = 10;
+
+            // Nađi slobodno mesto - skeniraj po redovima
+            double canvasW = canvasStolovi.ActualWidth > 100 ? canvasStolovi.ActualWidth : 1000;
+            double startX = 20;
+            double startY = 20;
+            double x = startX;
+            double y = startY;
+
+            bool found = false;
+            while (!found && y + itemH < 5000)
+            {
+                bool overlaps = false;
+                foreach (var t in tableItems)
+                {
+                    double tW = t.UiButton.Width;
+                    double tH = t.UiButton.Height;
+                    if (x < t.PosX + tW + spacing && x + itemW + spacing > t.PosX &&
+                        y < t.PosY + tH + spacing && y + itemH + spacing > t.PosY)
+                    {
+                        overlaps = true;
+                        // Pomeri desno od tog stola
+                        x = t.PosX + tW + spacing;
+                        break;
+                    }
+                }
+                if (!overlaps)
+                {
+                    found = true;
+                }
+                else if (x + itemW > canvasW - 20)
+                {
+                    // Novi red
+                    x = startX;
+                    y += itemH + spacing;
+                }
+            }
 
             Button btn = CreateTableButton(name, type, size);
             Canvas.SetLeft(btn, x);
@@ -480,6 +526,7 @@ namespace WpfAmsterdam
         private void Table_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Button btn = sender as Button;
+            TableItem item = tableItems.Find(t => t.UiButton == btn);
 
             if (deleteMode)
             {
@@ -490,7 +537,6 @@ namespace WpfAmsterdam
 
             if (e.ClickCount == 2)
             {
-                TableItem item = tableItems.Find(t => t.UiButton == btn);
                 if (item == null) return;
 
                 string newName = Microsoft.VisualBasic.Interaction.InputBox(
@@ -516,6 +562,38 @@ namespace WpfAmsterdam
                 return;
             }
 
+            // Ctrl+klik — dodaj/ukloni iz selekcije
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 && item != null)
+            {
+                if (selectedItems.Contains(item))
+                {
+                    selectedItems.Remove(item);
+                    HighlightTable(item, false);
+                }
+                else
+                {
+                    selectedItems.Add(item);
+                    HighlightTable(item, true);
+                }
+                UpdateSelectionButtons();
+                e.Handled = true;
+                return;
+            }
+
+            // Ako kliknemo na selektovani sto — grupni drag
+            if (item != null && selectedItems.Contains(item) && selectedItems.Count > 1)
+            {
+                isDraggingSelection = true;
+                selectionDragStart = e.GetPosition(canvasStolovi);
+                btn.CaptureMouse();
+                e.Handled = true;
+                return;
+            }
+
+            // Klik na neselektovani sto — očisti selekciju, normalan drag
+            if (selectedItems.Count > 0 && (item == null || !selectedItems.Contains(item)))
+                ClearSelection();
+
             draggedButton = btn;
             dragOffset = e.GetPosition(draggedButton);
             draggedButton.CaptureMouse();
@@ -524,6 +602,29 @@ namespace WpfAmsterdam
 
         private void Table_MouseMove(object sender, MouseEventArgs e)
         {
+            // Grupni drag selektovanih
+            if (isDraggingSelection && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point current = e.GetPosition(canvasStolovi);
+                double dx = current.X - selectionDragStart.X;
+                double dy = current.Y - selectionDragStart.Y;
+                selectionDragStart = current;
+
+                foreach (var item in selectedItems)
+                {
+                    double newX = Canvas.GetLeft(item.UiButton) + dx;
+                    double newY = Canvas.GetTop(item.UiButton) + dy;
+                    newX = Math.Max(0, Math.Min(newX, canvasStolovi.ActualWidth - item.UiButton.Width));
+                    newY = Math.Max(0, Math.Min(newY, canvasStolovi.ActualHeight - item.UiButton.Height));
+                    Canvas.SetLeft(item.UiButton, newX);
+                    Canvas.SetTop(item.UiButton, newY);
+                    item.PosX = newX;
+                    item.PosY = newY;
+                }
+                e.Handled = true;
+                return;
+            }
+
             if (draggedButton != null && e.LeftButton == MouseButtonState.Pressed)
             {
                 Point position = e.GetPosition(canvasStolovi);
@@ -631,6 +732,15 @@ namespace WpfAmsterdam
 
         private void Table_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (isDraggingSelection)
+            {
+                Button btn = sender as Button;
+                btn?.ReleaseMouseCapture();
+                isDraggingSelection = false;
+                e.Handled = true;
+                return;
+            }
+
             if (draggedButton != null)
             {
                 ClearGuideLines();
@@ -1157,6 +1267,193 @@ namespace WpfAmsterdam
             {
                 canvasStolovi.Children.Remove(zone.UiBorder);
                 zoneItems.Remove(zone);
+            }
+        }
+
+        // --- Selekcija pravougaonikom ---
+
+        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (deleteMode) return;
+
+            // Klik na prazan prostor canvasa - počni selekciju
+            if (e.OriginalSource == canvasStolovi)
+            {
+                // Ako nije Ctrl, očisti prethodnu selekciju
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == 0)
+                    ClearSelection();
+
+                isSelecting = true;
+                selectionStart = e.GetPosition(canvasStolovi);
+                Canvas.SetLeft(selectionRect, selectionStart.X);
+                Canvas.SetTop(selectionRect, selectionStart.Y);
+                selectionRect.Width = 0;
+                selectionRect.Height = 0;
+                selectionRect.Visibility = Visibility.Visible;
+                Panel.SetZIndex(selectionRect, 1000);
+                canvasStolovi.CaptureMouse();
+                e.Handled = true;
+            }
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isSelecting && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point current = e.GetPosition(canvasStolovi);
+                double x = Math.Min(selectionStart.X, current.X);
+                double y = Math.Min(selectionStart.Y, current.Y);
+                double w = Math.Abs(current.X - selectionStart.X);
+                double h = Math.Abs(current.Y - selectionStart.Y);
+
+                Canvas.SetLeft(selectionRect, x);
+                Canvas.SetTop(selectionRect, y);
+                selectionRect.Width = w;
+                selectionRect.Height = h;
+                e.Handled = true;
+            }
+            else if (isDraggingSelection && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point current = e.GetPosition(canvasStolovi);
+                double dx = current.X - selectionDragStart.X;
+                double dy = current.Y - selectionDragStart.Y;
+                selectionDragStart = current;
+
+                foreach (var item in selectedItems)
+                {
+                    double newX = Canvas.GetLeft(item.UiButton) + dx;
+                    double newY = Canvas.GetTop(item.UiButton) + dy;
+                    newX = Math.Max(0, Math.Min(newX, canvasStolovi.ActualWidth - item.UiButton.Width));
+                    newY = Math.Max(0, Math.Min(newY, canvasStolovi.ActualHeight - item.UiButton.Height));
+                    Canvas.SetLeft(item.UiButton, newX);
+                    Canvas.SetTop(item.UiButton, newY);
+                    item.PosX = newX;
+                    item.PosY = newY;
+                }
+                e.Handled = true;
+            }
+        }
+
+        private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (isSelecting)
+            {
+                canvasStolovi.ReleaseMouseCapture();
+                isSelecting = false;
+
+                // Nađi stolove unutar selekcije
+                double selX = Canvas.GetLeft(selectionRect);
+                double selY = Canvas.GetTop(selectionRect);
+                double selW = selectionRect.Width;
+                double selH = selectionRect.Height;
+
+                if (selW > 5 && selH > 5)
+                {
+                    Rect selRect = new Rect(selX, selY, selW, selH);
+                    foreach (var item in tableItems)
+                    {
+                        Rect itemRect = new Rect(item.PosX, item.PosY, item.UiButton.Width, item.UiButton.Height);
+                        if (selRect.IntersectsWith(itemRect))
+                        {
+                            if (!selectedItems.Contains(item))
+                            {
+                                selectedItems.Add(item);
+                                HighlightTable(item, true);
+                            }
+                        }
+                    }
+                }
+
+                selectionRect.Visibility = Visibility.Collapsed;
+                UpdateSelectionButtons();
+                e.Handled = true;
+            }
+            else if (isDraggingSelection)
+            {
+                isDraggingSelection = false;
+                e.Handled = true;
+            }
+        }
+
+        private void HighlightTable(TableItem item, bool selected)
+        {
+            if (item.UiButton == null) return;
+            if (VisualTreeHelper.GetChildrenCount(item.UiButton) > 0)
+            {
+                var border = VisualTreeHelper.GetChild(item.UiButton, 0) as Border;
+                if (border != null)
+                {
+                    border.BorderBrush = selected ? SelectedBorderBrush :
+                        new SolidColorBrush(Color.FromRgb(223, 230, 233));
+                    border.BorderThickness = new Thickness(selected ? 3 : 2);
+                }
+            }
+        }
+
+        private void ClearSelection()
+        {
+            foreach (var item in selectedItems)
+                HighlightTable(item, false);
+            selectedItems.Clear();
+            UpdateSelectionButtons();
+        }
+
+        private void UpdateSelectionButtons()
+        {
+            bool hasSelection = selectedItems.Count >= 2;
+            btnPoravnajH.IsEnabled = hasSelection;
+            btnPoravnajV.IsEnabled = hasSelection;
+        }
+
+        private int GetRastojanje()
+        {
+            int val;
+            if (int.TryParse(txtRastojanje.Text, out val) && val >= 0)
+                return val;
+            return 10;
+        }
+
+        private void btnPoravnajH_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedItems.Count < 2) return;
+
+            int spacing = GetRastojanje();
+            // Sortiraj po X poziciji (levo ka desno)
+            var sorted = selectedItems.OrderBy(t => t.PosX).ToList();
+
+            // Počni od pozicije prvog stola, zadrži Y prvog stola
+            double x = sorted[0].PosX;
+            double y = sorted[0].PosY;
+
+            foreach (var item in sorted)
+            {
+                Canvas.SetLeft(item.UiButton, x);
+                Canvas.SetTop(item.UiButton, y);
+                item.PosX = x;
+                item.PosY = y;
+                x += item.UiButton.Width + spacing;
+            }
+        }
+
+        private void btnPoravnajV_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedItems.Count < 2) return;
+
+            int spacing = GetRastojanje();
+            // Sortiraj po Y poziciji (gore ka dole)
+            var sorted = selectedItems.OrderBy(t => t.PosY).ToList();
+
+            // Počni od pozicije prvog stola, zadrži X prvog stola
+            double x = sorted[0].PosX;
+            double y = sorted[0].PosY;
+
+            foreach (var item in sorted)
+            {
+                Canvas.SetLeft(item.UiButton, x);
+                Canvas.SetTop(item.UiButton, y);
+                item.PosX = x;
+                item.PosY = y;
+                y += item.UiButton.Height + spacing;
             }
         }
 

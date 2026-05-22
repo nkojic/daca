@@ -202,6 +202,37 @@
                     <!-- Separator -->
                     <Border Width="2" Height="30" Background="#DFE6E9" Margin="10,0"/>
 
+                    <!-- Poravnanje selekcije -->
+                    <Button x:Name="btnPoravnajH" Style="{StaticResource BtnToolbar}"
+                            Content="↔ Horizontalno" Margin="0,0,6,0" IsEnabled="False"
+                            Click="btnPoravnajH_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#74B9FF" Offset="0"/>
+                                <GradientStop Color="#0984E3" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="btnPoravnajV" Style="{StaticResource BtnToolbar}"
+                            Content="↕ Vertikalno" Margin="0,0,6,0" IsEnabled="False"
+                            Click="btnPoravnajV_Click">
+                        <Button.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#A29BFE" Offset="0"/>
+                                <GradientStop Color="#6C5CE7" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <TextBox x:Name="txtRastojanje" Width="40" Height="28" FontSize="12"
+                             Text="10" VerticalContentAlignment="Center"
+                             HorizontalContentAlignment="Center"
+                             BorderBrush="#DFE6E9" BorderThickness="1" Margin="0,0,3,0"/>
+                    <TextBlock Text="px" FontSize="11" Foreground="#636E72"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+
+                    <!-- Separator -->
+                    <Border Width="2" Height="30" Background="#DFE6E9" Margin="10,0"/>
+
                     <!-- Snimi / Zatvori -->
                     <Button x:Name="btnSnimi" Style="{StaticResource BtnToolbar}"
                             Content="Snimi" Margin="0,0,6,0" Click="btnSnimi_Click">
@@ -275,7 +306,14 @@
                         </DrawingBrush.Drawing>
                     </DrawingBrush>
                 </Border.Background>
-                <Canvas x:Name="canvasStolovi" ClipToBounds="True"/>
+                <Canvas x:Name="canvasStolovi" ClipToBounds="True"
+                        MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                        MouseMove="Canvas_MouseMove"
+                        MouseLeftButtonUp="Canvas_MouseLeftButtonUp">
+                    <Rectangle x:Name="selectionRect" Visibility="Collapsed"
+                               Stroke="#0984E3" StrokeThickness="1" StrokeDashArray="3,2"
+                               Fill="#200984E3" IsHitTestVisible="False"/>
+                </Canvas>
             </Border>
         </DockPanel>
     </Border>
