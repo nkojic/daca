@@ -97,6 +97,8 @@ CREATE TABLE IF NOT EXISTS Artikli (
     daliDodatak INTEGER,
     VremeIzmene TEXT,
     Uneo TEXT,
+    EsIdArtikla TEXT DEFAULT '',
+    EsNazivArtikla TEXT DEFAULT '',
     FOREIGN KEY (IdKat1) REFERENCES Kategorija1(IdKat1)
 );
 

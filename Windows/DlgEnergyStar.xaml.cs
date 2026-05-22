@@ -12,6 +12,8 @@ namespace WpfAmsterdam
     public partial class DlgEnergyStar : Window
     {
         private string konekcija = Window2.konekcija;
+        private List<ArtikalES> sviArtikli;
+        private List<EsProizvod> sviES;
         private ObservableCollection<ArtikalES> listaArtikala;
         private ObservableCollection<EsProizvod> listaES;
 
@@ -25,6 +27,7 @@ namespace WpfAmsterdam
 
             LoadArtikli();
             LoadEnergyStarKatalog();
+            UkloniVecUpareneIzDesne();
             UpdateButtonStates();
         }
 
@@ -33,19 +36,20 @@ namespace WpfAmsterdam
             try
             {
                 DataTable dt = DatabaseHelper.ReaderTabela(konekcija,
-                    "SELECT IdArtikal, Naziv FROM Artikli WHERE aktivan = 1 ORDER BY Naziv");
+                    "SELECT IdArtikal, Naziv, EsIdArtikla, EsNazivArtikla FROM Artikli WHERE aktivan = 1 ORDER BY Naziv");
 
-                listaArtikala = new ObservableCollection<ArtikalES>();
+                sviArtikli = new List<ArtikalES>();
                 foreach (DataRow row in dt.Rows)
                 {
-                    listaArtikala.Add(new ArtikalES
+                    sviArtikli.Add(new ArtikalES
                     {
                         IdArtikla = Convert.ToInt32(row["IdArtikal"]),
                         ImeArtikla = row["Naziv"].ToString(),
-                        IdArtiklaES = "",
-                        ImeArtiklaES = ""
+                        IdArtiklaES = row["EsIdArtikla"]?.ToString() ?? "",
+                        ImeArtiklaES = row["EsNazivArtikla"]?.ToString() ?? ""
                     });
                 }
+                listaArtikala = new ObservableCollection<ArtikalES>(sviArtikli);
                 dgArtikli.ItemsSource = listaArtikala;
             }
             catch (Exception ex)
@@ -57,7 +61,7 @@ namespace WpfAmsterdam
         private void LoadEnergyStarKatalog()
         {
             // Fake podaci - kasnije će dolaziti iz eksterne baze
-            listaES = new ObservableCollection<EsProizvod>
+            sviES = new List<EsProizvod>
             {
                 new EsProizvod { IdArtiklaES = "ES-1001", ImeArtiklaES = "Dom Perignon 75cl" },
                 new EsProizvod { IdArtiklaES = "ES-1002", ImeArtiklaES = "Dom Perignon Rose 75cl" },
@@ -75,7 +79,83 @@ namespace WpfAmsterdam
                 new EsProizvod { IdArtiklaES = "ES-1014", ImeArtiklaES = "Ardbeg 10YO 70cl" },
                 new EsProizvod { IdArtiklaES = "ES-1015", ImeArtiklaES = "Chandon Garden Spritz 75cl" },
             };
+            listaES = new ObservableCollection<EsProizvod>(sviES);
             dgEnergyStar.ItemsSource = listaES;
+        }
+
+        /// <summary>
+        /// Ukloni iz desne tabele artikle koji su već upareni u levoj
+        /// </summary>
+        private void UkloniVecUpareneIzDesne()
+        {
+            var upareniIds = sviArtikli
+                .Where(a => !string.IsNullOrEmpty(a.IdArtiklaES))
+                .Select(a => a.IdArtiklaES)
+                .ToHashSet();
+
+            var zaUklanjanje = listaES.Where(es => upareniIds.Contains(es.IdArtiklaES)).ToList();
+            foreach (var es in zaUklanjanje)
+                listaES.Remove(es);
+
+            // Ažuriraj i sviES listu
+            sviES.RemoveAll(es => upareniIds.Contains(es.IdArtiklaES));
+        }
+
+        private void SacuvajUparivanje(int idArtikla, string esId, string esNaziv)
+        {
+            try
+            {
+                using (var con = new SqliteConnection(konekcija))
+                {
+                    con.Open();
+                    using (var cmd = new SqliteCommand(
+                        "UPDATE Artikli SET EsIdArtikla = @esId, EsNazivArtikla = @esNaziv WHERE IdArtikal = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@esId", esId);
+                        cmd.Parameters.AddWithValue("@esNaziv", esNaziv);
+                        cmd.Parameters.AddWithValue("@id", idArtikla);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Greška pri čuvanju uparivanja: " + ex.Message);
+            }
+        }
+
+        private void txtPretragaLevo_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filter = txtPretragaLevo.Text.Trim().ToLower();
+            listaArtikala.Clear();
+            foreach (var a in sviArtikli)
+            {
+                if (string.IsNullOrEmpty(filter) ||
+                    a.IdArtikla.ToString().Contains(filter) ||
+                    a.ImeArtikla.ToLower().Contains(filter) ||
+                    a.IdArtiklaES.ToLower().Contains(filter) ||
+                    a.ImeArtiklaES.ToLower().Contains(filter))
+                {
+                    listaArtikala.Add(a);
+                }
+            }
+            UpdateButtonStates();
+        }
+
+        private void txtPretragaDesno_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filter = txtPretragaDesno.Text.Trim().ToLower();
+            listaES.Clear();
+            foreach (var es in sviES)
+            {
+                if (string.IsNullOrEmpty(filter) ||
+                    es.IdArtiklaES.ToLower().Contains(filter) ||
+                    es.ImeArtiklaES.ToLower().Contains(filter))
+                {
+                    listaES.Add(es);
+                }
+            }
+            UpdateButtonStates();
         }
 
         private void dgArtikli_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -111,7 +191,9 @@ namespace WpfAmsterdam
             // Ako levi red već ima uparivanje, vrati stari artikl u desnu tabelu
             if (!string.IsNullOrEmpty(selLevo.IdArtiklaES))
             {
-                listaES.Add(new EsProizvod { IdArtiklaES = selLevo.IdArtiklaES, ImeArtiklaES = selLevo.ImeArtiklaES });
+                var stari = new EsProizvod { IdArtiklaES = selLevo.IdArtiklaES, ImeArtiklaES = selLevo.ImeArtiklaES };
+                sviES.Add(stari);
+                listaES.Add(stari);
             }
 
             // Upiši podatke iz desne tabele u 3. i 4. kolonu leve
@@ -120,6 +202,10 @@ namespace WpfAmsterdam
 
             // Skloni artikl iz desne tabele
             listaES.Remove(selDesno);
+            sviES.Remove(selDesno);
+
+            // Sačuvaj u bazu
+            SacuvajUparivanje(selLevo.IdArtikla, selLevo.IdArtiklaES, selLevo.ImeArtiklaES);
 
             dgArtikli.Items.Refresh();
             dgEnergyStar.SelectedItem = null;
@@ -132,12 +218,18 @@ namespace WpfAmsterdam
 
             if (selLevo == null || string.IsNullOrEmpty(selLevo.IdArtiklaES)) return;
 
-            // Vrati artikl u desnu tabelu
-            listaES.Add(new EsProizvod { IdArtiklaES = selLevo.IdArtiklaES, ImeArtiklaES = selLevo.ImeArtiklaES });
+            // Vrati artikl u desnu tabelu samo ako postoji u ES katalogu
+            // (ako ne postoji više, samo brišemo uparivanje)
+            var stari = new EsProizvod { IdArtiklaES = selLevo.IdArtiklaES, ImeArtiklaES = selLevo.ImeArtiklaES };
+            sviES.Add(stari);
+            listaES.Add(stari);
 
             // Obriši 3. i 4. kolonu
             selLevo.IdArtiklaES = "";
             selLevo.ImeArtiklaES = "";
+
+            // Sačuvaj u bazu (prazne vrednosti)
+            SacuvajUparivanje(selLevo.IdArtikla, "", "");
 
             dgArtikli.Items.Refresh();
             UpdateButtonStates();
@@ -155,6 +247,7 @@ namespace WpfAmsterdam
         public string ImeArtikla { get; set; }
         public string IdArtiklaES { get; set; }
         public string ImeArtiklaES { get; set; }
+        public string Upareno => string.IsNullOrEmpty(IdArtiklaES) ? "" : "Da";
     }
 
     public class EsProizvod

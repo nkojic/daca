@@ -90,13 +90,30 @@ namespace WpfAmsterdam
                 }
                 else
                 {
-                    // Osiguraj da nove tabele postoje (za postojeće baze)
+                    // Osiguraj da nove tabele i kolone postoje (za postojeće baze)
                     string[] ensureTables = new string[]
                     {
                         "CREATE TABLE IF NOT EXISTS PasivniElementi (Id INTEGER PRIMARY KEY AUTOINCREMENT, Tip TEXT NOT NULL, Naziv TEXT NOT NULL DEFAULT '', PosX REAL NOT NULL DEFAULT 0, PosY REAL NOT NULL DEFAULT 0, Sirina REAL NOT NULL DEFAULT 0, Visina REAL NOT NULL DEFAULT 0, Boja TEXT NOT NULL DEFAULT '#E8F4FD')",
                         "CREATE TABLE IF NOT EXISTS Konfiguracija (Kljuc TEXT PRIMARY KEY, Vrednost TEXT NOT NULL)",
                         "INSERT OR IGNORE INTO Konfiguracija (Kljuc, Vrednost) VALUES ('KoristiKartice', '0')"
                     };
+                    // Dodaj EnergyStar kolone u Artikli ako ne postoje
+                    string[] ensureColumns = new string[]
+                    {
+                        "ALTER TABLE Artikli ADD COLUMN EsIdArtikla TEXT DEFAULT ''",
+                        "ALTER TABLE Artikli ADD COLUMN EsNazivArtikla TEXT DEFAULT ''"
+                    };
+                    foreach (string sql in ensureColumns)
+                    {
+                        try
+                        {
+                            using (SqliteCommand cmd = new SqliteCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch { } // Kolona već postoji
+                    }
                     foreach (string sql in ensureTables)
                     {
                         using (SqliteCommand cmd = new SqliteCommand(sql, con))

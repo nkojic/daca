@@ -126,6 +126,28 @@
             <DockPanel Grid.Column="0">
                 <TextBlock Text="Naši artikli" FontSize="14" FontWeight="SemiBold"
                            Foreground="#2D3436" Margin="0,0,0,8" DockPanel.Dock="Top"/>
+                <TextBox x:Name="txtPretragaLevo" Height="30" FontSize="13"
+                         Padding="8,4" Margin="0,0,0,8" DockPanel.Dock="Top"
+                         BorderBrush="#E8ECF1" BorderThickness="1"
+                         TextChanged="txtPretragaLevo_TextChanged">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Resources>
+                                <VisualBrush x:Key="Placeholder" TileMode="None" Stretch="None" AlignmentX="Left">
+                                    <VisualBrush.Visual>
+                                        <TextBlock Text="Pretraži artikle..." FontSize="13"
+                                                   Foreground="#B2BEC3" Margin="8,4,0,0"/>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Style.Resources>
+                            <Style.Triggers>
+                                <Trigger Property="Text" Value="">
+                                    <Setter Property="Background" Value="{StaticResource Placeholder}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
                 <DataGrid x:Name="dgArtikli"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
@@ -149,6 +171,7 @@
                         <DataGridTextColumn Header="Ime artikla" Binding="{Binding ImeArtikla}" Width="*"/>
                         <DataGridTextColumn Header="ID artikla EnergyStar" Binding="{Binding IdArtiklaES}" Width="140"/>
                         <DataGridTextColumn Header="Ime artikla EnergyStar" Binding="{Binding ImeArtiklaES}" Width="*"/>
+                        <DataGridTextColumn Header="Upareno" Binding="{Binding Upareno}" Width="70"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
@@ -157,6 +180,28 @@
             <DockPanel Grid.Column="2">
                 <TextBlock Text="EnergyStar katalog" FontSize="14" FontWeight="SemiBold"
                            Foreground="#2D3436" Margin="0,0,0,8" DockPanel.Dock="Top"/>
+                <TextBox x:Name="txtPretragaDesno" Height="30" FontSize="13"
+                         Padding="8,4" Margin="0,0,0,8" DockPanel.Dock="Top"
+                         BorderBrush="#E8ECF1" BorderThickness="1"
+                         TextChanged="txtPretragaDesno_TextChanged">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Resources>
+                                <VisualBrush x:Key="Placeholder" TileMode="None" Stretch="None" AlignmentX="Left">
+                                    <VisualBrush.Visual>
+                                        <TextBlock Text="Pretraži EnergyStar..." FontSize="13"
+                                                   Foreground="#B2BEC3" Margin="8,4,0,0"/>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Style.Resources>
+                            <Style.Triggers>
+                                <Trigger Property="Text" Value="">
+                                    <Setter Property="Background" Value="{StaticResource Placeholder}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
                 <DataGrid x:Name="dgEnergyStar"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
