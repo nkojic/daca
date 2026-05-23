@@ -165,7 +165,8 @@
                           AlternationCount="2"
                           RowStyle="{StaticResource SelectionRowStyle}"
                           CellStyle="{StaticResource SelectionCellStyle}"
-                          SelectionChanged="dgArtikli_SelectionChanged">
+                          SelectionChanged="dgArtikli_SelectionChanged"
+                          PreviewMouseLeftButtonDown="dgArtikli_PreviewMouseLeftButtonDown">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID artikla" Binding="{Binding IdArtikla}" Width="80"/>
                         <DataGridTextColumn Header="Ime artikla" Binding="{Binding ImeArtikla}" Width="*"/>
@@ -219,7 +220,8 @@
                           AlternationCount="2"
                           RowStyle="{StaticResource SelectionRowStyle}"
                           CellStyle="{StaticResource SelectionCellStyle}"
-                          SelectionChanged="dgEnergyStar_SelectionChanged">
+                          SelectionChanged="dgEnergyStar_SelectionChanged"
+                          PreviewMouseLeftButtonDown="dgEnergyStar_PreviewMouseLeftButtonDown">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID artikla EnergyStar" Binding="{Binding IdArtiklaES}" Width="140"/>
                         <DataGridTextColumn Header="Ime artikla EnergyStar" Binding="{Binding ImeArtiklaES}" Width="*"/>

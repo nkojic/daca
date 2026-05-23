@@ -96,13 +96,16 @@ namespace WpfAmsterdam
             public int Id { get; set; }
             public double PosX { get; set; }
             public double PosY { get; set; }
-            public double Duzina { get; set; }
-            public bool Vertikalan { get; set; }
+            public double EndX { get; set; }  // Line.X2 (relativno od PosX)
+            public double EndY { get; set; }  // Line.Y2 (relativno od PosY)
             public Line UiLine { get; set; }
         }
         private List<WallItem> wallItems = new List<WallItem>();
         private WallItem draggedWall = null;
         private Point wallDragOffset;
+        private WallItem resizingWall = null;
+        private bool resizingWallFromStart = false;
+        private const double WallEndpointThreshold = 15;
 
         public RasporedStolova()
         {
@@ -212,10 +215,25 @@ namespace WpfAmsterdam
                     int id = Convert.ToInt32(row["Id"]);
                     double posX = Convert.ToDouble(row["PosX"]);
                     double posY = Convert.ToDouble(row["PosY"]);
-                    double duzina = Convert.ToDouble(row["Sirina"]);
-                    bool vertikalan = Convert.ToDouble(row["Visina"]) == 1;
+                    double sirina = Convert.ToDouble(row["Sirina"]);
+                    double visina = Convert.ToDouble(row["Visina"]);
 
-                    CreateWallOnCanvas(id, posX, posY, duzina, vertikalan);
+                    double endX, endY;
+                    // Stari format: Visina je 0 ili 1 (flag za vertikalan)
+                    if (visina == 0)
+                    {
+                        endX = sirina; endY = 0;     // Horizontalan
+                    }
+                    else if (visina == 1)
+                    {
+                        endX = 0; endY = sirina;     // Vertikalan
+                    }
+                    else
+                    {
+                        endX = sirina; endY = visina; // Novi format (slobodan ugao)
+                    }
+
+                    CreateWallOnCanvas(id, posX, posY, endX, endY);
                 }
             }
             catch
@@ -790,17 +808,17 @@ namespace WpfAmsterdam
         private void btnDodajZid_Click(object sender, RoutedEventArgs e)
         {
             if (deleteMode) ToggleDeleteMode();
-            CreateWallOnCanvas(0, 30, 30, 150, false);
+            CreateWallOnCanvas(0, 30, 30, 150, 0);
         }
 
-        private void CreateWallOnCanvas(int id, double posX, double posY, double duzina, bool vertikalan)
+        private void CreateWallOnCanvas(int id, double posX, double posY, double endX, double endY)
         {
             Line line = new Line
             {
                 X1 = 0,
                 Y1 = 0,
-                X2 = vertikalan ? 0 : duzina,
-                Y2 = vertikalan ? duzina : 0,
+                X2 = endX,
+                Y2 = endY,
                 Stroke = new SolidColorBrush(Color.FromRgb(99, 110, 114)),
                 StrokeThickness = 4,
                 StrokeStartLineCap = PenLineCap.Round,
@@ -818,8 +836,8 @@ namespace WpfAmsterdam
                 Id = id,
                 PosX = posX,
                 PosY = posY,
-                Duzina = duzina,
-                Vertikalan = vertikalan,
+                EndX = endX,
+                EndY = endY,
                 UiLine = line
             };
             wallItems.Add(wall);
@@ -842,27 +860,117 @@ namespace WpfAmsterdam
                 return;
             }
 
-            if (e.ClickCount == 2)
+            // Pozicija klika relativno na canvas
+            Point clickPos = e.GetPosition(canvasStolovi);
+            double wallLeft = Canvas.GetLeft(line);
+            double wallTop = Canvas.GetTop(line);
+
+            // Apsolutne koordinate početka i kraja linije
+            double startAbsX = wallLeft;
+            double startAbsY = wallTop;
+            double endAbsX = wallLeft + wall.EndX;
+            double endAbsY = wallTop + wall.EndY;
+
+            // Rastojanje od klika do početka i kraja
+            double distToStart = Math.Sqrt(Math.Pow(clickPos.X - startAbsX, 2) + Math.Pow(clickPos.Y - startAbsY, 2));
+            double distToEnd = Math.Sqrt(Math.Pow(clickPos.X - endAbsX, 2) + Math.Pow(clickPos.Y - endAbsY, 2));
+
+            if (distToEnd <= WallEndpointThreshold)
             {
-                wall.Vertikalan = !wall.Vertikalan;
-                line.X2 = wall.Vertikalan ? 0 : wall.Duzina;
-                line.Y2 = wall.Vertikalan ? wall.Duzina : 0;
+                // Klik blizu kraja — resize od kraja, početak ostaje fix
+                resizingWall = wall;
+                resizingWallFromStart = false;
+                line.CaptureMouse();
                 e.Handled = true;
                 return;
             }
 
+            if (distToStart <= WallEndpointThreshold)
+            {
+                // Klik blizu početka — resize od početka, kraj ostaje fix
+                resizingWall = wall;
+                resizingWallFromStart = true;
+                line.CaptureMouse();
+                e.Handled = true;
+                return;
+            }
+
+            // Klik u sredini — normalni drag cele linije
             draggedWall = wall;
-            wallDragOffset = e.GetPosition(canvasStolovi);
             wallDragOffset = new Point(
-                wallDragOffset.X - Canvas.GetLeft(line),
-                wallDragOffset.Y - Canvas.GetTop(line));
+                clickPos.X - wallLeft,
+                clickPos.Y - wallTop);
             line.CaptureMouse();
             e.Handled = true;
         }
 
         private void Wall_MouseMove(object sender, MouseEventArgs e)
         {
-            if (draggedWall != null && e.LeftButton == MouseButtonState.Pressed)
+            Line line = sender as Line;
+            if (line == null) return;
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+            {
+                // Promena kursora blizu krajeva
+                WallItem wall = wallItems.Find(w => w.UiLine == line);
+                if (wall == null || deleteMode) return;
+
+                Point clickPos = e.GetPosition(canvasStolovi);
+                double wallLeft = Canvas.GetLeft(line);
+                double wallTop = Canvas.GetTop(line);
+                double distToStart = Math.Sqrt(Math.Pow(clickPos.X - wallLeft, 2) + Math.Pow(clickPos.Y - wallTop, 2));
+                double distToEnd = Math.Sqrt(Math.Pow(clickPos.X - (wallLeft + wall.EndX), 2) + Math.Pow(clickPos.Y - (wallTop + wall.EndY), 2));
+
+                if (distToStart <= WallEndpointThreshold || distToEnd <= WallEndpointThreshold)
+                    line.Cursor = Cursors.Cross;
+                else
+                    line.Cursor = Cursors.SizeAll;
+
+                return;
+            }
+
+            // Resize kraja zida
+            if (resizingWall != null)
+            {
+                Point mousePos = e.GetPosition(canvasStolovi);
+
+                if (resizingWallFromStart)
+                {
+                    // Pomeramo početak, kraj ostaje fiksan
+                    double fixedEndAbsX = resizingWall.PosX + resizingWall.EndX;
+                    double fixedEndAbsY = resizingWall.PosY + resizingWall.EndY;
+
+                    double newPosX = Math.Max(0, mousePos.X);
+                    double newPosY = Math.Max(0, mousePos.Y);
+
+                    resizingWall.PosX = newPosX;
+                    resizingWall.PosY = newPosY;
+                    resizingWall.EndX = fixedEndAbsX - newPosX;
+                    resizingWall.EndY = fixedEndAbsY - newPosY;
+
+                    Canvas.SetLeft(resizingWall.UiLine, newPosX);
+                    Canvas.SetTop(resizingWall.UiLine, newPosY);
+                    resizingWall.UiLine.X2 = resizingWall.EndX;
+                    resizingWall.UiLine.Y2 = resizingWall.EndY;
+                }
+                else
+                {
+                    // Pomeramo kraj, početak ostaje fiksan
+                    double newEndX = mousePos.X - resizingWall.PosX;
+                    double newEndY = mousePos.Y - resizingWall.PosY;
+
+                    resizingWall.EndX = newEndX;
+                    resizingWall.EndY = newEndY;
+                    resizingWall.UiLine.X2 = newEndX;
+                    resizingWall.UiLine.Y2 = newEndY;
+                }
+
+                e.Handled = true;
+                return;
+            }
+
+            // Normalan drag cele linije
+            if (draggedWall != null)
             {
                 Point position = e.GetPosition(canvasStolovi);
                 double newX = position.X - wallDragOffset.X;
@@ -879,6 +987,15 @@ namespace WpfAmsterdam
 
         private void Wall_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (resizingWall != null)
+            {
+                resizingWall.UiLine.ReleaseMouseCapture();
+                resizingWall.PosX = Canvas.GetLeft(resizingWall.UiLine);
+                resizingWall.PosY = Canvas.GetTop(resizingWall.UiLine);
+                resizingWall = null;
+                return;
+            }
+
             if (draggedWall != null)
             {
                 draggedWall.UiLine.ReleaseMouseCapture();
@@ -1537,11 +1654,11 @@ namespace WpfAmsterdam
                         {
                             SqliteCommand cmdIns = new SqliteCommand(
                                 "INSERT INTO PasivniElementi (Tip, Naziv, PosX, PosY, Sirina, Visina, Boja) " +
-                                "VALUES ('zid', '', @x, @y, @d, @v, '')", con, txn);
+                                "VALUES ('zid', '', @x, @y, @endX, @endY, '')", con, txn);
                             cmdIns.Parameters.AddWithValue("@x", wall.PosX);
                             cmdIns.Parameters.AddWithValue("@y", wall.PosY);
-                            cmdIns.Parameters.AddWithValue("@d", wall.Duzina);
-                            cmdIns.Parameters.AddWithValue("@v", wall.Vertikalan ? 1.0 : 0.0);
+                            cmdIns.Parameters.AddWithValue("@endX", wall.EndX);
+                            cmdIns.Parameters.AddWithValue("@endY", wall.EndY);
                             cmdIns.ExecuteNonQuery();
                         }
 

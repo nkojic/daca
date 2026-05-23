@@ -168,6 +168,45 @@ namespace WpfAmsterdam
             UpdateButtonStates();
         }
 
+        private object lastSelectedLevo = null;
+        private object lastSelectedDesno = null;
+
+        private void dgArtikli_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = FindParent<DataGridRow>(e.OriginalSource as DependencyObject);
+            if (row != null && row.DataContext == lastSelectedLevo)
+            {
+                dgArtikli.SelectedItem = null;
+                lastSelectedLevo = null;
+                e.Handled = true;
+                return;
+            }
+            lastSelectedLevo = row?.DataContext;
+        }
+
+        private void dgEnergyStar_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = FindParent<DataGridRow>(e.OriginalSource as DependencyObject);
+            if (row != null && row.DataContext == lastSelectedDesno)
+            {
+                dgEnergyStar.SelectedItem = null;
+                lastSelectedDesno = null;
+                e.Handled = true;
+                return;
+            }
+            lastSelectedDesno = row?.DataContext;
+        }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            while (child != null)
+            {
+                if (child is T parent) return parent;
+                child = System.Windows.Media.VisualTreeHelper.GetParent(child);
+            }
+            return null;
+        }
+
         private void UpdateButtonStates()
         {
             var selLevo = dgArtikli.SelectedItem as ArtikalES;

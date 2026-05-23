@@ -166,8 +166,33 @@ namespace WpfAmsterdam
 
             if (result == System.Windows.Forms.DialogResult.Yes)
             {
-                // Soft delete
-                row[activeColumn] = 0;
+                // Soft delete u bazi
+                try
+                {
+                    long pkValue = Convert.ToInt64(row[pkColumn]);
+                    using (SqliteConnection con = new SqliteConnection(konekcija))
+                    {
+                        con.Open();
+                        using (SqliteCommand cmd = new SqliteCommand(
+                            "UPDATE " + tableName + " SET " + activeColumn + " = 0 WHERE " + pkColumn + " = @pk", con))
+                        {
+                            cmd.Parameters.AddWithValue("@pk", pkValue);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Skloni red iz prikaza
+                    row.Row.Delete();
+                    dataTable.AcceptChanges();
+                    txtCount.Text = dataTable.Rows.Count + " zapisa";
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(
+                        "Greška pri brisanju: " + ex.Message, "Greška",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Error);
+                }
             }
         }
 
